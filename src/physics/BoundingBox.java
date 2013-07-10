@@ -4,6 +4,7 @@
  */
 package physics;
 
+import java.util.ArrayList;
 import org.lwjgl.util.vector.Quaternion;
 import org.lwjgl.util.vector.Vector3f;
 import util.Utilities;
@@ -13,7 +14,7 @@ import util.Utilities;
  * @author Andy
  */
 public class BoundingBox {
-    
+
     Vector3f position;
     Vector3f dimension;
     Vector3f half;
@@ -90,6 +91,14 @@ public class BoundingBox {
         }
         return verts;
         
+    }
+    
+    public Vector3f[] getAxes() {
+        Vector3f[] axes = {new Vector3f(1, 0, 0), new Vector3f(0, 1, 0), new Vector3f(0, 0, 1)};
+        for (int i = 0; i < axes.length; i++) {
+            axes[i] = Utilities.transform(axes[i], orientation);
+        }
+        return axes;
     }
     
     public Vector3f getCenter() {
@@ -176,5 +185,15 @@ public class BoundingBox {
         half.scale(0.5f);
         Vector3f pos = Vector3f.add(min, half, null);
         return new BoundingBox(pos, dim);
+    }
+    
+    public static BoundingBox boundsFromBounds(ArrayList<? extends Boundable> bounds) {
+        Vector3f[] verts = new Vector3f[bounds.size() * 2];
+        for(int i = 0; i < bounds.size(); i++) {
+            BoundingBox b = bounds.get(i).getBounds();
+            verts[2 * i] = b.getMax();
+            verts[2 * i + 1] = b.getMin();
+        }
+        return boundsFromVerts(verts);
     }
 }

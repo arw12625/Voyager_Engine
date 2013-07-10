@@ -55,13 +55,12 @@ public class ThreeDGraphicsManager extends GraphicsManager {
 
         glEnable(GL_LIGHTING);
         glEnable(GL_LIGHT0);
-        glLightModel(GL_LIGHT_MODEL_AMBIENT, asFloatBuffer(new float[]{0.3f, 0.3f, 0.27f, 1f}));
-        glLight(GL_LIGHT0, GL_DIFFUSE, asFloatBuffer(new float[]{.65f, .65f, .65f, 1}));
-        glLight(GL_LIGHT0, GL_POSITION, asFloatBuffer(new float[]{-.3f, 200f, -.3f, 1}));
-
+        glLightModel(GL_LIGHT_MODEL_AMBIENT, asFloatBuffer(new float[]{0.5f, 0.5f, 0.45f, 0f}));
+        glLight(GL_LIGHT0, GL_DIFFUSE, asFloatBuffer(new float[]{.8f, .8f, .75f, 0}));
+        glLight(GL_LIGHT0, GL_POSITION, asFloatBuffer(new float[]{-.3f, 200f, -.3f, 0}));
         glEnable(GL_COLOR_MATERIAL);
         glColorMaterial(GL_FRONT, GL_DIFFUSE);
-
+/*
         glFogi(GL_FOG_MODE, GL_LINEAR);        // Fog Mode
         glFog(GL_FOG_COLOR, asFloatBuffer(new float[]{0.45f, 0.5f, 0.55f, 1f}));            // Set Fog Color
         glFogf(GL_FOG_DENSITY, 0.35f);              // How Dense Will The Fog Be
@@ -69,6 +68,7 @@ public class ThreeDGraphicsManager extends GraphicsManager {
         glFogf(GL_FOG_START, 100f);             // Fog Start Depth
         glFogf(GL_FOG_END, 200f);               // Fog End Depth
         glEnable(GL_FOG);                   // Enables GL_FOG
+        */
 
     }
 

@@ -10,7 +10,7 @@ import org.lwjgl.util.vector.Vector3f;
  *
  * @author Andy
  */
-public class Plane {
+public class Plane implements Boundable {
     
     public BoundingBox bounds;
     public float a, b, c, d;

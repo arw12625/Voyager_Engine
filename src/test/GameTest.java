@@ -56,8 +56,6 @@ public class GameTest {
         Game.addManager(c);
         Game.addManager(DebugMessages.getInstance());
         Game.addManager(GameStateManager.getInstance());
-        
-        // graphicsManager.addGraphic2D(new HudGraphic(TextureManager.getInstance().loadTextureResource("res/fuckopengl.png"), null), -10000);
 
         graphics = new ArrayList<TestGraphic>();
         /*addTestGraphic();

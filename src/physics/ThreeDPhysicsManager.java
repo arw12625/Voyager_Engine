@@ -15,27 +15,28 @@ import util.DebugMessages;
 public class ThreeDPhysicsManager extends PhysicsManager {
 
     ArrayList<PhysicalEntity> pe;
-    
+    CollisionMesh collsionMesh;
     static ThreeDPhysicsManager instance;
-    
+
     @Override
     public void create() {
         super.create();
         pe = new ArrayList<PhysicalEntity>();
     }
-    
+
     public static ThreeDPhysicsManager getInstance() {
-        if(instance == null) {
+        if (instance == null) {
             instance = new ThreeDPhysicsManager();
         }
         return instance;
     }
-    
+
     @Override
     public void update(int delta) {
-        
+
         DebugMessages.getInstance().write("Physics starting");
-        
+
+        //Motion update
         float time = delta / 1000f;
         for (PhysicalEntity e : pe) {
 
@@ -46,12 +47,22 @@ public class ThreeDPhysicsManager extends PhysicsManager {
             }
 
         }
-        
+
+        //Collision Detection
+        if (collsionMesh != null && !collsionMesh.isEmpty()) {
+            for (PhysicalEntity e : pe) {
+                ArrayList<Plane> cols = collsionMesh.getPlanes(e);
+                for (Plane p : cols) {
+                    if (e.getBounds().intersects(p.getBounds())) {
+                    }
+                }
+            }
+        }
+
         DebugMessages.getInstance().write("Physics finished");
     }
 
     public void addEntity(PhysicalEntity p) {
         pe.add(p);
     }
-    
 }

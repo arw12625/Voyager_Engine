@@ -31,7 +31,7 @@ public class ThreeDPlayer extends PhysicalEntity implements Player {
 
     public ThreeDPlayer() {
         super(new BoundingBox(new Vector3f(), new Vector3f(.5f, 1, .5f)));
-        vp = new ViewPoint(bounds.getPosition(), bounds.getOrientation());
+        vp = new ViewPoint(orientedBounds.getPosition(), orientedBounds.getOrientation());
         addForceGenerator(new ForceGenerator() {
 
             @Override
@@ -52,7 +52,7 @@ public class ThreeDPlayer extends PhysicalEntity implements Player {
                 }
                 if (go.lengthSquared() != 0) {
                     setAwake(true);
-                    go = transform(go, bounds.getOrientation());
+                    go = transform(go, orientedBounds.getOrientation());
                     pe.applyForce(go);
                 }
             }
@@ -78,9 +78,9 @@ public class ThreeDPlayer extends PhysicalEntity implements Player {
         }
         xAngle %= Math.PI;
         yAngle %= Math.PI * 2;
-        bounds.setOrientation(Quaternion.mul(quatFromAxisAngle(new Vector3f(1, 0, 0), xAngle), quatFromAxisAngle(new Vector3f(0, 1, 0), yAngle), null));
-        vp.setPosition(bounds.getPosition());
-        vp.setOrientation(bounds.getOrientation());
+        orientedBounds.setOrientation(Quaternion.mul(quatFromAxisAngle(new Vector3f(1, 0, 0), xAngle), quatFromAxisAngle(new Vector3f(0, 1, 0), yAngle), null));
+        vp.setPosition(orientedBounds.getPosition());
+        vp.setOrientation(orientedBounds.getOrientation());
     }
 
     public ViewPoint getViewPoint() {

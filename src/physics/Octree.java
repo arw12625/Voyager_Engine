@@ -11,7 +11,7 @@ import org.lwjgl.util.vector.Vector3f;
  *
  * @author Andy
  */
-public class Octree<T extends Boundable> {
+public class Octree<T extends Boundable> implements Boundable {
     final int MAX_OBJECTS = 250;
 
     ArrayList<T> objects;
@@ -140,5 +140,14 @@ public class Octree<T extends Boundable> {
 					  new Vector3f(max.getX(), max.getY(), max.getZ())))
 	};
 	
+    }
+
+    @Override
+    public BoundingBox getBounds() {
+        return boundary;
+    }
+    
+    public boolean isEmpty() {
+        return objects.size() > 0;
     }
 }
