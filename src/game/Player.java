@@ -4,12 +4,12 @@
  */
 package game;
 
-import update.Entity;
+import update.Updateable;
 
 /**
  *
  * @author Andy
  */
-public interface Player extends Entity {
+public abstract class Player extends GameObject implements Updateable {
     
 }

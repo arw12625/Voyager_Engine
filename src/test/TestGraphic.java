@@ -4,7 +4,8 @@
  */
 package test;
 
-import graphics.TwoDGraphic;
+import game.GameObject;
+import graphics.TwoD;
 import org.lwjgl.util.vector.Vector2f;
 import static org.lwjgl.opengl.GL11.*;
 import org.newdawn.slick.Color;
@@ -16,7 +17,7 @@ import resource.TextureResource;
  *
  * @author Andy
  */
-public class TestGraphic implements TwoDGraphic {
+public class TestGraphic extends GameObject implements TwoD {
 
     Vector2f[] points;
     TextureResource t;
@@ -57,16 +58,6 @@ public class TestGraphic implements TwoDGraphic {
         glEnd();
 
     }
-
-    @Override
-    public String getName() {
-        return "RandomShape";
-    }
-
-    @Override
-    public void update(int delta) {
-    }
-
 
     private Vector2f getRandomPoint() {
         return new Vector2f((float) Math.random() * 640, (float) Math.random() * 480);

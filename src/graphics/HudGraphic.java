@@ -4,6 +4,7 @@
  */
 package graphics;
 
+import game.GameObject;
 import java.awt.Font;
 import java.util.ArrayList;
 import org.newdawn.slick.UnicodeFont;
@@ -20,7 +21,7 @@ import resource.TextureResource;
  *
  * @author Andy
  */
-public class HudGraphic implements TwoDGraphic {
+public class HudGraphic extends GameObject implements TwoD {
 
     String name;
     TextureResource texture;
@@ -88,10 +89,6 @@ public class HudGraphic implements TwoDGraphic {
         }
     }
 
-    @Override
-    public void update(int delta) {
-    }
-
     public int getWidth() {
         return this.width;
     }
@@ -100,16 +97,11 @@ public class HudGraphic implements TwoDGraphic {
         return this.height;
     }
 
-    public void setMessage(String text) {
+    public void setText(String text) {
         this.text = text;
     }
 
-    public String getMessage() {
+    public String getText() {
         return this.text;
-    }
-
-    @Override
-    public String getName() {
-        return name;
     }
 }

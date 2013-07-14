@@ -13,7 +13,7 @@ import util.Utilities;
  *
  * @author Andy
  */
-public class BoundingBox {
+public class BoundingBox implements Boundable {
 
     Vector3f position;
     Vector3f dimension;
@@ -195,5 +195,10 @@ public class BoundingBox {
             verts[2 * i + 1] = b.getMin();
         }
         return boundsFromVerts(verts);
+    }
+
+    @Override
+    public BoundingBox getBounds() {
+        return this;
     }
 }

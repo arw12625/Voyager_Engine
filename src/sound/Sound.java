@@ -4,15 +4,16 @@ package sound;
  * To change this template, choose Tools | Templates and open the template in
  * the editor.
  */
-import update.Entity;
+import game.GameObject;
 import static org.lwjgl.openal.AL10.*;
 import org.lwjgl.util.vector.Vector3f;
+import update.Updateable;
 
 /**
  *
  * @author Andy
  */
-public class Sound implements Entity {
+public class Sound extends GameObject implements Updateable{
 
     String name;
     int source;
@@ -45,11 +46,6 @@ public class Sound implements Entity {
         }
     }
     
-    @Override
-    public String getName() {
-        return name;
-    }
-
     public void setPosition(Vector3f pos) {
         alSource3f(source, AL_POSITION, pos.getX() / 100, pos.getY() / 100, pos.getZ() / 100);
     }

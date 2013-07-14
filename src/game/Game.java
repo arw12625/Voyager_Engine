@@ -19,44 +19,34 @@ public class Game {
 
     public static String title;
     public static UpdateManager updateManager;
-    public static DisplayManager displayManager;
     public static GraphicsManager graphicsManager;
     public static InputManager inputManager;
-    public static SoundManager soundManager;
-    public static PhysicsManager physicsManager;
     public static ResourceManager resourceManager;
+    public static GameObjectManager gameObjectManager;
     public static ArrayList<Manager> managers;
     public static Player player;
     private static boolean quit;
 
     public static void create(String title,
-            UpdateManager updateManager, DisplayManager displayManager,
+            UpdateManager updateManager,
             GraphicsManager graphicsManager, InputManager inputManager,
-            SoundManager soundManager, PhysicsManager physicsManager,
-            ResourceManager resourceManager, Player player) {
+            ResourceManager resourceManager, GameObjectManager gameObjectManager
+            ) {
+        
         Game.title = title;
         Game.updateManager = updateManager;
-        Game.displayManager = displayManager;
         Game.graphicsManager = graphicsManager;
         Game.inputManager = inputManager;
-        Game.soundManager = soundManager;
-        Game.physicsManager = physicsManager;
         Game.resourceManager = resourceManager;
+        Game.gameObjectManager = gameObjectManager;
 
         managers = new ArrayList<Manager>();
-        managers.add(updateManager);
-        updateManager.create();
         
-        addManager(displayManager);
-        addManager(graphicsManager);
-        addManager(inputManager);
-        addManager(soundManager);
-        addManager(physicsManager);
-        addManager(resourceManager);
-        
-
-        Game.player = player;
-        updateManager.addEntity(player);
+        gameObjectManager.createAndAdd();
+        updateManager.createAndAdd();
+        graphicsManager.createAndAdd();
+        inputManager.createAndAdd();
+        resourceManager.createAndAdd();
 
     }
 
@@ -66,8 +56,7 @@ public class Game {
         while (!quit) {
 
             graphicsManager.render();
-            displayManager.refresh();
-            if (displayManager.isCloseRequested()) {
+            if (graphicsManager.isCloseRequested()) {
                 quit();
             }
 
@@ -93,15 +82,26 @@ public class Game {
         return !quit;
     }
 
-    public static void addManager(Manager m) {
-        managers.add(m);
-        updateManager.addEntity(m);
-        m.create();
+    public void setPlayer(Player p) {
+        this.player = p;
     }
-
-    public static void removeManager(Manager m) {
-        m.destroy();
-        managers.remove(m);
+    
+    public static void addGameObject(GameObject obj) {
+        if (obj instanceof Manager) {
+            managers.add((Manager) obj);
+        }
+        for (Manager m : managers) {
+            m.add(obj);
+        }
+    }
+    
+    public static void removeGameObject(GameObject obj) {
+        if (managers.contains(obj)) {
+            managers.remove(obj);
+        }
+        for (Manager m : managers) {
+            m.remove(obj);
+        }
     }
 
     public static Player getPlayer() {

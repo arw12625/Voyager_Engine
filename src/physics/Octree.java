@@ -4,6 +4,7 @@
  */
 package physics;
 
+import game.GameObject;
 import java.util.ArrayList;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -11,7 +12,7 @@ import org.lwjgl.util.vector.Vector3f;
  *
  * @author Andy
  */
-public class Octree<T extends Boundable> implements Boundable {
+public class Octree<T extends Boundable> extends GameObject implements Boundable {
     final int MAX_OBJECTS = 250;
 
     ArrayList<T> objects;
@@ -150,4 +151,5 @@ public class Octree<T extends Boundable> implements Boundable {
     public boolean isEmpty() {
         return objects.size() > 0;
     }
+
 }

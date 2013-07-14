@@ -4,6 +4,7 @@
  */
 package graphics;
 
+import game.GameObject;
 import java.nio.FloatBuffer;
 import org.lwjgl.BufferUtils;
 import static org.lwjgl.opengl.GL11.*;
@@ -15,7 +16,7 @@ import org.lwjgl.util.vector.Vector3f;
  *
  * @author Andy
  */
-public class ThreeDModel implements ThreeDGraphic {
+public class ThreeDModel extends GameObject implements ThreeD {
 
     Mesh m;
     int vboVertexHandle;
@@ -38,7 +39,6 @@ public class ThreeDModel implements ThreeDGraphic {
                 normals.put(asFloats(m.getNormals().get(face.getNormalIndices()[i])));
                 colors.put(face.getMaterial().getDiffuseColor());
             }
-
         }
         vertices.flip();
         normals.flip();
@@ -74,15 +74,6 @@ public class ThreeDModel implements ThreeDGraphic {
         glDisableClientState(GL_VERTEX_ARRAY);
     }
 
-    @Override
-    public void update(int delta) {
-    }
-
-    @Override
-    public String getName() {
-        return m.getName();
-    }
-    
     public Mesh getMesh() {
         return m;
     }

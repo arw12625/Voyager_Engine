@@ -4,13 +4,10 @@
  */
 package graphics;
 
-import update.Entity;
-
 /**
  *
  * @author Andy
  */
-public interface DisplayableEntity extends Entity {
-
-    public void render();
+public interface ThreeD extends Displayable{
+    
 }

@@ -4,7 +4,7 @@
  */
 package test;
 
-import graphics.ThreeDGraphic;
+import graphics.ThreeD;
 import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.Color;
 import resource.TextureManager;
@@ -15,7 +15,7 @@ import static org.lwjgl.opengl.GL11.*;
  *
  * @author Andy
  */
-public class ThreeDTestGraphic implements ThreeDGraphic {
+public class ThreeDTestGraphic implements ThreeD {
 
     
     Vector3f[] points;
@@ -64,16 +64,6 @@ public class ThreeDTestGraphic implements ThreeDGraphic {
         glEnd();
 
     }
-
-    @Override
-    public String getName() {
-        return "RandomShape";
-    }
-
-    @Override
-    public void update(int delta) {
-    }
-
 
     private Vector3f getRandomPoint() {
         return new Vector3f((float) Math.random() * 20 - 10, (float) Math.random() * 20 - 10, 0);

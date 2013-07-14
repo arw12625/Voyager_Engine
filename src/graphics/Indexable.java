@@ -8,5 +8,6 @@ package graphics;
  *
  * @author Andy
  */
-public interface TwoDGraphic extends DisplayableEntity {
+public interface Indexable {
+    public int getIndex();
 }

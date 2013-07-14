@@ -9,7 +9,6 @@ import graphics.*;
 import org.lwjgl.input.Keyboard;
 import physics.ThreeDPhysicsManager;
 import physics.ThreeDPlayer;
-import update.ThreeDUpdateManager;
 import script.Console;
 import util.DebugMessages;
 import java.util.ArrayList;
@@ -33,46 +32,40 @@ public class GameTest {
 
     public static void main(String[] args) {
 
-        ThreeDUpdateManager updateManager = ThreeDUpdateManager.getInstance();
-        DisplayManager displayManager = DisplayManager.getInstance();
+        UpdateManager updateManager = UpdateManager.getInstance();
         ThreeDGraphicsManager graphicsManager = ThreeDGraphicsManager.getInstance();
         InputManager inputManager = InputManager.getInstance();
-        SoundManager soundManager = SoundManager.getInstance();
-        ThreeDPhysicsManager physicsManager = ThreeDPhysicsManager.getInstance();
         ResourceManager resourceManager = ResourceManager.getInstance();
+        GameObjectManager gameObjectManager = GameObjectManager.getInstance();
+
+        Game.create("THE GAME", updateManager, graphicsManager, inputManager, resourceManager, gameObjectManager);
+
+        FontManager.getInstance().createAndAdd();
+        TextureManager.getInstance().createAndAdd();
+        SoundManager.getInstance().createAndAdd();
+        ThreeDPhysicsManager.getInstance().createAndAdd();
+        ScriptManager.getInstance().createAndAdd();
+        DebugMessages.getInstance().createAndAdd();
+        GameStateManager.getInstance().createAndAdd();
 
         ThreeDPlayer player = new ThreeDPlayer();
-
+        player.createAndAdd();
         graphicsManager.setViewPoint(player.getViewPoint());
-
-        Game.create("THE GAME", updateManager, displayManager, graphicsManager, inputManager, soundManager, physicsManager, resourceManager, player);
-
-        Console c = Console.getInstance();
-        ScriptManager sm = ScriptManager.getInstance();
         
-        Game.addManager(FontManager.getInstance());
-        Game.addManager(TextureManager.getInstance());
-        Game.addManager(sm);
-        Game.addManager(c);
-        Game.addManager(DebugMessages.getInstance());
-        Game.addManager(GameStateManager.getInstance());
-
+        Console.getInstance().createAndAdd();
         graphics = new ArrayList<TestGraphic>();
         /*addTestGraphic();
         addTestGraphic();
         addTestGraphic();
         addTestGraphic();*/
 
+        ScriptManager sm = ScriptManager.getInstance();
         try {
             sm.eval("importClass(Packages.test.GameTest)");
             sm.eval("function addTri() { GameTest.addTestGraphic() }");
             sm.eval("function removeTri() { GameTest.removeTestGraphic() }");
             sm.eval("function enableDebug(enable) { GameTest.enableDebug(enable) }");
-        } catch(ScriptException e) {
-            e.printStackTrace();
-        }
-        try {
-            ScriptManager.getInstance().execute(new GameScript("BLAAS", ""));
+            sm.execute(new GameScript("BLAAS", ""));
         } catch (ScriptException ex) {
             ex.printStackTrace();
         }
@@ -83,23 +76,21 @@ public class GameTest {
         ThreeDGraphicsManager.getInstance().addGraphic3D(new ThreeDModel(m));*/
         
         Mesh ter = new Mesh("terrain", "terrain");
+        ter.create();
         ResourceManager.getInstance().loadResource(ter);
-        System.out.println(ter);
-        ThreeDGraphicsManager.getInstance().addGraphic3D(new ThreeDModel(ter));
+        (new ThreeDModel(ter)).createAndAdd();
         
-        ThreeDPhysicsManager.getInstance().addEntity(player);
-        player.getBounds().setPosition(new Vector3f(0, 0, 60));
+        player.getPhysicalEntity().getBounds().setPosition(new Vector3f(0, 0, 60));
         InputManager.getInstance().put(Keyboard.KEY_UP);
         InputManager.getInstance().put(Keyboard.KEY_DOWN);
         InputManager.getInstance().put(Keyboard.KEY_LEFT);
         InputManager.getInstance().put(Keyboard.KEY_RIGHT);
         Mouse.setGrabbed(true);
         
-        ThreeDGraphicsManager.getInstance().addGraphic3D(new SkySphere(), -1000);
+        (new SkySphere()).createAndAdd();
         
         RigidBody rb = RigidBody.rigidBodyFromPath("palm_fix", "palm_fix");
-        ThreeDGraphicsManager.getInstance().addGraphic3D(rb);
-        ThreeDPhysicsManager.getInstance().addEntity(player);
+        rb.createAndAdd();
         
         Game.run();
         Game.destroy();
@@ -108,17 +99,13 @@ public class GameTest {
     public static void addTestGraphic() {
         TestGraphic g = new TestGraphic();
         graphics.add(g);
-        ThreeDUpdateManager.getInstance().addEntity(g);
-        ThreeDGraphicsManager.getInstance().addGraphic2D(g);
+        g.create();
 
     }
 
     public static void removeTestGraphic() {
-        ThreeDUpdateManager um = ThreeDUpdateManager.getInstance();
-        ThreeDGraphicsManager gm = ThreeDGraphicsManager.getInstance();
         for (TestGraphic g : graphics) {
-            um.removeEntity(g);
-            gm.removeGraphic2D(g);
+            g.destroy();
         }
         graphics.clear();
     }

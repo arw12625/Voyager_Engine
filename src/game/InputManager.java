@@ -17,7 +17,7 @@ import util.DebugMessages;
  *
  * @author Andy
  */
-public class InputManager implements Manager {
+public class InputManager extends Manager {
 
     HashMap<Integer, KeyStatus> map;
     private int x, y;
@@ -26,6 +26,7 @@ public class InputManager implements Manager {
 
     @Override
     public void create() {
+        super.create();
         try {
             //Keyboard
             Keyboard.create();
@@ -49,6 +50,7 @@ public class InputManager implements Manager {
 
     @Override
     public void destroy() {
+        super.destroy();
         Keyboard.destroy();
         Mouse.destroy();
         DebugMessages.getInstance().write("InputManager destroyed");
@@ -105,11 +107,12 @@ public class InputManager implements Manager {
     }
 
     @Override
-    public String getName() {
-        return "InputManager";
+    public boolean add(GameObject obj) {
+        return false;
     }
 
     @Override
-    public void update(int delta) {
+    public void remove(GameObject obj) {
     }
+    
 }

@@ -5,7 +5,6 @@
 package physics;
 
 import game.GameObject;
-import graphics.DisplayableEntity;
 import graphics.Face;
 import graphics.Mesh;
 import graphics.ThreeDModel;
@@ -16,7 +15,7 @@ import org.lwjgl.util.vector.Vector3f;
  *
  * @author Andy
  */
-class CollisionMesh implements GameObject, Boundable {
+public class CollisionMesh extends GameObject implements Boundable {
     
     Octree<Plane> planes;
     
@@ -39,11 +38,6 @@ class CollisionMesh implements GameObject, Boundable {
     @Override
     public BoundingBox getBounds() {
         return planes.getBounds();
-    }
-
-    @Override
-    public String getName() {
-        return "Terrain";
     }
 
     public void addMesh(Mesh collision) {

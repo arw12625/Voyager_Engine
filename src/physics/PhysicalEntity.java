@@ -4,18 +4,19 @@
  */
 package physics;
 
+import game.GameObject;
 import java.util.ArrayList;
 import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Quaternion;
 import org.lwjgl.util.vector.Vector3f;
-import update.Entity;
+import update.Updateable;
 import static util.Utilities.*;
 
 /**
  *
  * @author Andy
  */
-public abstract class PhysicalEntity implements Entity, Boundable {
+public abstract class PhysicalEntity extends GameObject implements Updateable, Boundable {
 
     BoundingBox orientedBounds;
     BoundingBox alignedBounds;
@@ -159,12 +160,16 @@ public abstract class PhysicalEntity implements Entity, Boundable {
     public BoundingBox getAlignedBounds() {
         return alignedBounds;
     }
+    
+    public BoundingBox getOrientedBounds() {
+        return orientedBounds;
+    }
 
     public Vector3f[] getAlignedAxes() {
         return axes;
     }
 
-    public Vector3f[] getAlignedVertices() {
+    public Vector3f[] getVertices() {
         return verts;
     }
 

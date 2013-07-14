@@ -14,7 +14,7 @@ import static org.lwjgl.openal.AL10.*;
  *
  * @author Andy
  */
-public class SoundResource implements Resource {
+public class SoundResource extends Resource {
 
     String name;
     String path;
@@ -31,11 +31,6 @@ public class SoundResource implements Resource {
     }
 
     @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
     public boolean load() {
         WaveData data = null;
         data = WaveData.create(new BufferedInputStream(ResourceLoader.getResourceAsStream(path)));
@@ -49,7 +44,8 @@ public class SoundResource implements Resource {
     }
 
     @Override
-    public void release() {
+    public void destroy() {
+        super.destroy();
         alDeleteBuffers(bufferNum);
     }
     

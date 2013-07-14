@@ -26,7 +26,7 @@ import util.DebugMessages;
  *
  * @author Andy
  */
-public class SoundManager implements Manager {
+public class SoundManager extends Manager implements update.Updateable{
 
     HashMap<String, SoundResource> resources;
     HashMap<String, Sound> sounds;
@@ -37,6 +37,7 @@ public class SoundManager implements Manager {
 
     @Override
     public void create() {
+        super.create();
         try {
             AL.create();
             alListener(AL_ORIENTATION, Utilities.asFloatBuffer(new float[]{0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f}));
@@ -56,11 +57,14 @@ public class SoundManager implements Manager {
         return instance;
     }
     
+    @Override
     public void destroy() {
+        super.destroy();
         AL.destroy();
         DebugMessages.getInstance().write("SoundManager destroyed");
     }
 
+    @Override
     public void update(int delta) {
         for(Sound s : sounds.values()) {
             s.update(delta);
@@ -74,8 +78,8 @@ public class SoundManager implements Manager {
 
     public Sound createSound(String name, int buffer, int delay) {
         Sound s = new Sound(name, buffer, delay);
-        sounds.put(s.getName(), s);
-        DebugMessages.getInstance().write("Sound created: " + s.getName());
+        sounds.put(s.getFullName(), s);
+        DebugMessages.getInstance().write("Sound created: " + s.getFullName());
         return s;
     }
     
@@ -84,7 +88,7 @@ public class SoundManager implements Manager {
     }
 
     public void addSoundResource(SoundResource s) {
-        resources.put(s.getName(), s);
+        resources.put(s.getFullName(), s);
     }
 
     public SoundResource loadSoundResource(String path) {
@@ -113,8 +117,31 @@ public class SoundManager implements Manager {
     }
 
     @Override
-    public String getName() {
+    public String getFullName() {
         return "SoundManager";
+    }
+
+    @Override
+    public boolean add(GameObject obj) {
+        if(obj instanceof Sound) {
+            sounds.put(obj.getFullName(), (Sound)obj);
+            return true;
+        }
+        if(obj instanceof SoundResource) {
+            resources.put(obj.getFullName(), (SoundResource)obj);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void remove(GameObject obj) {
+        if(sounds.containsKey(obj.getFullName())) {
+            sounds.remove(obj.getFullName());
+        }
+        if(resources.containsKey(obj.getFullName())) {
+            resources.remove(obj.getFullName());
+        }
     }
 
 }

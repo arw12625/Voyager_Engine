@@ -4,13 +4,14 @@
  */
 package util;
 
+import game.GameObject;
 import game.Manager;
 
 /**
  *
  * @author Andy
  */
-public class DebugMessages implements Manager {
+public class DebugMessages extends Manager {
 
     boolean enabled;
     
@@ -37,16 +38,16 @@ public class DebugMessages implements Manager {
         }
     }
 
-    @Override
-    public String getName() {
-        return "DebugMessages";
-    }
-
-    @Override
-    public void update(int delta) {
-    }
-
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    @Override
+    public boolean add(GameObject obj) {
+        return false;
+    }
+    
+    @Override
+    public void remove(GameObject obj) {
     }
 }

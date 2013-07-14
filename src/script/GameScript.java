@@ -11,7 +11,7 @@ import javax.script.ScriptContext;
  *
  * @author Andy
  */
-public class GameScript implements GameObject {
+public class GameScript extends GameObject {
 
     String name;
     String script;
@@ -19,11 +19,6 @@ public class GameScript implements GameObject {
     public GameScript(String name, String script) {
         this.name = name;
         this.script = script;
-    }
-    
-    @Override
-    public String getName() {
-        return name;
     }
     
     public String getScript() {

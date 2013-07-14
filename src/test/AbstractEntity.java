@@ -4,7 +4,7 @@
  */
 package test;
 
-import graphics.ThreeDGraphic;
+import graphics.ThreeD;
 import graphics.ThreeDModel;
 import java.util.ArrayList;
 import physics.PhysicalEntity;
@@ -14,7 +14,7 @@ import physics.Plane;
  *
  * @author Andy
  */
-public abstract class AbstractEntity extends PhysicalEntity implements ThreeDGraphic {
+public abstract class AbstractEntity extends PhysicalEntity implements ThreeD {
 
     ThreeDModel m;
     
@@ -25,7 +25,6 @@ public abstract class AbstractEntity extends PhysicalEntity implements ThreeDGra
 
     @Override
     public void update(int delta) {
-        m.update(delta);
     }
     
     @Override

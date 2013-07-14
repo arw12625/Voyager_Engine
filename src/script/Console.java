@@ -19,12 +19,13 @@ import javax.script.*;
 import resource.FontManager;
 import resource.FontResource;
 import resource.TextureManager;
+import update.Updateable;
 
 /**
  *
  * @author Andy
  */
-public class Console implements Manager {
+public class Console extends GameObject implements Updateable {
 
     StringBuilder line;
     ArrayList<String> inputs;
@@ -72,7 +73,7 @@ public class Console implements Manager {
         consoleFont = fm.createFont("console", new Color(102, 135, 172));
         lineGraphic = new HudGraphic("Console", TextureManager.getInstance().loadTextureResource("terminal.png"), "", consoleFont, 10, 8);
         terminal = new Menu(0, 0, false, lineGraphic, true, null, null);
-        ThreeDGraphicsManager.getInstance().addGraphic2D(terminal, 100);
+        terminal.create();
         
         scriptManager = ScriptManager.getInstance();
         loadConsoleScripts();
@@ -94,11 +95,6 @@ public class Console implements Manager {
 
     public void write(String message) {
         lines.addAll(wordWrap(message));
-    }
-
-    @Override
-    public String getName() {
-        return "Console";
     }
 
     @Override
@@ -179,7 +175,7 @@ public class Console implements Manager {
             display.append(lines.get(i) + "\n");
         }
         display.append(format + (under ? "_" : ""));
-        lineGraphic.setMessage(display.toString());
+        lineGraphic.setText(display.toString());
 
     }
 

@@ -21,18 +21,35 @@ import static org.lwjgl.opengl.GL11.*;
  *
  * @author Andy
  */
-public class ThreeDPlayer extends PhysicalEntity implements Player {
+public class ThreeDPlayer extends Player {
 
     ViewPoint vp;
+    PhysicalEntity pe;
     private float xAngle;
     private float yAngle;
     private float piOver180 = (float) (Math.PI / 180f);
     private float maxDeviation = 85f * piOver180;
+    
+    @Override
+    public void create() {
+        super.create();
+        pe = new PhysicalEntity(new BoundingBox(new Vector3f(), new Vector3f(.5f, 1, .5f))) {
 
-    public ThreeDPlayer() {
-        super(new BoundingBox(new Vector3f(), new Vector3f(.5f, 1, .5f)));
-        vp = new ViewPoint(orientedBounds.getPosition(), orientedBounds.getOrientation());
-        addForceGenerator(new ForceGenerator() {
+            @Override
+            public void collide(ArrayList<Plane> collisions) {
+            }
+
+            @Override
+            public void collide(PhysicalEntity collisions) {
+            }
+
+            @Override
+            public void update(int delta) {
+            }
+        };
+        pe.createAndAdd();
+        vp = new ViewPoint(pe.getOrientedBounds().getPosition(), pe.getOrientedBounds().getOrientation());
+        pe.addForceGenerator(new ForceGenerator() {
 
             @Override
             public void applyForce(PhysicalEntity pe) {
@@ -51,17 +68,12 @@ public class ThreeDPlayer extends PhysicalEntity implements Player {
                     go.translate(1, 0, 0);
                 }
                 if (go.lengthSquared() != 0) {
-                    setAwake(true);
-                    go = transform(go, orientedBounds.getOrientation());
+                    pe.setAwake(true);
+                    go = transform(go, pe.getOrientedBounds().getOrientation());
                     pe.applyForce(go);
                 }
             }
         });
-    }
-
-    @Override
-    public String getName() {
-        return "PLAYER";
     }
 
     @Override
@@ -78,20 +90,16 @@ public class ThreeDPlayer extends PhysicalEntity implements Player {
         }
         xAngle %= Math.PI;
         yAngle %= Math.PI * 2;
-        orientedBounds.setOrientation(Quaternion.mul(quatFromAxisAngle(new Vector3f(1, 0, 0), xAngle), quatFromAxisAngle(new Vector3f(0, 1, 0), yAngle), null));
-        vp.setPosition(orientedBounds.getPosition());
-        vp.setOrientation(orientedBounds.getOrientation());
+        pe.getOrientedBounds().setOrientation(Quaternion.mul(quatFromAxisAngle(new Vector3f(1, 0, 0), xAngle), quatFromAxisAngle(new Vector3f(0, 1, 0), yAngle), null));
+        vp.setPosition(pe.getOrientedBounds().getPosition());
+        vp.setOrientation(pe.getOrientedBounds().getOrientation());
     }
 
     public ViewPoint getViewPoint() {
         return vp;
     }
 
-    @Override
-    public void collide(ArrayList<Plane> collisions) {
-    }
-
-    @Override
-    public void collide(PhysicalEntity collisions) {
+    public PhysicalEntity getPhysicalEntity() {
+        return pe;
     }
 }

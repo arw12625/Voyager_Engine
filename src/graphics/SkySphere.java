@@ -4,6 +4,7 @@
  */
 package graphics;
 
+import game.GameObject;
 import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.glu.Sphere;
 import org.newdawn.slick.Color;
@@ -16,7 +17,7 @@ import static org.lwjgl.opengl.GL11.*;
  *
  * @author Andy
  */
-public class SkySphere implements ThreeDGraphic {
+public class SkySphere extends GameObject implements ThreeD, Indexable {
 
     Sphere sphere;
 
@@ -44,11 +45,7 @@ public class SkySphere implements ThreeDGraphic {
     }
 
     @Override
-    public void update(int delta) {
-    }
-
-    @Override
-    public String getName() {
-        return "SkySphere";
+    public int getIndex() {
+        return -1000000;
     }
 }

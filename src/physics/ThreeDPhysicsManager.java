@@ -12,7 +12,7 @@ import util.DebugMessages;
  *
  * @author Andy
  */
-public class ThreeDPhysicsManager extends PhysicsManager {
+public class ThreeDPhysicsManager extends Manager implements update.Updateable {
 
     ArrayList<PhysicalEntity> pe;
     CollisionMesh collsionMesh;
@@ -62,7 +62,19 @@ public class ThreeDPhysicsManager extends PhysicsManager {
         DebugMessages.getInstance().write("Physics finished");
     }
 
-    public void addEntity(PhysicalEntity p) {
-        pe.add(p);
+    @Override
+    public boolean add(GameObject obj) {
+        if(obj instanceof PhysicalEntity) {
+            pe.add((PhysicalEntity)obj);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void remove(GameObject obj) {
+        if(pe.contains(obj)) {
+            pe.remove(obj);
+        }
     }
 }

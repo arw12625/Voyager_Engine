@@ -4,6 +4,7 @@
  */
 package graphics;
 
+import game.GameObject;
 import static org.lwjgl.opengl.GL11.*;
 import update.Event;
 
@@ -11,12 +12,12 @@ import update.Event;
  *
  * @author Andy
  */
-public class Menu implements TwoDGraphic {
+public class Menu extends GameObject implements TwoD {
 
     String name;
     float x, y;
     float width, height;
-    TwoDGraphic td;
+    TwoD graphic;
     Menu[] sub;
     boolean absolute;
     boolean show;
@@ -47,12 +48,12 @@ public class Menu implements TwoDGraphic {
         this(name, x, y, hg.getWidth(), hg.getHeight(), absolute, hg, show, sub, event);
     }
 
-    public Menu(String name, float x, float y, float width, float height, boolean absolute, TwoDGraphic td, boolean show, Menu[] sub, Event event) {
+    public Menu(String name, float x, float y, float width, float height, boolean absolute, TwoD graphic, boolean show, Menu[] sub, Event event) {
 
         this.name = name;
         this.width = width;
         this.height = height;
-        this.td = td;
+        this.graphic = graphic;
         this.show = show;
         this.sub = sub;
         this.absolute = absolute;
@@ -67,10 +68,10 @@ public class Menu implements TwoDGraphic {
 
     @Override
     public void render() {
-        if (show && td != null) {
+        if (show && graphic != null) {
             glPushMatrix();
             glTranslatef(x, y, 0);
-            td.render();
+            graphic.render();
             glPopMatrix();
         }
         if (showChildren) {
@@ -80,11 +81,6 @@ public class Menu implements TwoDGraphic {
                 }
             }
         }
-    }
-
-    @Override
-    public void update(int delta) {
-        td.update(delta);
     }
 
     public void mouseClick(int mx, int my) {
@@ -151,10 +147,5 @@ public class Menu implements TwoDGraphic {
     public void setShowBranch(boolean showBranch) {
         setShow(showBranch);
         setShowChildren(showBranch);
-    }
-
-    @Override
-    public String getName() {
-        return name;
     }
 }

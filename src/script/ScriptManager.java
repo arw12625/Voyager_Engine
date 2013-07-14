@@ -4,7 +4,9 @@
  */
 package script;
 
+import game.GameObject;
 import game.Manager;
+import java.util.ArrayList;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
@@ -13,9 +15,10 @@ import javax.script.ScriptException;
  *
  * @author Andy
  */
-public class ScriptManager implements Manager {
+public class ScriptManager extends Manager {
 
     ScriptEngine engine;
+    ArrayList<GameScript> scripts;
     static ScriptManager instance;
 
     public static ScriptManager getInstance() {
@@ -27,25 +30,14 @@ public class ScriptManager implements Manager {
 
     @Override
     public void create() {
+        super.create();
+        scripts = new ArrayList<GameScript>();
         // create a script engine manager
         ScriptEngineManager factory = new ScriptEngineManager();
         // create a JavaScript engine
         this.engine = factory.getEngineByName("JavaScript");
         // evaluate JavaScript code from String
         loadStartupScripts();
-    }
-
-    @Override
-    public void destroy() {
-    }
-
-    @Override
-    public void update(int delta) {
-    }
-
-    @Override
-    public String getName() {
-        return "ScriptManager";
     }
 
     private void loadStartupScripts() {
@@ -67,6 +59,22 @@ public class ScriptManager implements Manager {
             engine.eval(s.getScript(), s.getContext());
         } else {
             engine.eval(s.getScript());
+        }
+    }
+
+    @Override
+    public boolean add(GameObject obj) {
+        if(obj instanceof GameScript) {
+            scripts.add((GameScript)obj);
+            return true;
+        }
+        return false;
+    }
+    
+    @Override
+    public void remove(GameObject obj) {
+        if(scripts.contains(obj)) {
+            scripts.remove(obj);
         }
     }
 }

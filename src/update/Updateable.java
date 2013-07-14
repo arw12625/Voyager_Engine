@@ -2,12 +2,12 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package graphics;
+package update;
 
 /**
  *
  * @author Andy
  */
-
-public interface ThreeDGraphic extends DisplayableEntity {
+public interface Updateable {
+    public void update(int delta);
 }

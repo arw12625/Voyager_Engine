@@ -4,13 +4,15 @@
  */
 package game;
 
-import update.Entity;
+import update.Updateable;
 
 /**
  *
  * @author Andy
  */
-public interface Manager extends Entity {
-    public void create();
-    public void destroy();
+public abstract class Manager extends GameObject {
+    
+    public abstract boolean add(GameObject obj);
+    public abstract void remove(GameObject obj);
+    
 }

@@ -19,7 +19,7 @@ import org.newdawn.slick.opengl.TextureImpl;
  *
  * @author Andy
  */
-public class FontResource implements Resource {
+public class FontResource extends Resource {
 
     String name;
     String fontPath;
@@ -43,11 +43,6 @@ public class FontResource implements Resource {
     }
 
     @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
     public boolean load() {
         try {
             TextureImpl.unbind();
@@ -56,10 +51,6 @@ public class FontResource implements Resource {
             Logger.getLogger(FontResource.class.getName()).log(Level.SEVERE, null, ex);
         }
         return true;
-    }
-
-    @Override
-    public void release() {
     }
 
     public void drawString(String text, int x, int y) {

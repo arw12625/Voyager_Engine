@@ -24,15 +24,12 @@ public class RigidBody extends AbstractEntity {
         this.name = name;
     }
     
-    @Override
-    public String getName() {
-        return name;
-    }
-    
     public static RigidBody rigidBodyFromPath(String name, String mpath) {
         Mesh mesh = new Mesh(name, mpath);
+        mesh.create();
         ResourceManager.getInstance().loadResource(mesh);
         ThreeDModel model = new ThreeDModel(mesh);
+        model.create();
         return new RigidBody(name, model);
     }
     @Override

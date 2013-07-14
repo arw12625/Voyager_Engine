@@ -18,7 +18,7 @@ import org.newdawn.slick.opengl.TextureImpl;
  *
  * @author Andy
  */
-public class TextureResource implements Resource, Texture {
+public class TextureResource extends Resource implements Texture {
 
     String name;
     String path;
@@ -27,11 +27,6 @@ public class TextureResource implements Resource, Texture {
     public TextureResource(String path) {
         this.name = path;
         this.path = path;
-    }
-    
-    @Override
-    public String getName() {
-        return name;
     }
     
     @Override

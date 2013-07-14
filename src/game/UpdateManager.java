@@ -7,51 +7,61 @@ package game;
 import java.util.ArrayList;
 import org.lwjgl.Sys;
 import util.DebugMessages;
-import update.Entity;
+import update.Updateable;
 
 /**
  *
  * @author Andy
  */
-public abstract class UpdateManager extends Thread implements Manager {
+public class UpdateManager extends Manager implements Runnable {
 
     long lastTime;
+    ArrayList<Updateable> entities;
     private long updateTime;
+    private Thread updateThread;
     static final int defaultUpdateTime = 1000 / 60;
     
     static UpdateManager instance;
 
-    public UpdateManager() {
-        this.updateTime = defaultUpdateTime;
-        lastTime = getTime();
-    }
-
     @Override
     public void create() {
+        super.create();
+        updateThread = new Thread(this);
+        this.updateTime = defaultUpdateTime;
+        lastTime = getTime();
+        entities = new ArrayList<Updateable>();
         DebugMessages.getInstance().write("UpdateManager created");
     }
 
     @Override
     public void destroy() {
+        super.destroy();
         try {
-            join();
+            updateThread.join();
         } catch (Exception e) {
             e.printStackTrace();
         }
         DebugMessages.getInstance().write("UpdateManager destroyed");
     }
-    
-    @Override
-    public void update(int delta) {
-    }
 
+    public static UpdateManager getInstance() {
+        if(instance == null) {
+            instance = new UpdateManager();
+        }
+        return instance;
+    }
+        
+    public void start() {
+        updateThread.start();
+    }
+    
     @Override
     public void run() {
         while (Game.isRunning()) {
             DebugMessages.getInstance().write("UpdateManager Running");
             long currentTime = getTime();
             long deltaTime = currentTime - lastTime;
-            updateGame((int) deltaTime);
+            update((int) deltaTime);
             lastTime = currentTime;
             try {
                 Thread.sleep(updateTime);
@@ -60,16 +70,38 @@ public abstract class UpdateManager extends Thread implements Manager {
             }
         }
     }
-
-    public static long getTime() {
-
-        return (Sys.getTime() * 1000) / Sys.getTimerResolution();
-
+    
+    public void update(int delta) {
+        DebugMessages.getInstance().write("Delta: " + delta + "  FPS: " + (1000 / delta));
+        DebugMessages.getInstance().write("Updates starting");
+        
+        InputManager.getInstance().processInputs();
+                
+        for (Updateable e : entities) {
+            e.update(delta);
+        }
+        
+        DebugMessages.getInstance().write("Updates finished");
     }
 
-    public abstract void updateGame(int delta);
+    public static long getTime() {
+        return (Sys.getTime() * 1000) / Sys.getTimerResolution();
+    }
 
-    public abstract void addEntity(Entity e);
-    public abstract void removeEntity(Entity e);
-    
+    @Override
+    public boolean add(GameObject obj) {
+        if(obj instanceof Updateable) {
+            entities.add((Updateable)obj);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void remove(GameObject obj) {
+        if(entities.contains(obj)) {
+            entities.remove(obj);
+        }
+    }
+
 }

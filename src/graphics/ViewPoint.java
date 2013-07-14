@@ -14,7 +14,7 @@ import org.lwjgl.util.vector.Vector3f;
  *
  * @author Andy
  */
-public class ViewPoint {
+public class ViewPoint extends GameObject {
 
     Vector3f position;
     Quaternion orientation;

@@ -23,7 +23,7 @@ import resource.TextureResource;
  *
  * @author Andy
  */
-public class Mesh implements Resource, Boundable {
+public class Mesh extends Resource implements Boundable {
 
     String name;
     String path;
@@ -37,15 +37,6 @@ public class Mesh implements Resource, Boundable {
     public Mesh(String name, String path) {
         this.name = name;
         this.path = path;
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public void release() {
     }
 
     public ArrayList<Vector3f> getVertices() {

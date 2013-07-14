@@ -4,6 +4,7 @@
  */
 package resource;
 
+import game.GameObject;
 import game.Manager;
 import game.ResourceManager;
 import java.awt.Font;
@@ -18,13 +19,14 @@ import org.newdawn.slick.Color;
  *
  * @author Andy
  */
-public class FontManager implements Manager {
+public class FontManager extends Manager {
 
     public ArrayList<FontResource> fonts;
     public static FontManager instance;
 
     @Override
     public void create() {
+        super.create();
         fonts = new ArrayList<FontResource>();
         createFont("default");
     }
@@ -34,10 +36,6 @@ public class FontManager implements Manager {
             instance = new FontManager();
         }
         return instance;
-    }
-
-    @Override
-    public void destroy() {
     }
 
     public FontResource createFont(String name) {
@@ -64,7 +62,8 @@ public class FontManager implements Manager {
     public FontResource getFont(String name) {
         FontResource font = null;
         for (FontResource fo : fonts) {
-            if (fo.getName().equals(name)) {
+            if (fo.getFullName().equals(name)) {
+                font = fo;
             }
         }
         return font;
@@ -79,11 +78,18 @@ public class FontManager implements Manager {
     }
 
     @Override
-    public String getName() {
-        return "FontManager";
+    public boolean add(GameObject obj) {
+        if(obj instanceof FontResource) {
+            fonts.add((FontResource)obj);
+            return true;
+        }
+        return false;
     }
 
     @Override
-    public void update(int delta) {
+    public void remove(GameObject obj) {
+        if(fonts.contains(obj)) {
+            fonts.remove(obj);
+        }
     }
 }

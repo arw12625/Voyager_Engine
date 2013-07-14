@@ -12,7 +12,7 @@ import util.DebugMessages;
  *
  * @author Andy
  */
-public class ResourceManager implements Manager {
+public class ResourceManager extends Manager {
 
     HashMap<String, Resource> queued;
     HashMap<String, Resource> loaded;
@@ -20,6 +20,7 @@ public class ResourceManager implements Manager {
 
     @Override
     public void create() {
+        super.create();
         queued = new HashMap<String, Resource>();
         loaded = new HashMap<String, Resource>();
         DebugMessages.getInstance().write("ResourceManager created");
@@ -34,35 +35,36 @@ public class ResourceManager implements Manager {
 
     @Override
     public void destroy() {
+        super.destroy();
         Set<String> queuedKeys = queued.keySet();
         for (String key : queuedKeys) {
-            queued.get(key).release();
+            queued.get(key).destroy();
         }
         queued.clear();
 
         Set<String> loadedKeys = loaded.keySet();
         for (String key : loadedKeys) {
-            loaded.get(key).release();
+            loaded.get(key).destroy();
         }
         loaded.clear();
         DebugMessages.getInstance().write("ResourceManager destroyed");
     }
 
     public boolean queueResource(Resource r) {
-        queued.put(r.getName(), r);
-        DebugMessages.getInstance().write("Queued: " + r.getName());
+        queued.put(r.getFullName(), r);
+        DebugMessages.getInstance().write("Queued: " + r.getFullName());
         return true;
     }
 
     public boolean loadResource(Resource r) {
-        queued.put(r.getName(), r);
+        queued.put(r.getFullName(), r);
         if (r.load()) {
             queued.remove(r);
-            loaded.put(r.getName(), r);
-            DebugMessages.getInstance().write("Loading succeeded: " + r.getName());
+            loaded.put(r.getFullName(), r);
+            DebugMessages.getInstance().write("Loading succeeded: " + r.getFullName());
             return true;
         } else {
-            DebugMessages.getInstance().write("Loading failed: " + r.getName());
+            DebugMessages.getInstance().write("Loading failed: " + r.getFullName());
             return false;
         }
     }
@@ -79,11 +81,24 @@ public class ResourceManager implements Manager {
     }
 
     @Override
-    public String getName() {
+    public String getFullName() {
         return "ResourceManager";
     }
 
     @Override
-    public void update(int delta) {
+    public boolean add(GameObject obj) {
+        if(obj instanceof Resource) {
+            loadResource((Resource)obj);
+            return true;
+        }
+        return false;
     }
+
+    @Override
+    public void remove(GameObject obj) {
+        if(loaded.containsKey(obj.getFullName())) {
+            loaded.remove(obj.getFullName());
+        }
+    }
+
 }
