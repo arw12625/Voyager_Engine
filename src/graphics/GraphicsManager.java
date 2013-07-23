@@ -2,8 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package game;
+package graphics;
 
+import game.Manager;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -38,6 +39,7 @@ public abstract class GraphicsManager extends Manager {
         try {
             Display.create();
         } catch (LWJGLException ex) {
+            ex.printStackTrace();
             Logger.getLogger(GraphicsManager.class.getName()).log(Level.SEVERE, null, ex);
         }
         glViewport(0, 0, width, height);

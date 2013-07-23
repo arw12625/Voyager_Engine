@@ -6,7 +6,6 @@ package physics;
 
 import game.GameObject;
 import graphics.Face;
-import graphics.Mesh;
 import graphics.ThreeDModel;
 import java.util.ArrayList;
 import org.lwjgl.util.vector.Vector3f;

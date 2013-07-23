@@ -4,7 +4,7 @@
  */
 package physics;
 
-import game.InputManager;
+import input.InputManager;
 import game.Player;
 import graphics.ViewPoint;
 import java.nio.FloatBuffer;
@@ -47,7 +47,8 @@ public class ThreeDPlayer extends Player {
             public void update(int delta) {
             }
         };
-        pe.createAndAdd();
+        pe.create();
+        ThreeDPhysicsManager.getInstance().add(pe);
         vp = new ViewPoint(pe.getOrientedBounds().getPosition(), pe.getOrientedBounds().getOrientation());
         pe.addForceGenerator(new ForceGenerator() {
 

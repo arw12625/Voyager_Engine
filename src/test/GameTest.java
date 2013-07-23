@@ -4,6 +4,11 @@
  */
 package test;
 
+import physics.Mesh;
+import input.InputManager;
+import resource.ResourceManager;
+import update.UpdateManager;
+import sound.SoundManager;
 import game.*;
 import graphics.*;
 import org.lwjgl.input.Keyboard;
@@ -40,19 +45,20 @@ public class GameTest {
 
         Game.create("THE GAME", updateManager, graphicsManager, inputManager, resourceManager, gameObjectManager);
 
-        FontManager.getInstance().createAndAdd();
-        TextureManager.getInstance().createAndAdd();
-        SoundManager.getInstance().createAndAdd();
-        ThreeDPhysicsManager.getInstance().createAndAdd();
-        ScriptManager.getInstance().createAndAdd();
-        DebugMessages.getInstance().createAndAdd();
-        GameStateManager.getInstance().createAndAdd();
+        FontManager.getInstance().create();
+        TextureManager.getInstance().create();
+        SoundManager.getInstance().create();
+        ThreeDPhysicsManager.getInstance().create();
+        ScriptManager.getInstance().create();
+        DebugMessages.getInstance().create();
+        GameStateManager.getInstance().create();
 
         ThreeDPlayer player = new ThreeDPlayer();
-        player.createAndAdd();
+        player.create();
+        Game.setPlayer(player);
         graphicsManager.setViewPoint(player.getViewPoint());
         
-        Console.getInstance().createAndAdd();
+        Console.getInstance().create();
         graphics = new ArrayList<TestGraphic>();
         /*addTestGraphic();
         addTestGraphic();
@@ -77,8 +83,10 @@ public class GameTest {
         
         Mesh ter = new Mesh("terrain", "terrain");
         ter.create();
-        ResourceManager.getInstance().loadResource(ter);
-        (new ThreeDModel(ter)).createAndAdd();
+        ResourceManager.getInstance().hackyUpdate();
+        ThreeDModel modeltest = new ThreeDModel(ter);
+        modeltest.create();
+        graphicsManager.add(modeltest);
         
         player.getPhysicalEntity().getBounds().setPosition(new Vector3f(0, 0, 60));
         InputManager.getInstance().put(Keyboard.KEY_UP);
@@ -87,10 +95,9 @@ public class GameTest {
         InputManager.getInstance().put(Keyboard.KEY_RIGHT);
         Mouse.setGrabbed(true);
         
-        (new SkySphere()).createAndAdd();
-        
-        RigidBody rb = RigidBody.rigidBodyFromPath("palm_fix", "palm_fix");
-        rb.createAndAdd();
+        SkySphere s = new SkySphere();
+        s.create();
+        graphicsManager.addGraphic3D(s, -100);
         
         Game.run();
         Game.destroy();

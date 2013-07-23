@@ -2,8 +2,10 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package game;
+package input;
 
+import game.GameObject;
+import game.Manager;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -104,11 +106,6 @@ public class InputManager extends Manager {
 
     public void setGrabbed(boolean isGrabbed) {
         Mouse.setGrabbed(isGrabbed);
-    }
-
-    @Override
-    public boolean add(GameObject obj) {
-        return false;
     }
 
     @Override

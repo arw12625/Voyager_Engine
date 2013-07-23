@@ -6,7 +6,6 @@ package resource;
 
 import game.GameObject;
 import game.Manager;
-import game.ResourceManager;
 import java.io.IOException;
 import java.util.ArrayList;
 import org.newdawn.slick.opengl.Texture;
@@ -31,12 +30,14 @@ public class TextureManager extends Manager {
 
     public TextureResource loadTextureResource(String path) {
         TextureResource t = new TextureResource(path);
-        ResourceManager.getInstance().loadResource(t);
+        t.create();
+        textures.add(t);
         return t;
     }
 
     @Override
     public void create() {
+        super.create();
         textures = new ArrayList<TextureResource>();
     }
 
@@ -51,12 +52,4 @@ public class TextureManager extends Manager {
     public void destroy() {
     }
 
-    @Override
-    public boolean add(GameObject obj) {
-        if (obj instanceof TextureResource) {
-            textures.add((TextureResource) obj);
-            return true;
-        }
-        return false;
-    }
 }

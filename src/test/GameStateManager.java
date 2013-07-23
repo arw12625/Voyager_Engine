@@ -4,11 +4,10 @@
  */
 package test;
 
+import input.InputManager;
+import update.UpdateManager;
+import game.*;
 import script.Console;
-import game.Game;
-import game.GameObject;
-import game.InputManager;
-import game.Manager;
 import org.lwjgl.input.Keyboard;
 
 /**
@@ -49,11 +48,6 @@ public class GameStateManager extends Manager implements update.Updateable {
     public void togglePause() {
         paused = !paused;
         Console.getInstance().setEnabled(paused);
-    }
-
-    @Override
-    public boolean add(GameObject obj) {
-        return false;
     }
 
     @Override

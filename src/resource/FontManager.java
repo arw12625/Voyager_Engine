@@ -6,7 +6,6 @@ package resource;
 
 import game.GameObject;
 import game.Manager;
-import game.ResourceManager;
 import java.awt.Font;
 import java.util.ArrayList;
 import org.newdawn.slick.SlickException;
@@ -52,11 +51,9 @@ public class FontManager extends Manager {
 
     public FontResource createFont(String name, String fontPath, String texturePath, Color c) {
         FontResource font = new FontResource(name, fontPath, texturePath, c);
-        if (ResourceManager.getInstance().loadResource(font)) {
-            fonts.add(font);
-            return font;
-        }
-        return null;
+        font.create();
+        fonts.add(font);
+        return font;
     }
 
     public FontResource getFont(String name) {
@@ -75,15 +72,6 @@ public class FontManager extends Manager {
 
     public FontResource getDefaultFont() {
         return getFont(0);
-    }
-
-    @Override
-    public boolean add(GameObject obj) {
-        if(obj instanceof FontResource) {
-            fonts.add((FontResource)obj);
-            return true;
-        }
-        return false;
     }
 
     @Override

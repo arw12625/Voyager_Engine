@@ -10,15 +10,15 @@ import java.util.HashMap;
  *
  * @author Andy
  */
-public class GameObjectManager extends Manager {
+public class GameObjectManager extends StandardManager {
 
     HashMap<String, GameObject> objects;
     static GameObjectManager instance;
     
     @Override
     public void create() {
-        super.create();
         objects = new HashMap<String, GameObject>();
+        super.create();
     }
     
     public static GameObjectManager getInstance() {

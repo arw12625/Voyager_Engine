@@ -2,8 +2,12 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package game;
+package update;
 
+import game.Game;
+import game.GameObject;
+import input.InputManager;
+import game.StandardManager;
 import java.util.ArrayList;
 import org.lwjgl.Sys;
 import util.DebugMessages;
@@ -13,7 +17,7 @@ import update.Updateable;
  *
  * @author Andy
  */
-public class UpdateManager extends Manager implements Runnable {
+public class UpdateManager extends StandardManager implements Runnable {
 
     long lastTime;
     ArrayList<Updateable> entities;

@@ -13,7 +13,7 @@ import update.Updateable;
  *
  * @author Andy
  */
-public class Sound extends GameObject implements Updateable{
+public class Sound extends GameObject implements Updateable {
 
     String name;
     int source;
@@ -23,7 +23,7 @@ public class Sound extends GameObject implements Updateable{
     float volume;
     float mult;
 
-    public Sound(String name, int buffer, int delay) {
+    protected Sound(String name, int buffer, int delay) {
         this.source = alGenSources();
         alSourcei(source, AL_BUFFER, buffer);
         this.playing = false;
@@ -32,7 +32,7 @@ public class Sound extends GameObject implements Updateable{
         this.mult = 1;
     }
 
-    public Sound(String name, int buffer, Vector3f pos, int delay) {
+    protected Sound(String name, int buffer, Vector3f pos, int delay) {
         this(name, buffer, delay);
         setPosition(pos);
     }

@@ -4,6 +4,7 @@
  */
 package physics;
 
+import update.UpdateManager;
 import game.*;
 import java.util.ArrayList;
 import util.DebugMessages;
@@ -12,7 +13,7 @@ import util.DebugMessages;
  *
  * @author Andy
  */
-public class ThreeDPhysicsManager extends Manager implements update.Updateable {
+public class ThreeDPhysicsManager extends StandardManager implements update.Updateable {
 
     ArrayList<PhysicalEntity> pe;
     CollisionMesh collsionMesh;

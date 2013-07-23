@@ -23,21 +23,13 @@ public abstract class GameObject {
             id = 0;
         }
         instances.put(name, id + 1);
+        Game.addGameObject(this);
     }
 
     public void destroy() {
-    }
-    
-    public void createAndAdd() {
-        create();
-        Game.addGameObject(this);
-    }
-    
-    public void removeAndDestroy() {
         Game.removeGameObject(this);
-        destroy();
     }
-
+    
     public String getFullName() {
         return getClass().getName() + id;
     }

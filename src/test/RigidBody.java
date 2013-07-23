@@ -4,8 +4,8 @@
  */
 package test;
 
-import game.ResourceManager;
-import graphics.Mesh;
+import resource.ResourceManager;
+import physics.Mesh;
 import graphics.ThreeDModel;
 import java.util.ArrayList;
 import physics.PhysicalEntity;
@@ -27,7 +27,9 @@ public class RigidBody extends AbstractEntity {
     public static RigidBody rigidBodyFromPath(String name, String mpath) {
         Mesh mesh = new Mesh(name, mpath);
         mesh.create();
-        ResourceManager.getInstance().loadResource(mesh);
+        while(!mesh.isLoaded()) {
+            Thread.yield();
+        }
         ThreeDModel model = new ThreeDModel(mesh);
         model.create();
         return new RigidBody(name, model);

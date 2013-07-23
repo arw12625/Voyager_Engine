@@ -4,8 +4,8 @@
  */
 package util;
 
-import game.ResourceManager;
-import graphics.Mesh;
+import resource.ResourceManager;
+import physics.Mesh;
 import java.io.*;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;

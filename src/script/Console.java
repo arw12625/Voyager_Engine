@@ -4,6 +4,8 @@
  */
 package script;
 
+import input.KeyStatus;
+import input.InputManager;
 import game.*;
 import graphics.HudGraphic;
 import graphics.Menu;
@@ -53,6 +55,7 @@ public class Console extends GameObject implements Updateable {
 
     @Override
     public void create() {
+        super.create();
         InputManager keyboard = InputManager.getInstance();
         defineKeySets();
         for (Integer i : keyNorm.keySet()) {
@@ -72,14 +75,16 @@ public class Console extends GameObject implements Updateable {
         FontManager fm = FontManager.getInstance();
         consoleFont = fm.createFont("console", new Color(102, 135, 172));
         lineGraphic = new HudGraphic("Console", TextureManager.getInstance().loadTextureResource("terminal.png"), "", consoleFont, 10, 8);
+        lineGraphic.create();
         terminal = new Menu(0, 0, false, lineGraphic, true, null, null);
         terminal.create();
+        graphics.ThreeDGraphicsManager.getInstance().add(terminal);
         
         scriptManager = ScriptManager.getInstance();
         loadConsoleScripts();
 
         setEnabled(false);
-
+        
     }
 
     public static Console getInstance() {
@@ -249,6 +254,7 @@ public class Console extends GameObject implements Updateable {
             scriptManager.eval("function cls() { Console.getInstance().clearScreen() }");
             scriptManager.eval("function echo(str) { Console.getInstance().write(str) }");
             scriptManager.eval("function err(show) { Console.getInstance().setShowError(show) }");
+            scriptManager.eval("function yolo() { Console.getInstance().write('Praise be Sanjay') }");
         } catch (ScriptException ex) {
             write("Console Scripts failed to load");
             ex.printStackTrace();

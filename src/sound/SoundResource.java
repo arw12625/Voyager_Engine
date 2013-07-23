@@ -4,7 +4,7 @@
  */
 package sound;
 
-import game.Resource;
+import resource.Resource;
 import java.io.BufferedInputStream;
 import org.lwjgl.util.WaveData;
 import org.newdawn.slick.util.ResourceLoader;

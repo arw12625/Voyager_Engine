@@ -4,6 +4,7 @@
  */
 package graphics;
 
+import physics.Mesh;
 import game.GameObject;
 import java.nio.FloatBuffer;
 import org.lwjgl.BufferUtils;

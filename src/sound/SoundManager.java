@@ -2,8 +2,11 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package game;
+package sound;
 
+import game.GameObject;
+import game.Manager;
+import update.UpdateManager;
 import util.Utilities;
 import sound.Sound;
 import java.io.BufferedInputStream;
@@ -87,14 +90,10 @@ public class SoundManager extends Manager implements update.Updateable{
         return createSound(name, r.getBuffer(), r.getLength());
     }
 
-    public void addSoundResource(SoundResource s) {
-        resources.put(s.getFullName(), s);
-    }
-
     public SoundResource loadSoundResource(String path) {
         SoundResource resource = new SoundResource(path);
-        Game.resourceManager.loadResource(resource);
-        addSoundResource(resource);
+        resource.create();
+        resources.put(resource.getFullName(), resource);
         return resource;
     }
     
@@ -110,7 +109,7 @@ public class SoundManager extends Manager implements update.Updateable{
         return muted;
     }
 
-    public void setVolume(float volume) {
+    public void setMasterVolume(float volume) {
         for (Sound s : sounds.values()) {
             s.setMult(volume);
         }
@@ -119,19 +118,6 @@ public class SoundManager extends Manager implements update.Updateable{
     @Override
     public String getFullName() {
         return "SoundManager";
-    }
-
-    @Override
-    public boolean add(GameObject obj) {
-        if(obj instanceof Sound) {
-            sounds.put(obj.getFullName(), (Sound)obj);
-            return true;
-        }
-        if(obj instanceof SoundResource) {
-            resources.put(obj.getFullName(), (SoundResource)obj);
-            return true;
-        }
-        return false;
     }
 
     @Override

@@ -17,7 +17,7 @@ import static org.lwjgl.opengl.GL11.*;
  *
  * @author Andy
  */
-public class SkySphere extends GameObject implements ThreeD, Indexable {
+public class SkySphere extends GameObject implements ThreeD {
 
     Sphere sphere;
 
@@ -42,10 +42,5 @@ public class SkySphere extends GameObject implements ThreeD, Indexable {
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_LIGHTING);
         glPopMatrix();
-    }
-
-    @Override
-    public int getIndex() {
-        return -1000000;
     }
 }

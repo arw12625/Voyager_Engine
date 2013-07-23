@@ -2,9 +2,11 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package graphics;
+package physics;
 
-import game.Resource;
+import graphics.Face;
+import graphics.Material;
+import resource.Resource;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -16,6 +18,8 @@ import org.lwjgl.util.vector.*;
 import org.newdawn.slick.util.ResourceLoader;
 import physics.Boundable;
 import physics.BoundingBox;
+import resource.Resource;
+import resource.TextureManager;
 import resource.TextureManager;
 import resource.TextureResource;
 
@@ -39,6 +43,11 @@ public class Mesh extends Resource implements Boundable {
         this.path = path;
     }
 
+    @Override
+    public void create() {
+        super.create();
+    }
+    
     public ArrayList<Vector3f> getVertices() {
         return vertices;
     }

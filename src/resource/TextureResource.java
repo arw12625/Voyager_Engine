@@ -4,7 +4,6 @@
  */
 package resource;
 
-import game.Resource;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;

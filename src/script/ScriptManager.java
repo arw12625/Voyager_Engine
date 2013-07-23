@@ -6,6 +6,7 @@ package script;
 
 import game.GameObject;
 import game.Manager;
+import game.StandardManager;
 import java.util.ArrayList;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -15,7 +16,7 @@ import javax.script.ScriptException;
  *
  * @author Andy
  */
-public class ScriptManager extends Manager {
+public class ScriptManager extends StandardManager {
 
     ScriptEngine engine;
     ArrayList<GameScript> scripts;

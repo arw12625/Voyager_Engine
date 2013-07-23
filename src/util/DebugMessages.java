@@ -19,6 +19,7 @@ public class DebugMessages extends Manager {
 
     @Override
     public void create() {
+        super.create();
     }
 
     public static DebugMessages getInstance() {
@@ -40,11 +41,6 @@ public class DebugMessages extends Manager {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
-    }
-
-    @Override
-    public boolean add(GameObject obj) {
-        return false;
     }
     
     @Override

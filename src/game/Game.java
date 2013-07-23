@@ -4,6 +4,10 @@
  */
 package game;
 
+import graphics.GraphicsManager;
+import input.InputManager;
+import resource.ResourceManager;
+import update.UpdateManager;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,9 +34,8 @@ public class Game {
     public static void create(String title,
             UpdateManager updateManager,
             GraphicsManager graphicsManager, InputManager inputManager,
-            ResourceManager resourceManager, GameObjectManager gameObjectManager
-            ) {
-        
+            ResourceManager resourceManager, GameObjectManager gameObjectManager) {
+
         Game.title = title;
         Game.updateManager = updateManager;
         Game.graphicsManager = graphicsManager;
@@ -41,12 +44,13 @@ public class Game {
         Game.gameObjectManager = gameObjectManager;
 
         managers = new ArrayList<Manager>();
-        
-        gameObjectManager.createAndAdd();
-        updateManager.createAndAdd();
-        graphicsManager.createAndAdd();
-        inputManager.createAndAdd();
-        resourceManager.createAndAdd();
+
+        gameObjectManager.create();
+        updateManager.create();
+        graphicsManager.create();
+        inputManager.create();
+        resourceManager.create();
+        resourceManager.start();
 
     }
 
@@ -55,6 +59,7 @@ public class Game {
         updateManager.start();
         while (!quit) {
 
+            resourceManager.hackyUpdate();
             graphicsManager.render();
             if (graphicsManager.isCloseRequested()) {
                 quit();
@@ -82,19 +87,19 @@ public class Game {
         return !quit;
     }
 
-    public void setPlayer(Player p) {
-        this.player = p;
+    public static void setPlayer(Player p) {
+        Game.player = p;
     }
-    
+
     public static void addGameObject(GameObject obj) {
         if (obj instanceof Manager) {
             managers.add((Manager) obj);
         }
-        for (Manager m : managers) {
-            m.add(obj);
-        }
+        gameObjectManager.add(obj);
+        resourceManager.add(obj);
+        updateManager.add(obj);
     }
-    
+
     public static void removeGameObject(GameObject obj) {
         if (managers.contains(obj)) {
             managers.remove(obj);

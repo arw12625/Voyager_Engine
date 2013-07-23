@@ -12,7 +12,6 @@ import update.Updateable;
  */
 public abstract class Manager extends GameObject {
     
-    public abstract boolean add(GameObject obj);
     public abstract void remove(GameObject obj);
     
 }

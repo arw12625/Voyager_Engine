@@ -123,7 +123,7 @@ public class ThreeDGraphicsManager extends GraphicsManager {
         DebugMessages.getInstance().write("Rendering finished");
     }
 
-    private void addGraphic3D(ThreeD de, int z) {
+    public void addGraphic3D(ThreeD de, int z) {
         int i = 0;
         while (i < graphics3D.size() && zIndices3D.get(i) < z) {
             i++;
@@ -132,7 +132,7 @@ public class ThreeDGraphicsManager extends GraphicsManager {
         zIndices3D.add(i, z);
     }
 
-    private void addGraphic2D(TwoD de, int z) {
+    public void addGraphic2D(TwoD de, int z) {
         int i = 0;
         while (i < graphics2D.size() && zIndices2D.get(i) < z) {
             i++;
@@ -146,23 +146,6 @@ public class ThreeDGraphicsManager extends GraphicsManager {
     }
 
     @Override
-    public boolean add(GameObject obj) {
-        int zIndex = 0;
-        if (obj instanceof Indexable) {
-            zIndex = ((Indexable) obj).getIndex();
-        }
-        if (obj instanceof TwoD) {
-            addGraphic2D((TwoD) obj, zIndex);
-            return true;
-        }
-        if (obj instanceof ThreeD) {
-            addGraphic3D((ThreeD) obj, zIndex);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
     public void remove(GameObject obj) {
         if(graphics2D.contains(obj)) {
             graphics2D.remove(obj);
@@ -170,6 +153,18 @@ public class ThreeDGraphicsManager extends GraphicsManager {
         if(graphics3D.contains(obj)) {
             graphics3D.remove(obj);
         }
+    }
+
+    public boolean add(GameObject obj) {
+        if(obj instanceof ThreeD) {
+            addGraphic3D((ThreeD)obj, 0);
+            return true;
+        }
+        if(obj instanceof TwoD) {
+            addGraphic2D((TwoD)obj, 0);
+            return true;
+        }
+        return false;
     }
 
 }
