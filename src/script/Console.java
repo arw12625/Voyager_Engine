@@ -254,7 +254,7 @@ public class Console extends GameObject implements Updateable {
             scriptManager.eval("function cls() { Console.getInstance().clearScreen() }");
             scriptManager.eval("function echo(str) { Console.getInstance().write(str) }");
             scriptManager.eval("function err(show) { Console.getInstance().setShowError(show) }");
-            scriptManager.eval("function yolo() { Console.getInstance().write('Praise be Sanjay') }");
+            scriptManager.eval("function yolo() { echo('Praise be Sanjay') }");
         } catch (ScriptException ex) {
             write("Console Scripts failed to load");
             ex.printStackTrace();
