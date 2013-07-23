@@ -8,6 +8,7 @@ import game.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.util.glu.GLU.*;
 import java.util.ArrayList;
+import org.newdawn.slick.Color;
 import script.Console;
 import util.DebugMessages;
 import static util.Utilities.*;
@@ -52,20 +53,16 @@ public class ThreeDGraphicsManager extends GraphicsManager {
         glDisable(GL_DITHER);
 
         glEnable(GL_LIGHTING);
+        
         glEnable(GL_LIGHT0);
-        glLightModel(GL_LIGHT_MODEL_AMBIENT, asFloatBuffer(new float[]{0.5f, 0.5f, 0.45f, 0f}));
-        glLight(GL_LIGHT0, GL_DIFFUSE, asFloatBuffer(new float[]{.8f, .8f, .75f, 0}));
-        glLight(GL_LIGHT0, GL_POSITION, asFloatBuffer(new float[]{-.3f, 200f, -.3f, 0}));
+        glLight(GL_LIGHT0, GL_DIFFUSE, asFloatBuffer(new float[]{.1f, .1f, .1f, 1}));
+        glLight(GL_LIGHT0, GL_POSITION, asFloatBuffer(new float[]{0f, 0f, 0f, 1}));
+        
+        glEnable(GL_LIGHT1);
+        glLight(GL_LIGHT1, GL_AMBIENT, asFloatBuffer(new float[]{.0f, .0f, .0f, 1}));
+        glLight(GL_LIGHT1, GL_DIFFUSE, asFloatBuffer(new float[]{.2f, .2f, .2f, 1}));
+        
         glEnable(GL_COLOR_MATERIAL);
-        glColorMaterial(GL_FRONT, GL_DIFFUSE);
-        /*
-         * glFogi(GL_FOG_MODE, GL_LINEAR); // Fog Mode glFog(GL_FOG_COLOR,
-         * asFloatBuffer(new float[]{0.45f, 0.5f, 0.55f, 1f})); // Set Fog Color
-         * glFogf(GL_FOG_DENSITY, 0.35f); // How Dense Will The Fog Be
-         * glHint(GL_FOG_HINT, GL_DONT_CARE); // Fog Hint Value
-         * glFogf(GL_FOG_START, 100f); // Fog Start Depth glFogf(GL_FOG_END,
-         * 200f); // Fog End Depth glEnable(GL_FOG); // Enables GL_FOG
-         */
 
     }
 
@@ -77,9 +74,9 @@ public class ThreeDGraphicsManager extends GraphicsManager {
     }
 
     public void threeDView() {
-        glEnable(GL_CULL_FACE);
-        glEnable(GL_LIGHTING);
         glEnable(GL_DEPTH_TEST);
+        glEnable(GL_LIGHTING);
+        glEnable(GL_CULL_FACE);
     }
 
     public void overlayView() {
@@ -98,24 +95,22 @@ public class ThreeDGraphicsManager extends GraphicsManager {
 
     @Override
     public void render() {
-
         DebugMessages.getInstance().write("Rendering started");
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         vp.perspectiveView();
         vp.adjustToView();
+        glLight(GL_LIGHT1, GL_POSITION, asFloatBuffer(new float[]{vp.getX(), vp.getY(), vp.getZ(), 0}));
+        glBindTexture(GL_TEXTURE_2D, 0);
+        
         threeDView();
-
-        ArrayList<Displayable> d3Copy = new ArrayList<Displayable>(graphics3D);
-        for (Displayable de : d3Copy) {
+        for (Displayable de : graphics3D) {
             de.render();
         }
 
         overlayView();
-
-        ArrayList<Displayable> d2Copy = new ArrayList<Displayable>(graphics2D);
-        for (Displayable de : d2Copy) {
+        for (Displayable de : graphics2D) {
             de.render();
         }
 

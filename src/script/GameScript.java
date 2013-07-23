@@ -13,11 +13,9 @@ import javax.script.ScriptContext;
  */
 public class GameScript extends GameObject {
 
-    String name;
     String script;
     
-    public GameScript(String name, String script) {
-        this.name = name;
+    public GameScript(String script) {
         this.script = script;
     }
     

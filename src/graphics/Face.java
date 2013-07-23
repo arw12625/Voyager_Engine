@@ -41,7 +41,7 @@ public class Face {
 
     public Face(int[] vertexIndices, int[] normalIndices, int[] texCoordIndices, Material material) {
         this.vertexIndices = vertexIndices;
-        this.normalIndices = vertexIndices;
+        this.normalIndices = normalIndices;
         this.texCoordIndices = texCoordIndices;
         this.material = material;
     }

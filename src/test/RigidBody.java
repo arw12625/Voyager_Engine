@@ -17,22 +17,19 @@ import physics.Plane;
  */
 public class RigidBody extends AbstractEntity {
 
-    String name;
-    
-    public RigidBody(String name, ThreeDModel m) {
+    public RigidBody(ThreeDModel m) {
         super(m);
-        this.name = name;
     }
     
-    public static RigidBody rigidBodyFromPath(String name, String mpath) {
-        Mesh mesh = new Mesh(name, mpath);
+    public static RigidBody rigidBodyFromPath(String mpath) {
+        Mesh mesh = new Mesh(mpath);
         mesh.create();
         while(!mesh.isLoaded()) {
             Thread.yield();
         }
         ThreeDModel model = new ThreeDModel(mesh);
         model.create();
-        return new RigidBody(name, model);
+        return new RigidBody(model);
     }
     @Override
     public void collide(ArrayList<Plane> collisions) {

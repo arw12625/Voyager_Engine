@@ -71,7 +71,7 @@ public class GameTest {
             sm.eval("function addTri() { GameTest.addTestGraphic() }");
             sm.eval("function removeTri() { GameTest.removeTestGraphic() }");
             sm.eval("function enableDebug(enable) { GameTest.enableDebug(enable) }");
-            sm.execute(new GameScript("BLAAS", ""));
+            sm.execute(new GameScript(""));
         } catch (ScriptException ex) {
             ex.printStackTrace();
         }
@@ -81,12 +81,10 @@ public class GameTest {
         System.out.println(m);
         ThreeDGraphicsManager.getInstance().addGraphic3D(new ThreeDModel(m));*/
         
-        Mesh ter = new Mesh("terrain", "terrain");
-        ter.create();
-        ResourceManager.getInstance().hackyUpdate();
-        ThreeDModel modeltest = new ThreeDModel(ter);
-        modeltest.create();
-        graphicsManager.add(modeltest);
+        RigidBody green = RigidBody.rigidBodyFromPath("planet");
+        green.create();
+        physics.ThreeDPhysicsManager.getInstance().add(green);
+        graphicsManager.add(green);
         
         player.getPhysicalEntity().getBounds().setPosition(new Vector3f(0, 0, 60));
         InputManager.getInstance().put(Keyboard.KEY_UP);
@@ -95,7 +93,7 @@ public class GameTest {
         InputManager.getInstance().put(Keyboard.KEY_RIGHT);
         Mouse.setGrabbed(true);
         
-        SkySphere s = new SkySphere();
+        NightSphere s = new NightSphere();
         s.create();
         graphicsManager.addGraphic3D(s, -100);
         

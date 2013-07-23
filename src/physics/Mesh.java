@@ -29,7 +29,6 @@ import resource.TextureResource;
  */
 public class Mesh extends Resource implements Boundable {
 
-    String name;
     String path;
     private ArrayList<Vector3f> vertices;
     private ArrayList<Vector3f> normals;
@@ -38,8 +37,7 @@ public class Mesh extends Resource implements Boundable {
     private ArrayList<Material> materialList;
     BoundingBox b;
 
-    public Mesh(String name, String path) {
-        this.name = name;
+    public Mesh(String path) {
         this.path = path;
     }
 
@@ -175,7 +173,7 @@ public class Mesh extends Resource implements Boundable {
     }
 
     public String toString() {
-        return name
+        return getFullName()
                 + "\nFaces: " + faces.size()
                 + "\nVertices: " + vertices.size()
                 + "\nNormals: " + normals.size()

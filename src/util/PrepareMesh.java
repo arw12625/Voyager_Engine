@@ -21,13 +21,16 @@ import physics.BoundingBox;
 public class PrepareMesh {
 
     public static void main(String[] args) {
-        prepareMesh("palm", "palm_fix");
+        prepareMesh("planet-orig", "planet");
     }
 
     public static void prepareMesh(String origPath, String fixPath) {
-        Mesh m = new Mesh(origPath, origPath);
+        Mesh m = new Mesh(origPath);
         m.load();
-        Vector3f[] verts = (Vector3f[]) m.getVertices().toArray();
+        Vector3f[] verts = new Vector3f[m.getVertices().size()];
+        for(int i = 0; i < verts.length; i++) {
+            verts[i] = m.getVertices().get(i);
+        }
         BoundingBox b = BoundingBox.boundsFromVerts(verts);
         Vector3f offset = Vector3f.sub(b.getMax(), b.getHalf(), null);
         try {
