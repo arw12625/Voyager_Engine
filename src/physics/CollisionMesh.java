@@ -6,6 +6,7 @@ package physics;
 
 import game.GameObject;
 import graphics.Face;
+import graphics.ThreeDGraphicsManager;
 import graphics.ThreeDModel;
 import java.util.ArrayList;
 import org.lwjgl.util.vector.Vector3f;
@@ -20,6 +21,7 @@ public class CollisionMesh extends GameObject implements Boundable {
     
     public CollisionMesh(BoundingBox b) {
         planes = new Octree<Plane>(b);
+        planes.create();
     }
     
     public CollisionMesh(Mesh collision) {
@@ -33,7 +35,7 @@ public class CollisionMesh extends GameObject implements Boundable {
             addMesh(m);
         }
     }
-
+    
     @Override
     public BoundingBox getBounds() {
         return planes.getBounds();
@@ -48,12 +50,14 @@ public class CollisionMesh extends GameObject implements Boundable {
                 verts[i] = collision.getVertices().get(face.getVertexIndices()[i]);
             }
 
-            planes.insert(new Plane(verts, collision.getNormals().get(face.getNormalIndices()[0])));
+            Plane p = new Plane(verts, collision.getNormals().get(face.getNormalIndices()[0]));
+            planes.insert(p);
+            //ThreeDGraphicsManager.getInstance().addGraphic3D(p, 10);
         }
     }
     
     public ArrayList<Plane> getPlanes(PhysicalEntity e) {
-        return planes.queryRange(e.getAlignedBounds());
+        return planes.queryRange(e.getBounds().getAlignedBounds());
     }
     
     public boolean isEmpty() {

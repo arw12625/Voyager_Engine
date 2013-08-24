@@ -21,7 +21,7 @@ import physics.BoundingBox;
 public class PrepareMesh {
 
     public static void main(String[] args) {
-        prepareMesh("planet-orig", "planet");
+        prepareMesh("ramp", "ramp_fix");
     }
 
     public static void prepareMesh(String origPath, String fixPath) {
@@ -31,8 +31,7 @@ public class PrepareMesh {
         for(int i = 0; i < verts.length; i++) {
             verts[i] = m.getVertices().get(i);
         }
-        BoundingBox b = BoundingBox.boundsFromVerts(verts);
-        Vector3f offset = Vector3f.sub(b.getMax(), b.getHalf(), null);
+        BoundingBox b = boundsFromVerts(verts);
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(
                     ResourceLoader.getResourceAsStream("res/" + origPath + ".obj")));
@@ -43,7 +42,7 @@ public class PrepareMesh {
             writer.write("dim " + vecToString(b.getDimension()) + "\n");
             while ((line = reader.readLine()) != null) {
                 if (line.startsWith("v ")) {
-                    writer.write("v " + vecToString(Vector3f.sub(verts[i++], offset, null)));
+                    writer.write("v " + vecToString(Vector3f.sub(verts[i++], b.getPosition(), null)));
                 } else {
                     writer.write(line);
                 }
@@ -57,6 +56,38 @@ public class PrepareMesh {
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+    }
+    
+    public static BoundingBox boundsFromVerts(Vector3f... verts) {
+        Vector3f min = new Vector3f(Float.MAX_VALUE, Float.MAX_VALUE, Float.MAX_VALUE);
+        Vector3f max = new Vector3f(Float.MIN_VALUE, Float.MIN_VALUE, Float.MIN_VALUE);
+        for (Vector3f v : verts) {
+            if (v.getX() > max.getX()) {
+                max.setX(v.getX());
+            }
+            if (v.getY() > max.getY()) {
+                max.setY(v.getY());
+            }
+            if (v.getZ() > max.getZ()) {
+                max.setZ(v.getZ());
+            }
+            if (v.getX() < min.getX()) {
+                min.setX(v.getX());
+            }
+            if (v.getY() < min.getY()) {
+                min.setY(v.getY());
+            }
+            if (v.getZ() < min.getZ()) {
+                min.setZ(v.getZ());
+            }
+        }
+        
+        Vector3f dim = Vector3f.sub(max, min, null);
+        Vector3f half = new Vector3f(dim);
+        half.scale(0.5f);
+        Vector3f pos = Vector3f.add(min, half, null);
+        BoundingBox b = new BoundingBox(pos, dim, true);
+        return b;
     }
 
     public static String vecToString(Vector3f v) {

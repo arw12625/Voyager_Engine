@@ -4,24 +4,24 @@
  */
 package physics;
 
+import graphics.ThreeD;
 import org.lwjgl.util.vector.Vector3f;
 
 /**
  *
  * @author Andy
  */
-public class Plane implements Boundable {
+public class Plane implements Boundable, ThreeD {
     
     public BoundingBox bounds;
-    public float a, b, c, d;
+    Vector3f normal;
+    float p;
 
     public Plane(Vector3f[] v, Vector3f n) {
 
         bounds = BoundingBox.boundsFromVerts(v);
-        a = n.getX();
-        b = n.getY();
-        c = n.getZ();
-        d = a * v[0].getX() + b * v[0].getY() + c * v[0].getZ();
+        this.normal = n;
+        p = -Vector3f.dot(v[0], n);
 
     }
 
@@ -37,11 +37,20 @@ public class Plane implements Boundable {
 
     }
     
+    public float getDistance(Vector3f v) {
+        return Vector3f.dot(normal, v) + p;
+    }
+    
     public Vector3f getNormal() {
-        return new Vector3f(a, b, c);
+        return normal;
     }
     
     public Vector3f getMiddle() {
         return bounds.getPosition();
+    }
+
+    @Override
+    public void render() {
+        bounds.render();
     }
 }

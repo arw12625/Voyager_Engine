@@ -64,6 +64,10 @@ public class Utilities {
         Quaternion.mul(resQ, q, resQ);
         return new Vector3f(resQ.getX(), resQ.getY(), resQ.getZ());
     }
+    
+    public static Vector3f inverseTransform(Vector3f orig, Quaternion q) {
+        return transform(orig, inverse(q));
+    }
 
     public static Quaternion inverse(Quaternion q) {
         return new Quaternion(-q.getX(), -q.getY(), -q.getZ(), q.getW());

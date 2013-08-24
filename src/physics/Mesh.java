@@ -119,7 +119,8 @@ public class Mesh extends Resource implements Boundable {
                     x = Float.parseFloat(spaceSplit[1]);
                     y = Float.parseFloat(spaceSplit[2]);
                     z = Float.parseFloat(spaceSplit[3]);
-                    b = new BoundingBox(new Vector3f(-x / 2, -y / 2, -z / 2), new Vector3f(x / 2, y / 2, z / 2));
+                    b = new BoundingBox(new Vector3f(0, 0, 0), new Vector3f(x, y, z));
+                    b.create();
                 }
             }
             reader.close();

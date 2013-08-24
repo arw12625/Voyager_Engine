@@ -55,12 +55,12 @@ public class ThreeDGraphicsManager extends GraphicsManager {
         glEnable(GL_LIGHTING);
         
         glEnable(GL_LIGHT0);
-        glLight(GL_LIGHT0, GL_DIFFUSE, asFloatBuffer(new float[]{.1f, .1f, .1f, 1}));
+        glLight(GL_LIGHT0, GL_DIFFUSE, asFloatBuffer(new float[]{.5f, .5f, .5f, 1}));
         glLight(GL_LIGHT0, GL_POSITION, asFloatBuffer(new float[]{0f, 0f, 0f, 1}));
         
         glEnable(GL_LIGHT1);
         glLight(GL_LIGHT1, GL_AMBIENT, asFloatBuffer(new float[]{.0f, .0f, .0f, 1}));
-        glLight(GL_LIGHT1, GL_DIFFUSE, asFloatBuffer(new float[]{.2f, .2f, .2f, 1}));
+        glLight(GL_LIGHT1, GL_DIFFUSE, asFloatBuffer(new float[]{.7f, .7f, .7f, 1}));
         
         glEnable(GL_COLOR_MATERIAL);
 

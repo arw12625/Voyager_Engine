@@ -7,7 +7,9 @@ package physics;
 import update.UpdateManager;
 import game.*;
 import java.util.ArrayList;
+import org.lwjgl.util.vector.Vector3f;
 import util.DebugMessages;
+import util.Utilities;
 
 /**
  *
@@ -16,7 +18,8 @@ import util.DebugMessages;
 public class ThreeDPhysicsManager extends StandardManager implements update.Updateable {
 
     ArrayList<PhysicalEntity> pe;
-    CollisionMesh collsionMesh;
+    CollisionMesh collisionMesh;
+    float restitution = 0.2f;
     static ThreeDPhysicsManager instance;
 
     @Override
@@ -38,23 +41,98 @@ public class ThreeDPhysicsManager extends StandardManager implements update.Upda
         DebugMessages.getInstance().write("Physics starting");
 
         //Motion update
-        float time = delta / 1000f;
-        for (PhysicalEntity e : pe) {
+        float division = 3;
+        float collision = 3;
+        float time = delta / 1000f / division;
+        for (int j = 0; j < division; j++) {
+            for (PhysicalEntity e : pe) {
 
-            e.setAwake(!e.canSleep());
-            e.updateForces();
-            if (e.isAwake()) {
-                e.integrate(time);
+                e.setAwake(!e.canSleep());
+                e.updateForces();
+                if (e.isAwake()) {
+                    e.integrate(time);
+                }
+
             }
 
-        }
-
-        //Collision Detection
-        if (collsionMesh != null && !collsionMesh.isEmpty()) {
+            ArrayList<PhysicalEntity> pcopy = new ArrayList<PhysicalEntity>(pe);
             for (PhysicalEntity e : pe) {
-                ArrayList<Plane> cols = collsionMesh.getPlanes(e);
-                for (Plane p : cols) {
-                    if (e.getBounds().intersects(p.getBounds())) {
+                if (collisionMesh != null && !collisionMesh.isEmpty()) {
+                    ArrayList<Plane> cols = collisionMesh.getPlanes(e);
+                    if (!cols.isEmpty()) {
+                        Vector3f[] vertices;
+                        for (int i = 0; i < collision; i++) {
+                            vertices = e.getBounds().getGlobalVertices();
+                            for (Vector3f v : vertices) {
+                                float highestVelocity = Float.MAX_VALUE;
+                                Plane toResolve = null;
+                                for (Plane p : cols) {
+                                    float distance = p.getDistance(v);
+                                    if (distance > 0) {
+                                        continue;
+                                    }
+
+                                    Vector3f pointVelocity = Vector3f.add(e.getVelocity(), Vector3f.cross(Utilities.transform(e.getAngularVelocity(), e.getOrientation()), Vector3f.sub(v, e.getPosition(), null), null), null);
+                                    float seperatingVelocity = Vector3f.dot(pointVelocity, p.getNormal());
+                                    if (seperatingVelocity < highestVelocity) {
+                                        highestVelocity = seperatingVelocity;
+                                        toResolve = p;
+                                    }
+                                }
+
+                                if (highestVelocity >= 0) {
+                                    continue;
+                                }
+
+                                float newVelocity = -highestVelocity;
+
+                                Vector3f accCausedVelocity = e.getAcceleration();
+                                float accCausedSepVelocity =
+                                        Vector3f.dot(accCausedVelocity,
+                                        toResolve.getNormal()) * time;
+                                if (accCausedSepVelocity < 0) {
+                                    newVelocity +=
+                                            accCausedSepVelocity;
+                                    if (newVelocity < 0) {
+                                        newVelocity = 0;
+                                    }
+                                }
+
+                                newVelocity *= restitution;
+
+                                float deltaV = newVelocity - highestVelocity;
+                                Vector3f normal = new Vector3f(toResolve.getNormal());
+                                normal.scale(deltaV * e.getMass() / 5f);
+                                e.applyImpulseAtPoint(normal, v);
+                            }
+                        }
+                        for (int i = 0; i < collision; i++) {
+                            vertices = e.getBounds().getGlobalVertices();
+                            for (Vector3f v : vertices) {
+                                float highestPenetration = Float.MAX_VALUE;
+                                Plane toResolve = null;
+                                for (Plane p : cols) {
+                                    float distance = p.getDistance(v);
+                                    if (distance < highestPenetration) {
+                                        highestPenetration = distance;
+                                        toResolve = p;
+                                    }
+                                }
+                                if (highestPenetration > 0) {
+                                    continue;
+                                }
+                                e.setPosition(Utilities.addScaledVector(e.getPosition(), toResolve.getNormal(), -1f * highestPenetration));
+                            }
+                        }
+                        e.collide(cols);
+                    }
+                }
+                pcopy.remove(e);
+
+                for (PhysicalEntity other : pcopy) {
+                    if (e.getBounds().intersects(other.getBounds())) {
+                        e.collide(other);
+                        other.collide(e);
                     }
                 }
             }
@@ -65,8 +143,8 @@ public class ThreeDPhysicsManager extends StandardManager implements update.Upda
 
     @Override
     public boolean add(GameObject obj) {
-        if(obj instanceof PhysicalEntity) {
-            pe.add((PhysicalEntity)obj);
+        if (obj instanceof PhysicalEntity) {
+            pe.add((PhysicalEntity) obj);
             return true;
         }
         return false;
@@ -74,8 +152,12 @@ public class ThreeDPhysicsManager extends StandardManager implements update.Upda
 
     @Override
     public void remove(GameObject obj) {
-        if(pe.contains(obj)) {
+        if (pe.contains(obj)) {
             pe.remove(obj);
         }
+    }
+
+    public void setCollisionMesh(CollisionMesh cm) {
+        this.collisionMesh = cm;
     }
 }

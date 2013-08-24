@@ -70,7 +70,8 @@ public class Game {
 
     public static void destroy() {
 
-        for (Manager m : managers) {
+        ArrayList<Manager> copy  = (ArrayList<Manager>) managers.clone();
+        for (Manager m : copy) {
             m.destroy();
         }
 
