@@ -4,15 +4,10 @@
  */
 package util;
 
-import resource.ResourceManager;
-import physics.Mesh;
 import java.io.*;
 import java.nio.channels.FileChannel;
-import java.util.ArrayList;
-import java.util.HashMap;
 import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.util.ResourceLoader;
-import physics.BoundingBox;
 
 /**
  *
@@ -21,17 +16,23 @@ import physics.BoundingBox;
 public class PrepareMesh {
 
     public static void main(String[] args) {
-        prepareMesh("ramp", "ramp_fix");
+        if (args.length == 0) {
+            prepareMesh("building", "building_fix");
+        } else if(args.length == 1) {
+            prepareMesh(args[0], args[0] + "_fix");
+        } else if(args.length == 2) {
+            prepareMesh(args[0], args[1]);
+        }
     }
 
     public static void prepareMesh(String origPath, String fixPath) {
-        Mesh m = new Mesh(origPath);
+        physics.Mesh m = new physics.Mesh(origPath);
         m.load();
         Vector3f[] verts = new Vector3f[m.getVertices().size()];
-        for(int i = 0; i < verts.length; i++) {
+        for (int i = 0; i < verts.length; i++) {
             verts[i] = m.getVertices().get(i);
         }
-        BoundingBox b = boundsFromVerts(verts);
+        physics.BoundingBox b = boundsFromVerts(verts);
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(
                     ResourceLoader.getResourceAsStream("res/" + origPath + ".obj")));
@@ -57,8 +58,8 @@ public class PrepareMesh {
             ex.printStackTrace();
         }
     }
-    
-    public static BoundingBox boundsFromVerts(Vector3f... verts) {
+
+    public static physics.BoundingBox boundsFromVerts(Vector3f... verts) {
         Vector3f min = new Vector3f(Float.MAX_VALUE, Float.MAX_VALUE, Float.MAX_VALUE);
         Vector3f max = new Vector3f(Float.MIN_VALUE, Float.MIN_VALUE, Float.MIN_VALUE);
         for (Vector3f v : verts) {
@@ -81,12 +82,12 @@ public class PrepareMesh {
                 min.setZ(v.getZ());
             }
         }
-        
+
         Vector3f dim = Vector3f.sub(max, min, null);
         Vector3f half = new Vector3f(dim);
         half.scale(0.5f);
         Vector3f pos = Vector3f.add(min, half, null);
-        BoundingBox b = new BoundingBox(pos, dim, true);
+        physics.BoundingBox b = new physics.BoundingBox(pos, dim, true);
         return b;
     }
 

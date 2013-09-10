@@ -5,24 +5,21 @@
 package test;
 
 import game.GameObject;
-import graphics.TwoD;
 import org.lwjgl.util.vector.Vector2f;
 import static org.lwjgl.opengl.GL11.*;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.opengl.TextureImpl;
-import resource.TextureManager;
-import resource.TextureResource;
 
 /**
  *
  * @author Andy
  */
-public class TestGraphic extends GameObject implements TwoD {
+public class TestGraphic extends GameObject implements graphics.TwoD {
 
     Vector2f[] points;
-    TextureResource t;
+    resource.TextureResource t;
     //Color c;
-    static TextureResource[] textures;
+    static resource.TextureResource[] textures;
 
     public TestGraphic() {
         points = new Vector2f[3];
@@ -32,9 +29,9 @@ public class TestGraphic extends GameObject implements TwoD {
         //c = new Color((float) Math.random(), (float) Math.random(), (float) Math.random());
         if (textures == null) {
             int size = 3;
-            textures = new TextureResource[size];
+            textures = new resource.TextureResource[size];
             for (int i = 0; i < size; i++) {
-                textures[i] = TextureManager.getInstance().loadTextureResource("" + i + ".png");
+                textures[i] = resource.TextureManager.getInstance().loadTextureResource("" + i + ".png");
             }
         }
         t = textures[(int) (Math.random() * textures.length)];

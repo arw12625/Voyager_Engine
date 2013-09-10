@@ -28,6 +28,7 @@ import resource.FontManager;
 import resource.TextureManager;
 import script.GameScript;
 import script.ScriptManager;
+import update.Updateable;
 import util.Utilities;
 
 /**
@@ -84,11 +85,11 @@ public class GameTest {
         System.out.println(m);
         ThreeDGraphicsManager.getInstance().addGraphic3D(new ThreeDModel(m));*/
         
-        RigidBody green = RigidBody.rigidBodyFromPath("box_fix");
+        final RigidBody green = RigidBody.rigidBodyFromPath("box_fix");
         green.create();
         //green.getBounds().setOrientation(Utilities.quatFromAxisAngle(new Vector3f(0, 0, 1), -(float)Math.PI));
         
-        green.setPosition(new Vector3f(-18, 18f, 0));
+        green.setPosition(new Vector3f(-0, 8f, 0));
         //green.setPosition(new Vector3f(0, 7, 0));
         physics.ThreeDPhysicsManager.getInstance().add(green);
         graphicsManager.add(green);
@@ -96,7 +97,7 @@ public class GameTest {
 
             @Override
             public void applyForce(PhysicalEntity pe) {
-                pe.applyForce(new Vector3f(0, -2f* pe.getMass(), 0));
+                pe.applyForce(new Vector3f(0, -3f* pe.getMass(), 0));
             }
         };
         green.addForceGenerator(grav);
@@ -105,7 +106,7 @@ public class GameTest {
         ter.create();
         physics.ThreeDPhysicsManager.getInstance().add(ter);
         graphicsManager.add(ter);*/
-        Mesh ter = new Mesh("ramp_fix");
+        Mesh ter = new Mesh("building_fix");
         ter.create();
         ThreeDModel terDisp = new ThreeDModel(ter);
         terDisp.create();
@@ -114,16 +115,15 @@ public class GameTest {
         cm.create();
         physics.ThreeDPhysicsManager.getInstance().setCollisionMesh(cm);
         
-        player.getPhysicalEntity().setPosition(new Vector3f(0, 0, 0));
         InputManager.getInstance().put(Keyboard.KEY_UP);
         InputManager.getInstance().put(Keyboard.KEY_DOWN);
         InputManager.getInstance().put(Keyboard.KEY_LEFT);
         InputManager.getInstance().put(Keyboard.KEY_RIGHT);
         Mouse.setGrabbed(true);
         
-        player.getPhysicalEntity().addForceGenerator(grav);
+        //player.getPhysicalEntity().addForceGenerator(grav);
         
-        NightSphere s = new NightSphere();
+        SkySphere s = new SkySphere(SkySphere.SkyType.PLAIN_NIGHT);
         s.create();
         graphicsManager.addGraphic3D(s, -100);
         

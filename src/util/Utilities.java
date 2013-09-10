@@ -9,7 +9,6 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Quaternion;
 import org.lwjgl.util.vector.Vector3f;
-import physics.BoundingBox;
 
 /**
  *

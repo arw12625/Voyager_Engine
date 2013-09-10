@@ -6,7 +6,6 @@ package graphics;
 
 import game.GameObject;
 import static org.lwjgl.opengl.GL11.*;
-import update.Event;
 
 /**
  *
@@ -22,7 +21,7 @@ public class Menu extends GameObject implements TwoD {
     boolean absolute;
     boolean show;
     boolean showChildren;
-    Event event;
+    update.Action action;
 
     public Menu() {
         this("Wrapper");
@@ -40,15 +39,15 @@ public class Menu extends GameObject implements TwoD {
         this(name, x, y, 0, 0, absolute, null, show, sub, null);
     }
 
-    public Menu(float x, float y, boolean absolute, HudGraphic hg, boolean show, Menu[] sub, Event event) {
-        this("Filler", x, y, hg.getWidth(), hg.getHeight(), absolute, hg, show, sub, event);
+    public Menu(float x, float y, boolean absolute, HudGraphic hg, boolean show, Menu[] sub, update.Action action) {
+        this("Filler", x, y, hg.getWidth(), hg.getHeight(), absolute, hg, show, sub, action);
     }
 
-    public Menu(String name, float x, float y, boolean absolute, HudGraphic hg, boolean show, Menu[] sub, Event event) {
-        this(name, x, y, hg.getWidth(), hg.getHeight(), absolute, hg, show, sub, event);
+    public Menu(String name, float x, float y, boolean absolute, HudGraphic hg, boolean show, Menu[] sub, update.Action action) {
+        this(name, x, y, hg.getWidth(), hg.getHeight(), absolute, hg, show, sub, action);
     }
 
-    public Menu(String name, float x, float y, float width, float height, boolean absolute, TwoD graphic, boolean show, Menu[] sub, Event event) {
+    public Menu(String name, float x, float y, float width, float height, boolean absolute, TwoD graphic, boolean show, Menu[] sub, update.Action action) {
 
         this.name = name;
         this.width = width;
@@ -62,7 +61,7 @@ public class Menu extends GameObject implements TwoD {
             this.y = y;
         }
         translate(x, y);
-        this.event = event;
+        this.action = action;
         this.showChildren = true;
     }
 
@@ -84,8 +83,8 @@ public class Menu extends GameObject implements TwoD {
     }
 
     public void mouseClick(int mx, int my) {
-        if (event != null && show && inArea(mx, my)) {
-            event.execute();
+        if (action != null && show && inArea(mx, my)) {
+            action.execute();
         }
         if (showChildren && sub != null) {
             for (Menu m : sub) {

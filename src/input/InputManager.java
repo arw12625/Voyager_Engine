@@ -6,14 +6,10 @@ package input;
 
 import game.GameObject;
 import game.Manager;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-import util.DebugMessages;
 
 /**
  *
@@ -38,9 +34,8 @@ public class InputManager extends Manager {
             dx = 0;
             dy = 0;
         } catch (LWJGLException ex) {
-            Logger.getLogger(InputManager.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
         }
-        DebugMessages.getInstance().write("InputManager created");
     }
 
     public static InputManager getInstance() {
@@ -55,7 +50,6 @@ public class InputManager extends Manager {
         super.destroy();
         Keyboard.destroy();
         Mouse.destroy();
-        DebugMessages.getInstance().write("InputManager destroyed");
     }
 
     public void processInputs() {
@@ -67,7 +61,7 @@ public class InputManager extends Manager {
         x = Mouse.getX();
         y = Mouse.getY();
 
-        DebugMessages.getInstance().write("Inputs processed");
+        util.DebugMessages.getInstance().write("Inputs processed");
     }
 
     public void updateKey(int key) {

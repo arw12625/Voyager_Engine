@@ -4,8 +4,6 @@
  */
 package game;
 
-import update.Updateable;
-
 /**
  *
  * @author Andy

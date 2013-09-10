@@ -5,9 +5,6 @@
 package physics;
 
 import game.GameObject;
-import graphics.Face;
-import graphics.ThreeDGraphicsManager;
-import graphics.ThreeDModel;
 import java.util.ArrayList;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -42,7 +39,7 @@ public class CollisionMesh extends GameObject implements Boundable {
     }
 
     public void addMesh(Mesh collision) {
-        for (Face face : collision.getFaces()) {
+        for (graphics.Face face : collision.getFaces()) {
 
             Vector3f[] verts = new Vector3f[3];
 

@@ -20,12 +20,35 @@ import static org.lwjgl.opengl.GL11.*;
 public class SkySphere extends GameObject implements ThreeD {
 
     Sphere sphere;
+    org.newdawn.slick.Color color;
+    
+    public enum SkyType {
+        PLAIN_DAY (new org.newdawn.slick.Color(0.45f, 0.5f, 0.6f)),
+        PLAIN_NIGHT (new org.newdawn.slick.Color(0.05f, 0.05f, 0.1f));
+        
+        private final org.newdawn.slick.Color color;
+        
+        SkyType(org.newdawn.slick.Color color) {
+            this.color = color;
+        }
+        
+        public org.newdawn.slick.Color getColor() {
+            return color;
+        }
+    }
 
     public SkySphere() {
-
+        this(SkyType.PLAIN_DAY);
+    }
+    
+    public SkySphere(SkyType st) {
+        this(st.getColor());
+    }
+    
+    public SkySphere(Color c) {
         this.sphere = new Sphere();
         sphere.setOrientation(GLU.GLU_INSIDE);
-
+        this.color = c;
     }
 
     @Override
@@ -33,7 +56,7 @@ public class SkySphere extends GameObject implements ThreeD {
         glPushMatrix();
         glLoadIdentity();
         Color.white.bind();
-        (new Color(0.45f, 0.5f, 0.6f)).bind();
+        color.bind();
         glDisable(GL_TEXTURE_2D);
         glDisable(GL_DEPTH_TEST);
         glDisable(GL_LIGHTING);

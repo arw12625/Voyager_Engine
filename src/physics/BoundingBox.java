@@ -4,8 +4,6 @@
  */
 package physics;
 
-import graphics.Displayable;
-import graphics.ThreeD;
 import java.util.ArrayList;
 import org.lwjgl.util.vector.Quaternion;
 import org.lwjgl.util.vector.Vector3f;
@@ -16,7 +14,7 @@ import static org.lwjgl.opengl.GL11.*;
  *
  * @author Andy
  */
-public class BoundingBox extends game.GameObject implements Boundable, ThreeD {
+public class BoundingBox extends game.GameObject implements Boundable, graphics.ThreeD {
 
     private Vector3f position;
     private Vector3f dimension;

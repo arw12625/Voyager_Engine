@@ -6,13 +6,7 @@ package resource;
 
 import game.GameObject;
 import game.Manager;
-import java.awt.Font;
 import java.util.ArrayList;
-import org.newdawn.slick.SlickException;
-import org.newdawn.slick.UnicodeFont;
-import org.newdawn.slick.font.effects.ColorEffect;
-import static org.lwjgl.opengl.GL11.*;
-import org.newdawn.slick.Color;
 
 /**
  *
@@ -41,15 +35,15 @@ public class FontManager extends Manager {
         return createFont(name, name + ".fnt", name + "_0.png");
     }
 
-    public FontResource createFont(String name, Color c) {
+    public FontResource createFont(String name, org.newdawn.slick.Color c) {
         return createFont(name, name + ".fnt", name + "_0.png", c);
     }
 
     public FontResource createFont(String name, String fontPath, String texturePath) {
-        return createFont(name, fontPath, texturePath, Color.black);
+        return createFont(name, fontPath, texturePath, org.newdawn.slick.Color.black);
     }
 
-    public FontResource createFont(String name, String fontPath, String texturePath, Color c) {
+    public FontResource createFont(String name, String fontPath, String texturePath, org.newdawn.slick.Color c) {
         FontResource font = new FontResource(name, fontPath, texturePath, c);
         font.create();
         fonts.add(font);

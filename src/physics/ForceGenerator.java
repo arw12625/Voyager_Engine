@@ -4,8 +4,6 @@
  */
 package physics;
 
-import org.lwjgl.util.vector.Vector3f;
-
 /**
  *
  * @author Andy

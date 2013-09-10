@@ -24,10 +24,12 @@ public abstract class GameObject {
         }
         instances.put(name, id + 1);
         Game.addGameObject(this);
+        util.DebugMessages.getInstance().write(this.getFullName() + " created");
     }
 
     public void destroy() {
         Game.removeGameObject(this);
+        util.DebugMessages.getInstance().write(this.getFullName() + " destroyed");
     }
     
     public String getFullName() {

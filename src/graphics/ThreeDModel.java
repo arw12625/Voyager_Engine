@@ -4,7 +4,6 @@
  */
 package graphics;
 
-import physics.Mesh;
 import game.GameObject;
 import java.nio.FloatBuffer;
 import org.lwjgl.BufferUtils;
@@ -19,13 +18,13 @@ import org.lwjgl.util.vector.Vector3f;
  */
 public class ThreeDModel extends GameObject implements ThreeD {
 
-    Mesh m;
+    physics.Mesh m;
     int vboVertexHandle;
     int vboNormalHandle;
     int vboColorHandle;
     int amountOfVertices;
 
-    public ThreeDModel(Mesh m) {
+    public ThreeDModel(physics.Mesh m) {
         this.m = m;
         vboVertexHandle = glGenBuffers();
         vboNormalHandle = glGenBuffers();
@@ -75,7 +74,7 @@ public class ThreeDModel extends GameObject implements ThreeD {
         glDisableClientState(GL_VERTEX_ARRAY);
     }
 
-    public Mesh getMesh() {
+    public physics.Mesh getMesh() {
         return m;
     }
 

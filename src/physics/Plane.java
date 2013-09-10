@@ -4,14 +4,13 @@
  */
 package physics;
 
-import graphics.ThreeD;
 import org.lwjgl.util.vector.Vector3f;
 
 /**
  *
  * @author Andy
  */
-public class Plane implements Boundable, ThreeD {
+public class Plane implements Boundable, graphics.ThreeD {
     
     public BoundingBox bounds;
     Vector3f normal;

@@ -6,23 +6,12 @@ package sound;
 
 import game.GameObject;
 import game.Manager;
-import update.UpdateManager;
 import util.Utilities;
-import sound.Sound;
-import java.io.BufferedInputStream;
-import java.nio.FloatBuffer;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.openal.AL;
 import static org.lwjgl.openal.AL10.*;
-import org.lwjgl.util.WaveData;
 import org.lwjgl.util.vector.Vector3f;
-import org.newdawn.slick.util.ResourceLoader;
-import sound.SoundResource;
 import util.DebugMessages;
 
 /**
@@ -50,7 +39,6 @@ public class SoundManager extends Manager implements update.Updateable{
         }
         sounds = new HashMap<String, Sound>();
         resources = new HashMap<String, SoundResource>();
-        DebugMessages.getInstance().write("SoundManager created");
     }
 
     public static SoundManager getInstance() {
@@ -64,7 +52,6 @@ public class SoundManager extends Manager implements update.Updateable{
     public void destroy() {
         super.destroy();
         AL.destroy();
-        DebugMessages.getInstance().write("SoundManager destroyed");
     }
 
     @Override
@@ -82,7 +69,6 @@ public class SoundManager extends Manager implements update.Updateable{
     public Sound createSound(String name, int buffer, int delay) {
         Sound s = new Sound(name, buffer, delay);
         sounds.put(s.getFullName(), s);
-        DebugMessages.getInstance().write("Sound created: " + s.getFullName());
         return s;
     }
     
@@ -113,11 +99,6 @@ public class SoundManager extends Manager implements update.Updateable{
         for (Sound s : sounds.values()) {
             s.setMult(volume);
         }
-    }
-
-    @Override
-    public String getFullName() {
-        return "SoundManager";
     }
 
     @Override

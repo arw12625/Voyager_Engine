@@ -9,7 +9,6 @@ import game.GameObject;
 import game.StandardManager;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Set;
 import util.DebugMessages;
 
 /**
@@ -30,7 +29,6 @@ public class ResourceManager extends StandardManager implements Runnable {
         loaded = new HashMap<String, Resource>();
         resourceThread = new Thread(this);
         resourceThread.setPriority(Thread.NORM_PRIORITY - 1);
-        DebugMessages.getInstance().write("ResourceManager created");
     }
 
     public static ResourceManager getInstance() {
@@ -45,7 +43,6 @@ public class ResourceManager extends StandardManager implements Runnable {
         super.destroy();
         queued.clear();
         loaded.clear();
-        DebugMessages.getInstance().write("ResourceManager destroyed");
     }
 
     private boolean loadResource(Resource r) {
@@ -58,11 +55,6 @@ public class ResourceManager extends StandardManager implements Runnable {
             DebugMessages.getInstance().write("Loading failed: " + r.getFullName());
             return false;
         }
-    }
-
-    @Override
-    public String getFullName() {
-        return "ResourceManager";
     }
 
     @Override

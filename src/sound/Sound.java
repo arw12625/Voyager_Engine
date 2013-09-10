@@ -7,13 +7,12 @@ package sound;
 import game.GameObject;
 import static org.lwjgl.openal.AL10.*;
 import org.lwjgl.util.vector.Vector3f;
-import update.Updateable;
 
 /**
  *
  * @author Andy
  */
-public class Sound extends GameObject implements Updateable {
+public class Sound extends GameObject implements update.Updateable {
 
     String name;
     int source;

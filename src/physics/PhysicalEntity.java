@@ -5,13 +5,10 @@
 package physics;
 
 import game.GameObject;
-import graphics.ThreeDGraphicsManager;
-import graphics.VectorGraphic;
 import java.util.ArrayList;
 import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Quaternion;
 import org.lwjgl.util.vector.Vector3f;
-import update.Updateable;
 import util.Utilities;
 import static util.Utilities.*;
 
@@ -19,7 +16,7 @@ import static util.Utilities.*;
  *
  * @author Andy
  */
-public abstract class PhysicalEntity extends GameObject implements Updateable, Boundable {
+public abstract class PhysicalEntity extends GameObject implements update.Updateable, Boundable {
 
     private BoundingBox orientedBounds;
     private Vector3f velocity;

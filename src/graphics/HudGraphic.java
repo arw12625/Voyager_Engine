@@ -5,17 +5,7 @@
 package graphics;
 
 import game.GameObject;
-import java.awt.Font;
-import java.util.ArrayList;
-import org.newdawn.slick.UnicodeFont;
-import org.newdawn.slick.font.effects.ColorEffect;
-import org.newdawn.slick.opengl.Texture;
 import static org.lwjgl.opengl.GL11.*;
-import org.newdawn.slick.Color;
-import org.newdawn.slick.SlickException;
-import resource.FontManager;
-import resource.FontResource;
-import resource.TextureResource;
 
 /**
  *
@@ -24,24 +14,24 @@ import resource.TextureResource;
 public class HudGraphic extends GameObject implements TwoD {
 
     String name;
-    TextureResource texture;
+    resource.TextureResource texture;
     int width, height;
     String text;
-    FontResource font;
+    resource.FontResource font;
     int textx, texty;
 
-    public HudGraphic(TextureResource texture, String text) {
-        this(texture, text, FontManager.getInstance().getFont(0), 0, 0);
+    public HudGraphic(resource.TextureResource texture, String text) {
+        this(texture, text, resource.FontManager.getInstance().getFont(0), 0, 0);
     }
     
-    public HudGraphic(String name, TextureResource texture, String text) {
-        this(name, texture, text, FontManager.getInstance().getFont(0), 0, 0);
+    public HudGraphic(String name, resource.TextureResource texture, String text) {
+        this(name, texture, text, resource.FontManager.getInstance().getFont(0), 0, 0);
     }
 
-    public HudGraphic(TextureResource texture, String text, FontResource font, int textx, int texty) {
+    public HudGraphic(resource.TextureResource texture, String text, resource.FontResource font, int textx, int texty) {
         this(text, texture, text, font, textx, texty);
     }
-    public HudGraphic(String name, TextureResource texture, String text, FontResource font, int textx, int texty) {
+    public HudGraphic(String name, resource.TextureResource texture, String text, resource.FontResource font, int textx, int texty) {
 
         this.name = name;
         
@@ -68,7 +58,7 @@ public class HudGraphic extends GameObject implements TwoD {
     @Override
     public void render() {
         if (texture != null) {
-            Color.white.bind();
+            org.newdawn.slick.Color.white.bind();
             texture.bind();
             glBegin(GL_QUADS);
             glTexCoord2f(0, 0);

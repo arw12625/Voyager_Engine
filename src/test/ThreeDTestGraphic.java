@@ -4,29 +4,25 @@
  */
 package test;
 
-import graphics.ThreeD;
 import org.lwjgl.util.vector.Vector3f;
-import org.newdawn.slick.Color;
-import resource.TextureManager;
-import resource.TextureResource;
 import static org.lwjgl.opengl.GL11.*;
 
 /**
  *
  * @author Andy
  */
-public class ThreeDTestGraphic implements ThreeD {
+public class ThreeDTestGraphic implements graphics.ThreeD {
 
     
     Vector3f[] points;
-    Color c;
+    org.newdawn.slick.Color c;
 
     public ThreeDTestGraphic() {
         points = new Vector3f[3];
         for (int i = 0; i < points.length; i++) {
             points[i] = getRandomPoint();
         }
-        c = new Color(.5f, .5f, .5f);
+        c = new org.newdawn.slick.Color(.5f, .5f, .5f);
     }
     
     @Override

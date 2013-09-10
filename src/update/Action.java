@@ -8,6 +8,6 @@ package update;
  *
  * @author Andy
  */
-public interface Event {
+public interface Action {
     public void execute();
 }

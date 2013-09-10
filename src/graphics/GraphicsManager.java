@@ -5,14 +5,10 @@
 package graphics;
 
 import game.Manager;
-import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import static org.lwjgl.opengl.GL11.*;
-import util.DebugMessages;
 
 /**
  *
@@ -40,11 +36,9 @@ public abstract class GraphicsManager extends Manager {
             Display.create();
         } catch (LWJGLException ex) {
             ex.printStackTrace();
-            Logger.getLogger(GraphicsManager.class.getName()).log(Level.SEVERE, null, ex);
         }
         glViewport(0, 0, width, height);
         glClearColor(0f, 0f, 0f, 0f);
-        DebugMessages.getInstance().write("GraphicsManager created");
 
     }
 
@@ -52,14 +46,13 @@ public abstract class GraphicsManager extends Manager {
     public void destroy() {
         super.destroy();
         Display.destroy();
-        DebugMessages.getInstance().write("GraphicsManager destroyed");
     }
 
     public void setDisplayMode(DisplayMode displayMode) {
         try {
             Display.setDisplayMode(displayMode);
         } catch (LWJGLException ex) {
-            Logger.getLogger(GraphicsManager.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
         }
     }
     

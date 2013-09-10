@@ -4,10 +4,7 @@
  */
 package test;
 
-import input.InputManager;
-import update.UpdateManager;
 import game.*;
-import script.Console;
 import org.lwjgl.input.Keyboard;
 
 /**
@@ -31,23 +28,23 @@ public class GameStateManager extends Manager implements update.Updateable {
     @Override
     public void create() {
         super.create();
-        InputManager.getInstance().put(toggleKey);
-        InputManager.getInstance().put(exitKey);
+        input.InputManager.getInstance().put(toggleKey);
+        input.InputManager.getInstance().put(exitKey);
     }
 
     @Override
     public void update(int delta) {
-        if (InputManager.getInstance().get(exitKey).isPressed()) {
+        if (input.InputManager.getInstance().get(exitKey).isPressed()) {
             Game.quit();
         }
-        if (InputManager.getInstance().get(toggleKey).isPressed()) {
+        if (input.InputManager.getInstance().get(toggleKey).isPressed()) {
             togglePause();
         }
     }
 
     public void togglePause() {
         paused = !paused;
-        Console.getInstance().setEnabled(paused);
+        script.Console.getInstance().setEnabled(paused);
     }
 
     @Override

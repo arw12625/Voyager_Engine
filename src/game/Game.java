@@ -9,11 +9,6 @@ import input.InputManager;
 import resource.ResourceManager;
 import update.UpdateManager;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.lwjgl.LWJGLException;
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
 
 /**
  *

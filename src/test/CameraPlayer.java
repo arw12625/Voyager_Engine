@@ -4,8 +4,6 @@
  */
 package test;
 
-import graphics.ViewPoint;
-import input.InputManager;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.vector.Quaternion;
 import org.lwjgl.util.vector.Vector3f;
@@ -19,7 +17,7 @@ public class CameraPlayer extends game.Player {
 
     Vector3f position;
     Quaternion orientation;
-    ViewPoint vp;
+    graphics.ViewPoint vp;
     private float xAngle;
     private float yAngle;
     private float piOver180 = (float) (Math.PI / 180f);
@@ -30,15 +28,15 @@ public class CameraPlayer extends game.Player {
         super.create();
         position = new Vector3f();
         orientation = new Quaternion();
-        vp = new ViewPoint(position, orientation);
+        vp = new graphics.ViewPoint(position, orientation);
     }
 
     @Override
     public void update(int delta) {
-        InputManager keyboard = InputManager.getInstance();
+        input.InputManager keyboard = input.InputManager.getInstance();
         
-        float dx = InputManager.getInstance().getDX() / 100f;
-        float dy = -InputManager.getInstance().getDY() / 100f;
+        float dx = input.InputManager.getInstance().getDX() / 100f;
+        float dy = -input.InputManager.getInstance().getDY() / 100f;
         xAngle += dy;
         yAngle += dx;
         if (xAngle > maxDeviation) {
@@ -90,7 +88,7 @@ public class CameraPlayer extends game.Player {
         this.orientation = orientation;
     }
     
-    public ViewPoint getViewPoint() {
+    public graphics.ViewPoint getViewPoint() {
         return vp;
     }
 }

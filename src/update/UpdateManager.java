@@ -6,12 +6,10 @@ package update;
 
 import game.Game;
 import game.GameObject;
-import input.InputManager;
 import game.StandardManager;
 import java.util.ArrayList;
 import org.lwjgl.Sys;
 import util.DebugMessages;
-import update.Updateable;
 
 /**
  *
@@ -34,7 +32,6 @@ public class UpdateManager extends StandardManager implements Runnable {
         this.updateTime = defaultUpdateTime;
         lastTime = getTime();
         entities = new ArrayList<Updateable>();
-        DebugMessages.getInstance().write("UpdateManager created");
     }
 
     @Override
@@ -45,7 +42,6 @@ public class UpdateManager extends StandardManager implements Runnable {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        DebugMessages.getInstance().write("UpdateManager destroyed");
     }
 
     public static UpdateManager getInstance() {
@@ -79,7 +75,7 @@ public class UpdateManager extends StandardManager implements Runnable {
         DebugMessages.getInstance().write("Delta: " + delta + "  FPS: " + (1000 / delta));
         DebugMessages.getInstance().write("Updates starting");
         
-        InputManager.getInstance().processInputs();
+        input.InputManager.getInstance().processInputs();
                 
         for (Updateable e : entities) {
             e.update(delta);

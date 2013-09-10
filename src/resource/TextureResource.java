@@ -5,8 +5,6 @@
 package resource;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
@@ -34,7 +32,7 @@ public class TextureResource extends Resource implements Texture {
             TextureImpl.unbind();
             t = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/" + path));
         } catch (IOException ex) {
-            Logger.getLogger(TextureResource.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
             return false;
         }
         return true;

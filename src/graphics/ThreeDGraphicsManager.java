@@ -6,11 +6,7 @@ package graphics;
 
 import game.*;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.util.glu.GLU.*;
 import java.util.ArrayList;
-import org.newdawn.slick.Color;
-import script.Console;
-import util.DebugMessages;
 import static util.Utilities.*;
 
 /**
@@ -95,7 +91,7 @@ public class ThreeDGraphicsManager extends GraphicsManager {
 
     @Override
     public void render() {
-        DebugMessages.getInstance().write("Rendering started");
+        util.DebugMessages.getInstance().write("Rendering started");
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -115,7 +111,7 @@ public class ThreeDGraphicsManager extends GraphicsManager {
         }
 
         super.render();
-        DebugMessages.getInstance().write("Rendering finished");
+        util.DebugMessages.getInstance().write("Rendering finished");
     }
 
     public void addGraphic3D(ThreeD de, int z) {

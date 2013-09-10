@@ -4,12 +4,8 @@
  */
 package test;
 
-import resource.ResourceManager;
-import physics.Mesh;
-import graphics.ThreeDModel;
 import java.util.ArrayList;
-import physics.PhysicalEntity;
-import physics.Plane;
+
 
 /**
  *
@@ -17,26 +13,24 @@ import physics.Plane;
  */
 public class RigidBody extends AbstractEntity {
 
-    public RigidBody(ThreeDModel m) {
+    public RigidBody(graphics.ThreeDModel m) {
         super(m);
     }
     
     public static RigidBody rigidBodyFromPath(String mpath) {
-        Mesh mesh = new Mesh(mpath);
+        physics.Mesh mesh = new physics.Mesh(mpath);
         mesh.create();
-        while(!mesh.isLoaded()) {
-            Thread.yield();
-        }
-        ThreeDModel model = new ThreeDModel(mesh);
+        graphics.ThreeDModel model = new graphics.ThreeDModel(mesh);
         model.create();
         return new RigidBody(model);
     }
+    
     @Override
-    public void collide(ArrayList<Plane> collisions) {
+    public void collide(ArrayList<physics.Plane> collisions) {
     }
 
     @Override
-    public void collide(PhysicalEntity collisions) {
+    public void collide(physics.PhysicalEntity collisions) {
     }
 
 }

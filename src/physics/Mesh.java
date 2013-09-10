@@ -4,37 +4,26 @@
  */
 package physics;
 
-import graphics.Face;
-import graphics.Material;
-import resource.Resource;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.lwjgl.util.vector.*;
 import org.newdawn.slick.util.ResourceLoader;
-import physics.Boundable;
-import physics.BoundingBox;
-import resource.Resource;
-import resource.TextureManager;
-import resource.TextureManager;
-import resource.TextureResource;
 
 /**
  *
  * @author Andy
  */
-public class Mesh extends Resource implements Boundable {
+public class Mesh extends resource.Resource implements Boundable {
 
     String path;
     private ArrayList<Vector3f> vertices;
     private ArrayList<Vector3f> normals;
     private ArrayList<Vector2f> texCoords;
-    private ArrayList<Face> faces;
-    private ArrayList<Material> materialList;
+    private ArrayList<graphics.Face> faces;
+    private ArrayList<graphics.Material> materialList;
     BoundingBox b;
 
     public Mesh(String path) {
@@ -58,7 +47,7 @@ public class Mesh extends Resource implements Boundable {
         return texCoords;
     }
 
-    public ArrayList<Face> getFaces() {
+    public ArrayList<graphics.Face> getFaces() {
         return faces;
     }
 
@@ -67,14 +56,14 @@ public class Mesh extends Resource implements Boundable {
         vertices = new ArrayList<Vector3f>();
         normals = new ArrayList<Vector3f>();
         texCoords = new ArrayList<Vector2f>();
-        faces = new ArrayList<Face>();
-        materialList = new ArrayList<Material>();
+        faces = new ArrayList<graphics.Face>();
+        materialList = new ArrayList<graphics.Material>();
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(
                     ResourceLoader.getResourceAsStream("res/" + path + ".obj")));
-            HashMap<String, Material> materials = new HashMap<String, Material>();
+            HashMap<String, graphics.Material> materials = new HashMap<String, graphics.Material>();
             String line;
-            Material currentMaterial = Material.defaultMaterial;
+            graphics.Material currentMaterial = graphics.Material.defaultMaterial;
             while ((line = reader.readLine()) != null) {
                 if (line.startsWith("#")) {
                     continue;
@@ -113,7 +102,7 @@ public class Mesh extends Resource implements Boundable {
                         texCoordIndicesArray = new int[]{Integer.parseInt(faceIndices[1].split("/")[1]) - 1,
                             Integer.parseInt(faceIndices[2].split("/")[1]) - 1, Integer.parseInt(faceIndices[3].split("/")[1]) - 1};
                     }
-                    faces.add(new Face(vertexIndicesArray, normalIndicesArray, texCoordIndicesArray, currentMaterial));
+                    faces.add(new graphics.Face(vertexIndicesArray, normalIndicesArray, texCoordIndicesArray, currentMaterial));
                 } else if (line.startsWith("dim ")) {
                     float x, y, z;
                     x = Float.parseFloat(spaceSplit[1]);
@@ -124,7 +113,7 @@ public class Mesh extends Resource implements Boundable {
                 }
             }
             reader.close();
-            materialList = new ArrayList<Material>(materials.values());
+            materialList = new ArrayList<graphics.Material>(materials.values());
 
         } catch (IOException e) {
             return false;
@@ -132,13 +121,13 @@ public class Mesh extends Resource implements Boundable {
         return true;
     }
 
-    public static HashMap<String, Material> loadMaterialLibrary(String materialFilePath) {
-        HashMap<String, Material> materials = new HashMap<String, Material>();
+    public static HashMap<String, graphics.Material> loadMaterialLibrary(String materialFilePath) {
+        HashMap<String, graphics.Material> materials = new HashMap<String, graphics.Material>();
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(
                     ResourceLoader.getResourceAsStream("res/" + materialFilePath)));
             String line;
-            Material parseMaterial = null;
+            graphics.Material parseMaterial = null;
             String materialName = "";
             while ((line = reader.readLine()) != null) {
                 if (line.startsWith("#")) {
@@ -150,7 +139,7 @@ public class Mesh extends Resource implements Boundable {
                         materials.put(materialName, parseMaterial);
                     }
                     materialName = spaceSplit[1];
-                    parseMaterial = new Material();
+                    parseMaterial = new graphics.Material();
                 } else if (line.startsWith("Ns ")) {
                     parseMaterial.setSpecularCoefficient(Float.valueOf(spaceSplit[1]));
                 } else if (line.startsWith("Ka ")) {
@@ -160,9 +149,9 @@ public class Mesh extends Resource implements Boundable {
                 } else if (line.startsWith("Kd ")) {
                     parseMaterial.setDiffuseColor(new float[]{Float.valueOf(spaceSplit[1]), Float.valueOf(spaceSplit[2]), Float.valueOf(spaceSplit[3])});
                 } else if (line.startsWith("map_Kd")) {
-                    parseMaterial.setTexture(TextureManager.getInstance().loadTextureResource(spaceSplit[1]));
+                    parseMaterial.setTexture(resource.TextureManager.getInstance().loadTextureResource(spaceSplit[1]));
                 } else {
-                    System.err.println("[MTL] Unknown Line: " + line);
+                    util.DebugMessages.getInstance().write("[MTL] Unknown Line: " + line);
                 }
             }
             materials.put(materialName, parseMaterial);

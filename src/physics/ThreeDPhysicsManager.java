@@ -4,7 +4,6 @@
  */
 package physics;
 
-import update.UpdateManager;
 import game.*;
 import java.util.ArrayList;
 import org.lwjgl.util.vector.Vector3f;
@@ -102,7 +101,10 @@ public class ThreeDPhysicsManager extends StandardManager implements update.Upda
 
                                 float deltaV = newVelocity - highestVelocity;
                                 Vector3f normal = new Vector3f(toResolve.getNormal());
-                                normal.scale(deltaV * e.getMass() / 5f);
+                                normal.scale(deltaV * e.getMass() / 10f);
+                                if (normal.lengthSquared() > 0.1f) {
+                                    System.out.println(normal);
+                                }
                                 e.applyImpulseAtPoint(normal, v);
                             }
                         }

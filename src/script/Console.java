@@ -4,30 +4,17 @@
  */
 package script;
 
-import input.KeyStatus;
-import input.InputManager;
 import game.*;
-import graphics.HudGraphic;
-import graphics.Menu;
-import graphics.ThreeDGraphicsManager;
-import org.newdawn.slick.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.lwjgl.input.Keyboard;
-
 import javax.script.*;
-import resource.FontManager;
-import resource.FontResource;
-import resource.TextureManager;
-import update.Updateable;
 
 /**
  *
  * @author Andy
  */
-public class Console extends GameObject implements Updateable {
+public class Console extends GameObject implements update.Updateable {
 
     StringBuilder line;
     ArrayList<String> inputs;
@@ -35,9 +22,9 @@ public class Console extends GameObject implements Updateable {
     ScriptManager scriptManager;
     HashMap<Integer, Character> keyNorm;
     HashMap<Integer, Character> keyShift;
-    FontResource consoleFont;
-    Menu terminal;
-    HudGraphic lineGraphic;
+    resource.FontResource consoleFont;
+    graphics.Menu terminal;
+    graphics.HudGraphic lineGraphic;
     private int upCounter;
     private int underCounter;
     private static final int counterReset = 500;
@@ -56,7 +43,7 @@ public class Console extends GameObject implements Updateable {
     @Override
     public void create() {
         super.create();
-        InputManager keyboard = InputManager.getInstance();
+        input.InputManager keyboard = input.InputManager.getInstance();
         defineKeySets();
         for (Integer i : keyNorm.keySet()) {
             keyboard.put(i);
@@ -72,11 +59,11 @@ public class Console extends GameObject implements Updateable {
         inputs = new ArrayList<String>();
         lines = new ArrayList<String>();
 
-        FontManager fm = FontManager.getInstance();
-        consoleFont = fm.createFont("console", new Color(102, 135, 172));
-        lineGraphic = new HudGraphic("Console", TextureManager.getInstance().loadTextureResource("terminal.png"), "", consoleFont, 10, 8);
+        resource.FontManager fm = resource.FontManager.getInstance();
+        consoleFont = fm.createFont("console", new org.newdawn.slick.Color(102, 135, 172));
+        lineGraphic = new graphics.HudGraphic("Console", resource.TextureManager.getInstance().loadTextureResource("terminal.png"), "", consoleFont, 10, 8);
         lineGraphic.create();
-        terminal = new Menu(0, 0, false, lineGraphic, true, null, null);
+        terminal = new graphics.Menu(0, 0, false, lineGraphic, true, null, null);
         terminal.create();
         graphics.ThreeDGraphicsManager.getInstance().add(terminal);
         
@@ -106,10 +93,10 @@ public class Console extends GameObject implements Updateable {
     public void update(int delta) {
         if (inputEnable) {
             String oldLine = line.toString();
-            InputManager keyboard = InputManager.getInstance();
+            input.InputManager keyboard = input.InputManager.getInstance();
             boolean shift = keyboard.get(lshiftKey).isDown() || keyboard.get(rshiftKey).isDown();
             for (Integer i : keyNorm.keySet()) {
-                KeyStatus k = keyboard.get(i);
+                input.KeyStatus k = keyboard.get(i);
                 if (k.isPressed()) {
                     Character c = shift ? keyShift.get(i) : keyNorm.get(i);
                     line.append(c);
@@ -175,7 +162,7 @@ public class Console extends GameObject implements Updateable {
                 counter++;
             }
         }
-        int start = Math.max(lines.size() + counter - (ThreeDGraphicsManager.getInstance().getHeight() / consoleFont.getHeight() - 1), 0);
+        int start = Math.max(lines.size() + counter - (graphics.ThreeDGraphicsManager.getInstance().getHeight() / consoleFont.getHeight() - 1), 0);
         for (int i = start; i < lines.size(); i++) {
             display.append(lines.get(i) + "\n");
         }
@@ -190,7 +177,7 @@ public class Console extends GameObject implements Updateable {
 
     private ArrayList<String> wordWrap(String input) {
         ArrayList<String> wrapped = new ArrayList<String>();
-        int width = (int) ((ThreeDGraphicsManager.getInstance().getWidth()) / consoleFont.getWidth());
+        int width = (int) ((graphics.ThreeDGraphicsManager.getInstance().getWidth()) / consoleFont.getWidth());
         int i = 0;
         while (i < input.length()) {
             if (i + width < input.length()) {
@@ -208,7 +195,7 @@ public class Console extends GameObject implements Updateable {
         String prefix = getPrefix();
         StringBuilder wordWrap = new StringBuilder(input);
         wordWrap.insert(0, getPrefix());
-        int width = (int) ((ThreeDGraphicsManager.getInstance().getWidth()) / consoleFont.getWidth());
+        int width = (int) ((graphics.ThreeDGraphicsManager.getInstance().getWidth()) / consoleFont.getWidth());
         for (int i = 1; i < wordWrap.length() / width + 1; i++) {
             wordWrap.insert(i * width, "\n");
         }

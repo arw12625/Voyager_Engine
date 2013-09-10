@@ -4,13 +4,9 @@
  */
 package resource;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.AngelCodeFont;
 import org.newdawn.slick.Font;
-import org.newdawn.slick.font.effects.ColorEffect;
-import static org.lwjgl.opengl.GL11.*;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.opengl.TextureImpl;
 
@@ -47,7 +43,7 @@ public class FontResource extends Resource {
             TextureImpl.unbind();
             aFont = new AngelCodeFont("res/" + fontPath, "res/" + texturePath);
         } catch (SlickException ex) {
-            Logger.getLogger(FontResource.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
         }
         return true;
     }

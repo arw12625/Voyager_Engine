@@ -4,7 +4,6 @@
  */
 package sound;
 
-import resource.Resource;
 import java.io.BufferedInputStream;
 import org.lwjgl.util.WaveData;
 import org.newdawn.slick.util.ResourceLoader;
@@ -14,7 +13,7 @@ import static org.lwjgl.openal.AL10.*;
  *
  * @author Andy
  */
-public class SoundResource extends Resource {
+public class SoundResource extends resource.Resource {
 
     String name;
     String path;
