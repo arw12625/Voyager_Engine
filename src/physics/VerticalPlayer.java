@@ -19,14 +19,13 @@ import static org.lwjgl.opengl.GL11.*;
  *
  * @author Andy
  */
-public class PhysicalPlayer extends Player implements graphics.ThreeD {
+public class VerticalPlayer extends Player implements graphics.ThreeD {
 
     graphics.ViewPoint vp;
     physics.PhysicalEntity pe;
     private float xAngle;
     private float yAngle;
     private float piOver180 = (float) (Math.PI / 180f);
-    private Quaternion orientation;
     private float maxDeviation = 85f * piOver180;
 
     @Override
@@ -73,7 +72,7 @@ public class PhysicalPlayer extends Player implements graphics.ThreeD {
                 }
                 if (go.lengthSquared() != 0) {
                     pe.setAwake(true);
-                    go = transform(go, orientation);
+                    go = transform(go, pe.getBounds().getOrientation());
                     go.scale(2);
                     pe.applyForce(go);
                     //pe.setVelocity(go);
@@ -96,9 +95,9 @@ public class PhysicalPlayer extends Player implements graphics.ThreeD {
         }
         xAngle %= Math.PI;
         yAngle %= Math.PI * 2;
-        orientation = (Quaternion.mul(quatFromAxisAngle(new Vector3f(1, 0, 0), xAngle), quatFromAxisAngle(new Vector3f(0, 1, 0), yAngle), null));
+        pe.getBounds().setOrientation(Quaternion.mul(quatFromAxisAngle(new Vector3f(1, 0, 0), xAngle), quatFromAxisAngle(new Vector3f(0, 1, 0), yAngle), null));
         vp.setPosition(pe.getBounds().getPosition());
-        vp.setOrientation(orientation);
+        vp.setOrientation(pe.getBounds().getOrientation());
     }
 
     public graphics.ViewPoint getViewPoint() {

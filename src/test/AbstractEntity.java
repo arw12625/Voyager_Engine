@@ -26,47 +26,38 @@ public abstract class AbstractEntity extends physics.PhysicalEntity implements g
 
     @Override
     public void update(int delta) {
-        
-        
-        
+
         input.InputManager keyboard = input.InputManager.getInstance();
-                Vector3f go = new Vector3f();
-                if (keyboard.get(Keyboard.KEY_I).isDown()) {
-                    go.translate(0, 0, -1);
-                }
-                if (keyboard.get(Keyboard.KEY_K).isDown()) {
-                    go.translate(0, 0, 1);
-                }
-                if (keyboard.get(Keyboard.KEY_J).isDown()) {
-                    go.translate(-1, 0, 0);
-                }
-                if (keyboard.get(Keyboard.KEY_L).isDown()) {
-                    go.translate(1, 0, 0);
-                }
-                if (keyboard.get(Keyboard.KEY_U).isDown()) {
-                    go.translate(0, 5, 0);
-                }
-                if (keyboard.get(Keyboard.KEY_O).isDown()) {
-                    go.translate(0, -5, 0);
-                }
-                if (go.lengthSquared() != 0) {
-                    go.scale(2);
-                    applyForce(go);
-                }
-        
-        
-        
-        
-        Vector3f v = getBounds().getGlobalVertices()[0];
-        Vector3f pointVelocity = Vector3f.add(this.getVelocity(), Vector3f.cross(Utilities.transform(this.getAngularVelocity(), this.getOrientation()), Vector3f.sub(v, this.getPosition(), null), null), null);
-        System.out.println(pointVelocity.length());
+        Vector3f go = new Vector3f();
+        if (keyboard.get(Keyboard.KEY_I).isDown()) {
+            go.translate(0, 0, -1);
+        }
+        if (keyboard.get(Keyboard.KEY_K).isDown()) {
+            go.translate(0, 0, 1);
+        }
+        if (keyboard.get(Keyboard.KEY_J).isDown()) {
+            go.translate(-1, 0, 0);
+        }
+        if (keyboard.get(Keyboard.KEY_L).isDown()) {
+            go.translate(1, 0, 0);
+        }
+        if (keyboard.get(Keyboard.KEY_U).isDown()) {
+            go.translate(0, 5, 0);
+        }
+        if (keyboard.get(Keyboard.KEY_O).isDown()) {
+            go.translate(0, -5, 0);
+        }
+        if (go.lengthSquared() != 0) {
+            go.scale(2);
+            applyForce(go);
+        }
     }
 
     @Override
     public void render() {
         Vector3f pos = getPosition();
         Quaternion orientation = getOrientation();
-        float angle = (float)(Math.acos(orientation.getW()) * 2 * 180 / Math.PI);
+        float angle = (float) (Math.acos(orientation.getW()) * 2 * 180 / Math.PI);
         glPushMatrix();
         glTranslatef(pos.getX(), pos.getY(), pos.getZ());
         glRotatef(-angle, orientation.getX(), orientation.getY(), orientation.getZ());

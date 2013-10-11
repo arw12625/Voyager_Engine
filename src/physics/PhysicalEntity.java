@@ -205,4 +205,8 @@ public abstract class PhysicalEntity extends GameObject implements update.Update
         return getBounds().getOrientation();
     }
 
+    public void setOrientation(Quaternion orientation) {
+        orientedBounds.setOrientation(orientation);
+    }
+
 }

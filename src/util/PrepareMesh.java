@@ -17,7 +17,7 @@ public class PrepareMesh {
 
     public static void main(String[] args) {
         if (args.length == 0) {
-            prepareMesh("building", "building_fix");
+            prepareMesh("loop-smooth", "loop-smooth_fix");
         } else if(args.length == 1) {
             prepareMesh(args[0], args[0] + "_fix");
         } else if(args.length == 2) {

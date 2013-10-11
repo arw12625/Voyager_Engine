@@ -5,10 +5,12 @@
 package graphics;
 
 import game.*;
+import org.lwjgl.input.Mouse;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.util.glu.GLU.*;
 import org.lwjgl.util.vector.Quaternion;
 import org.lwjgl.util.vector.Vector3f;
+import util.Utilities;
 
 /**
  *
@@ -45,17 +47,19 @@ public class ViewPoint extends GameObject {
         this.zFar = zFar;
 
     }
-    
+
     public void perspectiveView() {
-        
+
         glLoadIdentity();
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
         gluPerspective(fieldOfView, aspectRatio, zNear, zFar);
         glMatrixMode(GL_MODELVIEW);
 
+
+
     }
-    
+
     public void moveFromWorld(Vector3f u) {
 
         position.translate(u.getX(), u.getY(), u.getZ());
@@ -73,7 +77,7 @@ public class ViewPoint extends GameObject {
     }
 
     public void adjustToView() {
-        float angle = (float)(Math.acos(orientation.getW()) * 2 * 180 / Math.PI);
+        float angle = (float) (Math.acos(orientation.getW()) * 2 * 180 / Math.PI);
         glRotatef(angle, orientation.getX(), orientation.getY(), orientation.getZ());
         glTranslatef(-position.getX(), -position.getY(), -position.getZ());
     }

@@ -22,7 +22,6 @@ public class GameScript extends GameObject {
     @Override
     public void create() {
         super.create();
-        ScriptManager.getInstance().add(this);
     }
     
     public String getScript() {

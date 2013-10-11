@@ -8,6 +8,8 @@ import game.GameObject;
 import game.Manager;
 import game.StandardManager;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
@@ -42,13 +44,7 @@ public class ScriptManager extends StandardManager {
     }
 
     private void loadStartupScripts() {
-        try {
-            eval("importClass(Packages.game.Game)");
-            eval("function quit() { Game.quit() }");
-            eval("function exit() { Game.quit() }");
-        } catch (ScriptException ex) {
-            ex.printStackTrace();
-        }
+        loadAndExecute("Script.js");
     }
 
     public void eval(String command) throws ScriptException {
@@ -76,6 +72,23 @@ public class ScriptManager extends StandardManager {
     public void remove(GameObject obj) {
         if(scripts.contains(obj)) {
             scripts.remove(obj);
+        }
+    }
+    
+    public GameScript loadScript(String path) {
+        resource.TextResource text = new resource.TextResource(path);
+        text.create();
+        GameScript g = new GameScript(text.getTextString());
+        g.create();
+        add(g);
+        return g;
+    }
+    
+    public void loadAndExecute(String path) {
+        try {
+            execute(loadScript(path));
+        } catch (ScriptException ex) {
+            ex.printStackTrace();
         }
     }
 }

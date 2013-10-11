@@ -13,23 +13,17 @@ import game.*;
 import graphics.*;
 import org.lwjgl.input.Keyboard;
 import physics.ThreeDPhysicsManager;
-import physics.PhysicalPlayer;
+import physics.VerticalPlayer;
 import script.Console;
 import util.DebugMessages;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.script.ScriptException;
 import org.lwjgl.input.Mouse;
-import org.lwjgl.util.vector.Quaternion;
 import org.lwjgl.util.vector.Vector3f;
 import physics.*;
 import resource.FontManager;
 import resource.TextureManager;
-import script.GameScript;
 import script.ScriptManager;
-import update.Updateable;
-import util.Utilities;
 
 /**
  *
@@ -57,56 +51,23 @@ public class GameTest {
         DebugMessages.getInstance().create();
         GameStateManager.getInstance().create();
 
-        PhysicalPlayer player = new PhysicalPlayer();
+        VerticalPlayer player = new VerticalPlayer();
         player.create();
         Game.setPlayer(player);
         graphicsManager.setViewPoint(player.getViewPoint());
         
         Console.getInstance().create();
-        graphics = new ArrayList<TestGraphic>();
-        /*addTestGraphic();
-        addTestGraphic();
-        addTestGraphic();
-        addTestGraphic();*/
-
-        ScriptManager sm = ScriptManager.getInstance();
-        try {
-            sm.eval("importClass(Packages.test.GameTest)");
-            sm.eval("function addTri() { GameTest.addTestGraphic() }");
-            sm.eval("function removeTri() { GameTest.removeTestGraphic() }");
-            sm.eval("function enableDebug(enable) { GameTest.enableDebug(enable) }");
-            sm.execute(new GameScript(""));
-        } catch (ScriptException ex) {
-            ex.printStackTrace();
-        }
+            ScriptManager.getInstance().loadAndExecute("GameTest.js");
         
-        /*Mesh m = new Mesh("palm_fix", "palm_fix");
-        ResourceManager.getInstance().loadResource(m);
-        System.out.println(m);
-        ThreeDGraphicsManager.getInstance().addGraphic3D(new ThreeDModel(m));*/
-        
-        final RigidBody green = RigidBody.rigidBodyFromPath("box_fix");
-        green.create();
-        //green.getBounds().setOrientation(Utilities.quatFromAxisAngle(new Vector3f(0, 0, 1), -(float)Math.PI));
-        
-        green.setPosition(new Vector3f(-0, 8f, 0));
-        //green.setPosition(new Vector3f(0, 7, 0));
-        physics.ThreeDPhysicsManager.getInstance().add(green);
-        graphicsManager.add(green);
         ForceGenerator grav = new ForceGenerator() {
 
             @Override
             public void applyForce(PhysicalEntity pe) {
-                pe.applyForce(new Vector3f(0, -3f* pe.getMass(), 0));
+                pe.applyForce(new Vector3f(0, -8f* pe.getMass(), 0));
             }
         };
-        green.addForceGenerator(grav);
         
-        /*RigidBody ter = RigidBody.rigidBodyFromPath("terrain-fix");
-        ter.create();
-        physics.ThreeDPhysicsManager.getInstance().add(ter);
-        graphicsManager.add(ter);*/
-        Mesh ter = new Mesh("building_fix");
+        Mesh ter = new Mesh("loop-smooth_fix");
         ter.create();
         ThreeDModel terDisp = new ThreeDModel(ter);
         terDisp.create();
@@ -115,19 +76,26 @@ public class GameTest {
         cm.create();
         physics.ThreeDPhysicsManager.getInstance().setCollisionMesh(cm);
         
+        player.getPhysicalEntity().setPosition(new Vector3f(0, 7, 0));
+        //player.getPhysicalEntity().addForceGenerator(grav);
+        
+        final RigidBody green = RigidBody.rigidBodyFromPath("box_fix");
+        green.create();
+        graphicsManager.add(green);
+        //green.getBounds().setOrientation(Utilities.quatFromAxisAngle(new Vector3f(0, 0, 1), -(float)Math.PI));
+        green.setPosition(new Vector3f(-20, 15f, 7));
+        physics.ThreeDPhysicsManager.getInstance().add(green);
+        green.addForceGenerator(grav);
+        
         InputManager.getInstance().put(Keyboard.KEY_UP);
         InputManager.getInstance().put(Keyboard.KEY_DOWN);
         InputManager.getInstance().put(Keyboard.KEY_LEFT);
         InputManager.getInstance().put(Keyboard.KEY_RIGHT);
         Mouse.setGrabbed(true);
         
-        //player.getPhysicalEntity().addForceGenerator(grav);
-        
         SkySphere s = new SkySphere(SkySphere.SkyType.PLAIN_NIGHT);
         s.create();
         graphicsManager.addGraphic3D(s, -100);
-        
-        player.getPhysicalEntity().setPosition(new Vector3f(0, 7, 0));
         
         Game.run();
         Game.destroy();

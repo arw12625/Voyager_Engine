@@ -131,6 +131,7 @@ public class Octree<T extends Boundable> extends GameObject implements Boundable
             newBounds[i].create();
             newBounds[i].setPosition(Vector3f.add(center, newBounds[i].getPosition(), null));
             children[i] = new Octree(newBounds[i]);
+            //graphics.ThreeDGraphicsManager.getInstance().addGraphic3D(newBounds[i], 0);
         }
         
 

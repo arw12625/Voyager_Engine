@@ -15,10 +15,19 @@ public class VectorGraphic extends game.GameObject implements graphics.ThreeD {
 
     Vector3f position;
     Vector3f vec;
+    boolean normalised;
 
     public VectorGraphic(Vector3f pos, Vector3f vec) {
+        this(pos, vec, false);
+    }
+    
+    public VectorGraphic(Vector3f pos, Vector3f vec, boolean normalised) {
         this.position = pos;
         this.vec = vec;
+        this.normalised = normalised;
+        if (normalised && vec.lengthSquared() != 0) {
+            vec.normalise(vec);
+        }
     }
 
     @Override
@@ -32,7 +41,7 @@ public class VectorGraphic extends game.GameObject implements graphics.ThreeD {
 
     public void setVector(Vector3f v) {
         this.vec = new Vector3f(v);
-        if (v.lengthSquared() != 0) {
+        if (normalised && v.lengthSquared() != 0) {
             vec.normalise();
         }
     }

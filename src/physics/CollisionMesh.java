@@ -49,7 +49,7 @@ public class CollisionMesh extends GameObject implements Boundable {
 
             Plane p = new Plane(verts, collision.getNormals().get(face.getNormalIndices()[0]));
             planes.insert(p);
-            //ThreeDGraphicsManager.getInstance().addGraphic3D(p, 10);
+            //graphics.ThreeDGraphicsManager.getInstance().addGraphic3D(p, 10);
         }
     }
     
