@@ -20,7 +20,7 @@ public abstract class AbstractEntity extends physics.PhysicalEntity implements g
     graphics.ThreeDModel m;
 
     public AbstractEntity(graphics.ThreeDModel m) {
-        super(m.getMesh().getBounds());
+        super(m.getBounds());
         this.m = m;
     }
 

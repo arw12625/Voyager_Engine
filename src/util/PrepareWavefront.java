@@ -4,29 +4,48 @@
  */
 package util;
 
+import game.Game;
+import game.GameObjectManager;
+import graphics.ThreeDGraphicsManager;
+import input.InputManager;
 import java.io.*;
 import java.nio.channels.FileChannel;
 import org.lwjgl.util.vector.Vector3f;
 import org.newdawn.slick.util.ResourceLoader;
+import resource.ResourceManager;
+import resource.TextureManager;
+import resource.WavefrontModel;
+import update.UpdateManager;
 
 /**
  *
  * @author Andy
  */
-public class PrepareMesh {
+public class PrepareWavefront {
 
     public static void main(String[] args) {
+        UpdateManager updateManager = UpdateManager.getInstance();
+        ThreeDGraphicsManager graphicsManager = ThreeDGraphicsManager.getInstance();
+        InputManager inputManager = InputManager.getInstance();
+        ResourceManager resourceManager = ResourceManager.getInstance();
+        GameObjectManager gameObjectManager = GameObjectManager.getInstance();
+
+        Game.create("THE GAME", updateManager, graphicsManager, inputManager, resourceManager, gameObjectManager);
+
+        TextureManager.getInstance().create();
+        
         if (args.length == 0) {
-            prepareMesh("loop-smooth", "loop-smooth_fix");
+            prepareMesh("teapot", "teapot_fix");
         } else if(args.length == 1) {
             prepareMesh(args[0], args[0] + "_fix");
         } else if(args.length == 2) {
             prepareMesh(args[0], args[1]);
         }
+        
     }
 
     public static void prepareMesh(String origPath, String fixPath) {
-        physics.Mesh m = new physics.Mesh(origPath);
+        WavefrontModel m = new WavefrontModel(origPath);
         m.load();
         Vector3f[] verts = new Vector3f[m.getVertices().size()];
         for (int i = 0; i < verts.length; i++) {

@@ -12,27 +12,29 @@ import resource.TextureResource;
  */
 public class Material {
 
+    String name;
     private float[] ambientColor; // 0-1
     private float[] diffuseColor; // 0-1
     private float[] specularColor; // 0-1
     private float specularCoefficient; // 0-1000
     private TextureResource texture;
     
-    public static Material defaultMaterial = new Material(new float[] {.3f, .3f, .3f});
+    public static Material defaultMaterial = new Material("default", new float[] {.3f, .3f, .3f});
 
-    public Material() {
-        
+    public Material(String name) {
+        this.name = name;
     }
     
-    public Material(float[] ambientColor) {
-        this(ambientColor, null, null, 0);
+    public Material(String name, float[] ambientColor) {
+        this(name, ambientColor, null, null, 0);
     }
 
-    public Material(float[] ambientColor, float[] diffuseColor, float[] specularColor, float specularCoefficient) {
-        this(ambientColor, diffuseColor, specularColor, specularCoefficient, null);
+    public Material(String name, float[] ambientColor, float[] diffuseColor, float[] specularColor, float specularCoefficient) {
+        this(name, ambientColor, diffuseColor, specularColor, specularCoefficient, null);
     }
 
-    public Material(float[] ambientColor, float[] diffuseColor, float[] specularColor, float specularCoefficient, TextureResource texture) {
+    public Material(String name, float[] ambientColor, float[] diffuseColor, float[] specularColor, float specularCoefficient, TextureResource texture) {
+        this.name = name;
         this.ambientColor = ambientColor;
         this.diffuseColor = diffuseColor;
         this.specularColor = specularColor;
@@ -84,9 +86,13 @@ public class Material {
         this.texture = texture;
     }
     
+    public String getName() {
+        return name;
+    }
+    
     @Override
         public String toString() {
-            return "Material{" +
+            return "Material{" + name + 
                     ", ambientColour=" + ambientColor +
                     ", diffuseColour=" + diffuseColor +
                     ", specularColour=" + specularColor +

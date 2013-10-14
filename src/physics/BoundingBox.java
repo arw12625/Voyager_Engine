@@ -29,6 +29,10 @@ public class BoundingBox extends game.GameObject implements Boundable, graphics.
     private static boolean lines = true;
     private static boolean points = true;
 
+    public BoundingBox() {
+        this(new Vector3f(), new Vector3f());
+    }
+
     public BoundingBox(Vector3f position, Vector3f dimension) {
         this(position, dimension, false);
     }
@@ -135,19 +139,21 @@ public class BoundingBox extends game.GameObject implements Boundable, graphics.
     }
 
     private void deriveGlobalData() {
-        for (int i = 0; i < globalVerts.length; i++) {
-            globalVerts[i] = Utilities.transform(localVerts[i], orientation);
-            globalVerts[i].translate(position.getX(), position.getY(), position.getZ());
-        }
-
-        for (int i = 0; i < globalAxes.length; i++) {
-            globalAxes[i] = Utilities.transform(localAxes[i], orientation);
-        }
-
-        if (!aligned) {
-            alignedBounds = BoundingBox.boundsFromVerts(true, globalVerts);
-        } else {
-            alignedBounds = null;
+        if (globalVerts != null) {
+            for (int i = 0; i < globalVerts.length; i++) {
+                globalVerts[i] = Utilities.transform(localVerts[i], orientation);
+                globalVerts[i].translate(position.getX(), position.getY(), position.getZ());
+            }
+            if (globalAxes != null) {
+                for (int i = 0; i < globalAxes.length; i++) {
+                    globalAxes[i] = Utilities.transform(localAxes[i], orientation);
+                }
+                if (!aligned) {
+                    alignedBounds = BoundingBox.boundsFromVerts(true, globalVerts);
+                } else {
+                    alignedBounds = null;
+                }
+            }
         }
     }
 
@@ -320,5 +326,14 @@ public class BoundingBox extends game.GameObject implements Boundable, graphics.
 
     public void drawlines(boolean lines) {
         BoundingBox.lines = lines;
+    }
+
+    public void setDimension(Vector3f dimension) {
+        this.dimension = dimension;
+    }
+
+    @Override
+    public String toString() {
+        return getFullName() + position + dimension;
     }
 }

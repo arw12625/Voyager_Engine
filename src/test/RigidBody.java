@@ -5,6 +5,7 @@
 package test;
 
 import java.util.ArrayList;
+import resource.WavefrontModel;
 
 
 /**
@@ -18,9 +19,9 @@ public class RigidBody extends AbstractEntity {
     }
     
     public static RigidBody rigidBodyFromPath(String mpath) {
-        physics.Mesh mesh = new physics.Mesh(mpath);
-        mesh.create();
-        graphics.ThreeDModel model = new graphics.ThreeDModel(mesh);
+        WavefrontModel w = new WavefrontModel(mpath);
+        w.create();
+        graphics.ThreeDModel model = new graphics.ThreeDModel(w);
         model.create();
         return new RigidBody(model);
     }

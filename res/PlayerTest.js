@@ -4,17 +4,18 @@
  */
 importPackage(Packages.physics);
 importPackage(Packages.graphics);
+importPackage(Packages.resource);
 importClass(Packages.game.Game);
 importClass(org.lwjgl.util.vector.Vector3f);
 importClass(org.lwjgl.util.vector.Quaternion);
 
 var grav = new Gravity();
-var ter = new Mesh("loop-smooth_fix");
+var ter = new WavefrontModel("teapot_fix");
 ter.create();
 var terDisp = new ThreeDModel(ter);
 terDisp.create();
 ThreeDGraphicsManager.getInstance().add(terDisp);
-var cm = new CollisionMesh(ter);
+var cm = new CollisionMesh(ter.getObjects());
 cm.create();
 ThreeDPhysicsManager.getInstance().setCollisionMesh(cm);
 

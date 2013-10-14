@@ -40,7 +40,7 @@ public class CollisionMesh extends GameObject implements Boundable {
 
     public void addMesh(Mesh collision) {
         for (graphics.Face face : collision.getFaces()) {
-
+            
             Vector3f[] verts = new Vector3f[3];
 
             for (int i = 0; i < 3; i++) {

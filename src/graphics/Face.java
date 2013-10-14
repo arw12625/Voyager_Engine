@@ -13,15 +13,6 @@ public class Face {
     private int[] vertexIndices;
     private int[] normalIndices;
     private int[] texCoordIndices;
-    private Material material;
-
-    public boolean isTextured() {
-        return material.isTextured();
-    }
-
-    public Material getMaterial() {
-        return material;
-    }
 
     public int[] getVertexIndices() {
         return vertexIndices;
@@ -36,13 +27,12 @@ public class Face {
     }
 
     public Face(int[] vertexIndices, int[] normalIndices) {
-        this(vertexIndices, normalIndices, null, null);
+        this(vertexIndices, normalIndices, null);
     }
 
-    public Face(int[] vertexIndices, int[] normalIndices, int[] texCoordIndices, Material material) {
+    public Face(int[] vertexIndices, int[] normalIndices, int[] texCoordIndices) {
         this.vertexIndices = vertexIndices;
         this.normalIndices = normalIndices;
         this.texCoordIndices = texCoordIndices;
-        this.material = material;
     }
 }

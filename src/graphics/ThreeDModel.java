@@ -11,71 +11,134 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
+import physics.Boundable;
+import physics.BoundingBox;
+import physics.Mesh;
+import resource.WavefrontModel;
 
 /**
  *
  * @author Andy
  */
-public class ThreeDModel extends GameObject implements ThreeD {
+public class ThreeDModel extends GameObject implements ThreeD, Boundable {
 
-    physics.Mesh m;
-    int vboVertexHandle;
-    int vboNormalHandle;
-    int vboColorHandle;
-    int amountOfVertices;
+    WavefrontModel m;
+    int[] vboVertexHandle;
+    int[] vboNormalHandle;
+    int[] vboTexCoordHandle;
+    int[] amountOfVertices;
+    Material[] materials;
 
-    public ThreeDModel(physics.Mesh m) {
+    public ThreeDModel(WavefrontModel m) {
         this.m = m;
-        vboVertexHandle = glGenBuffers();
-        vboNormalHandle = glGenBuffers();
-        vboColorHandle = glGenBuffers();
-        amountOfVertices = m.getFaces().size() * 9;
-        FloatBuffer vertices = BufferUtils.createFloatBuffer(amountOfVertices);
-        FloatBuffer normals = BufferUtils.createFloatBuffer(amountOfVertices);
-        FloatBuffer colors = BufferUtils.createFloatBuffer(amountOfVertices);
-        for (Face face : m.getFaces()) {
-            for (int i = 0; i < 3; i++) {
-                vertices.put(asFloats(m.getVertices().get(face.getVertexIndices()[i])));
-                normals.put(asFloats(m.getNormals().get(face.getNormalIndices()[i])));
-                colors.put(face.getMaterial().getDiffuseColor());
+    }
+
+    @Override
+    public void create() {
+        int numberOfObjects = m.getObjects().size();
+        vboVertexHandle = new int[numberOfObjects];
+        vboNormalHandle = new int[numberOfObjects];
+        vboTexCoordHandle = new int[numberOfObjects];
+        amountOfVertices = new int[numberOfObjects];
+        materials = new Material[numberOfObjects];
+        for (int i = 0; i < numberOfObjects; i++) {
+            Mesh mesh = m.getObjects().get(i);
+            vboVertexHandle[i] = glGenBuffers();
+            vboNormalHandle[i] = mesh.hasNormals() ? glGenBuffers() : -1;
+            vboTexCoordHandle[i] = mesh.hasTexCoords() ? glGenBuffers() : -1;
+            amountOfVertices[i] = mesh.getFaces().size() * 3;
+            FloatBuffer vertices = BufferUtils.createFloatBuffer(amountOfVertices[i] * 3);
+            FloatBuffer normals = null;
+            if (mesh.hasNormals()) {
+                normals = BufferUtils.createFloatBuffer(amountOfVertices[i] * 3);
+            }
+            FloatBuffer texCoords = null;
+            if (mesh.hasTexCoords()) {
+                texCoords = BufferUtils.createFloatBuffer(amountOfVertices[i] * 2);
+            }
+            for (Face face : mesh.getFaces()) {
+                for (int j = 0; j < 3; j++) {
+                    vertices.put(asFloats(m.getVertices().get(face.getVertexIndices()[j])));
+                    if (mesh.hasNormals()) {
+                        normals.put(asFloats(m.getNormals().get(face.getNormalIndices()[j])));
+                    }
+                    if (mesh.hasTexCoords()) {
+                        texCoords.put(asFloats(m.getTexCoords().get(face.getTextureCoordinateIndices()[j])));
+                    }
+                }
+            }
+            materials[i] = mesh.getMaterial();
+            vertices.flip();
+            if (mesh.hasNormals()) {
+                normals.flip();
+            }
+            if (mesh.hasTexCoords()) {
+                texCoords.flip();
+            }
+            glBindBuffer(GL_ARRAY_BUFFER, vboVertexHandle[i]);
+            glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
+            if (mesh.hasNormals()) {
+                glBindBuffer(GL_ARRAY_BUFFER, vboNormalHandle[i]);
+                glBufferData(GL_ARRAY_BUFFER, normals, GL_STATIC_DRAW);
+                glBindBuffer(GL_ARRAY_BUFFER, 0);
+            }
+            if (mesh.hasTexCoords()) {
+                glBindBuffer(GL_ARRAY_BUFFER, vboTexCoordHandle[i]);
+                glBufferData(GL_ARRAY_BUFFER, texCoords, GL_STATIC_DRAW);
+                glBindBuffer(GL_ARRAY_BUFFER, 0);
             }
         }
-        vertices.flip();
-        normals.flip();
-        colors.flip();
-        glBindBuffer(GL_ARRAY_BUFFER, vboVertexHandle);
-        glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindBuffer(GL_ARRAY_BUFFER, vboNormalHandle);
-        glBufferData(GL_ARRAY_BUFFER, normals, GL_STATIC_DRAW);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindBuffer(GL_ARRAY_BUFFER, vboColorHandle);
-        glBufferData(GL_ARRAY_BUFFER, colors, GL_STATIC_DRAW);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
     @Override
     public void render() {
-        glBindBuffer(GL_ARRAY_BUFFER, vboVertexHandle);
-        glVertexPointer(3, GL_FLOAT, 0, 0L);
+        for (int i = 0; i < m.getObjects().size(); i++) {
 
-        glBindBuffer(GL_ARRAY_BUFFER, vboNormalHandle);
-        glNormalPointer(GL_FLOAT, 0, 0);
+            glBindBuffer(GL_ARRAY_BUFFER, vboVertexHandle[i]);
+            glVertexPointer(3, GL_FLOAT, 0, 0L);
 
-        glBindBuffer(GL_ARRAY_BUFFER, vboColorHandle);
-        glColorPointer(3, GL_FLOAT, 0, 0L);
+            if (vboNormalHandle[i] != -1) {
+                glBindBuffer(GL_ARRAY_BUFFER, vboNormalHandle[i]);
+                glNormalPointer(GL_FLOAT, 0, 0);
+            }
 
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glEnableClientState(GL_NORMAL_ARRAY);
-        glEnableClientState(GL_COLOR_ARRAY);
-        glDrawArrays(GL_TRIANGLES, 0, amountOfVertices / 3);
-        glDisableClientState(GL_COLOR_ARRAY);
-        glDisableClientState(GL_NORMAL_ARRAY);
-        glDisableClientState(GL_VERTEX_ARRAY);
-    }
+            org.newdawn.slick.Color.white.bind();
+            if (vboTexCoordHandle[i] != -1) {
+                glBindBuffer(GL_ARRAY_BUFFER, vboTexCoordHandle[i]);
+                glTexCoordPointer(2, GL_FLOAT, 0, 0);
+                if (materials[i].isTextured()) {
+                    materials[i].getTexture().bind();
+                }
+            }
 
-    public physics.Mesh getMesh() {
-        return m;
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+            if (materials[i].getDiffuseColor() != null) {
+                float[] col = materials[i].getDiffuseColor();
+                glColor3f(col[0], col[1], col[2]);
+            }
+
+            glEnableClientState(GL_VERTEX_ARRAY);
+            if (vboTexCoordHandle[i] != -1) {
+                glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+            }
+            if (vboNormalHandle[i] != -1) {
+                glEnableClientState(GL_NORMAL_ARRAY);
+            }
+
+            glDrawArrays(GL_TRIANGLES, 0, amountOfVertices[i]);
+
+            if (vboTexCoordHandle[i] != -1) {
+                glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+            }
+            if (vboNormalHandle[i] != -1) {
+                glDisableClientState(GL_NORMAL_ARRAY);
+            }
+            glDisableClientState(GL_VERTEX_ARRAY);
+
+            glBindTexture(GL_TEXTURE_2D, 0);
+        }
     }
 
     public float[] asFloats(Vector3f v) {
@@ -88,5 +151,10 @@ public class ThreeDModel extends GameObject implements ThreeD {
 
     private void myVertex3f(Vector3f v) {
         glVertex3f(v.getX(), v.getY(), v.getZ());
+    }
+
+    @Override
+    public BoundingBox getBounds() {
+        return m.getBounds();
     }
 }
