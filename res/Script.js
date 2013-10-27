@@ -23,7 +23,7 @@ function create(prefix, path) {
             var tdModel = new ThreeDModel(wfModel);
             tdModel.create();
             ThreeDGraphicsManager.getInstance().add(tdModel);
-            cm = new CollisionMesh(wfModel.getObjects());
+            var cm = new CollisionMesh(wfModel.getObjects());
             cm.create();
             ThreeDPhysicsManager.getInstance().setCollisionMesh(cm);
             
