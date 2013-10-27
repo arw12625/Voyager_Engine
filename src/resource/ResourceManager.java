@@ -17,7 +17,8 @@ import util.DebugMessages;
  */
 public class ResourceManager extends StandardManager implements Runnable {
 
-    LinkedList<Resource> queued;
+    LinkedList<Resource> queuedResources;
+    LinkedList<GraphicsResource> queuedGraphics;
     HashMap<String, Resource> loaded;
     private Thread resourceThread;
     static ResourceManager instance;
@@ -25,10 +26,11 @@ public class ResourceManager extends StandardManager implements Runnable {
     @Override
     public void create() {
         super.create();
-        queued = new LinkedList<Resource>();
+        queuedResources = new LinkedList<Resource>();
+        queuedGraphics = new LinkedList<GraphicsResource>();
         loaded = new HashMap<String, Resource>();
         resourceThread = new Thread(this);
-        resourceThread.setPriority(Thread.NORM_PRIORITY - 1);
+        resourceThread.setPriority(Thread.NORM_PRIORITY + 1);
     }
 
     public static ResourceManager getInstance() {
@@ -41,15 +43,20 @@ public class ResourceManager extends StandardManager implements Runnable {
     @Override
     public void destroy() {
         super.destroy();
-        queued.clear();
+        queuedResources.clear();
+        queuedGraphics.clear();
         loaded.clear();
     }
 
     private boolean loadResource(Resource r) {
         if (r.load()) {
-            loaded.put(r.getFullName(), r);
+            if (r instanceof GraphicsResource) {
+                queuedGraphics.add((GraphicsResource) r);
+            } else {
+                loaded.put(r.getFullName(), r);
+                DebugMessages.getInstance().write("Loading succeeded: " + r.getFullName());
+            }
             r.setIsLoaded(true);
-            DebugMessages.getInstance().write("Loading succeeded: " + r.getFullName());
             return true;
         } else {
             DebugMessages.getInstance().write("Loading failed: " + r.getFullName());
@@ -60,8 +67,7 @@ public class ResourceManager extends StandardManager implements Runnable {
     @Override
     public boolean add(GameObject obj) {
         if (obj instanceof Resource) {
-            queued.add((Resource) obj);
-            hackyUpdate();
+            queuedResources.add((Resource) obj);
             return true;
         }
         return false;
@@ -77,24 +83,33 @@ public class ResourceManager extends StandardManager implements Runnable {
     @Override
     public void run() {
         while (Game.isRunning()) {
-            /*while (isLoading()) {
-                loadResource(queued.pop());
-            }*/
+            while (isLoading()) {
+                loadResource(queuedResources.pop());
+            }
             Thread.yield();
         }
     }
 
-    public void hackyUpdate() {
-        while (isLoading()) {
-            loadResource(queued.pop());
+    public void processGraphics() {
+        while (isGraphicsProcessing()) {
+            GraphicsResource g = queuedGraphics.pop();
+            if (g.processGraphics()) {
+                loaded.put(g.getFullName(), g);
+                g.setIsprocessed(true);
+            }
         }
+        Thread.yield();
     }
 
     public boolean isLoading() {
-        return !queued.isEmpty();
+        return !queuedResources.isEmpty();
     }
 
     public void start() {
         resourceThread.start();
+    }
+
+    private boolean isGraphicsProcessing() {
+        return !queuedGraphics.isEmpty();
     }
 }

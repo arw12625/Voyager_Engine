@@ -9,6 +9,7 @@ import game.GameObject;
 import game.StandardManager;
 import java.util.ArrayList;
 import org.lwjgl.Sys;
+import resource.ResourceManager;
 import util.DebugMessages;
 
 /**
@@ -22,6 +23,7 @@ public class UpdateManager extends StandardManager implements Runnable {
     private long updateTime;
     private Thread updateThread;
     static final int defaultUpdateTime = 1000 / 60;
+    private boolean init;
     
     static UpdateManager instance;
 
@@ -52,16 +54,23 @@ public class UpdateManager extends StandardManager implements Runnable {
     }
         
     public void start() {
+        init = true;
         updateThread.start();
     }
     
     @Override
     public void run() {
+        while(ResourceManager.getInstance().isLoading() || script.ScriptManager.getInstance().hasExecutables()) {
+            script.ScriptManager.getInstance().executeScripts();
+        }
+        init = false;
+        System.out.println("EHEJE");
         while (Game.isRunning()) {
             DebugMessages.getInstance().write("UpdateManager Running");
             long currentTime = getTime();
             long deltaTime = currentTime - lastTime;
             update((int) deltaTime);
+            script.ScriptManager.getInstance().executeScripts();
             lastTime = currentTime;
             try {
                 Thread.sleep(updateTime);
@@ -102,6 +111,10 @@ public class UpdateManager extends StandardManager implements Runnable {
         if(entities.contains(obj)) {
             entities.remove(obj);
         }
+    }
+
+    public boolean runningInitScripts() {
+        return init;
     }
 
 }

@@ -35,6 +35,9 @@ public class HudGraphic extends GameObject implements TwoD {
 
         this.name = name;
         
+        while(!texture.isProcessed()) {
+            Thread.yield();
+        }
         if (texture != null) {
             this.texture = texture;
             this.width = texture.getImageWidth();

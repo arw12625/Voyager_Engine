@@ -14,7 +14,7 @@ import org.newdawn.slick.opengl.TextureImpl;
  *
  * @author Andy
  */
-public class FontResource extends Resource {
+public class FontResource extends GraphicsResource {
 
     String name;
     String fontPath;
@@ -39,11 +39,17 @@ public class FontResource extends Resource {
 
     @Override
     public boolean load() {
+        return true;
+    }
+
+    @Override
+    public boolean processGraphics() {
         try {
             TextureImpl.unbind();
             aFont = new AngelCodeFont("res/" + fontPath, "res/" + texturePath);
         } catch (SlickException ex) {
             ex.printStackTrace();
+            return false;
         }
         return true;
     }

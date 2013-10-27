@@ -22,6 +22,7 @@ public class ScriptManager extends StandardManager {
 
     ScriptEngine engine;
     ArrayList<GameScript> scripts;
+    ArrayList<GameScript> scriptsToRun;
     static ScriptManager instance;
 
     public static ScriptManager getInstance() {
@@ -35,6 +36,7 @@ public class ScriptManager extends StandardManager {
     public void create() {
         super.create();
         scripts = new ArrayList<GameScript>();
+        scriptsToRun = new ArrayList<GameScript>();
         // create a script engine manager
         ScriptEngineManager factory = new ScriptEngineManager();
         // create a JavaScript engine
@@ -61,34 +63,49 @@ public class ScriptManager extends StandardManager {
 
     @Override
     public boolean add(GameObject obj) {
-        if(obj instanceof GameScript) {
-            scripts.add((GameScript)obj);
+        if (obj instanceof GameScript) {
+            scripts.add((GameScript) obj);
             return true;
         }
         return false;
     }
-    
+
     @Override
     public void remove(GameObject obj) {
-        if(scripts.contains(obj)) {
+        if (scripts.contains(obj)) {
             scripts.remove(obj);
         }
     }
-    
+
     public GameScript loadScript(String path) {
         resource.TextResource text = new resource.TextResource(path);
         text.create();
+        while (text.isLoaded() == false) {
+            Thread.yield();
+        }
         GameScript g = new GameScript(text.getTextString());
         g.create();
         add(g);
         return g;
     }
-    
+
     public void loadAndExecute(String path) {
-        try {
-            execute(loadScript(path));
-        } catch (ScriptException ex) {
-            ex.printStackTrace();
+        scriptsToRun.add(loadScript(path));
+    }
+    
+    public void executeScripts() {
+        ArrayList<GameScript> scriptsCopy = new ArrayList<GameScript>(scriptsToRun);
+        for(GameScript gs : scriptsCopy) {
+            try {
+                execute(gs);
+            } catch (ScriptException ex) {
+                ex.printStackTrace();
+            }
         }
+        scriptsToRun.clear();
+    }
+    
+    public boolean hasExecutables() {
+        return !scriptsToRun.isEmpty();
     }
 }

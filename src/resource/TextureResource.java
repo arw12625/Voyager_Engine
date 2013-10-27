@@ -5,6 +5,7 @@
 package resource;
 
 import java.io.IOException;
+import java.io.InputStream;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
@@ -15,29 +16,36 @@ import org.newdawn.slick.opengl.TextureImpl;
  *
  * @author Andy
  */
-public class TextureResource extends Resource implements Texture {
+public class TextureResource extends GraphicsResource implements Texture {
 
     String name;
     String path;
     Texture t;
-    
+    InputStream s;
+
     public TextureResource(String path) {
         this.name = path;
         this.path = path;
     }
-    
+
     @Override
     public boolean load() {
+        s = ResourceLoader.getResourceAsStream("res/" + path);
+        return true;
+    }
+    
+    @Override
+    public boolean processGraphics() {
         try {
             TextureImpl.unbind();
-            t = TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("res/" + path));
+            t = TextureLoader.getTexture("PNG", s);
         } catch (IOException ex) {
             ex.printStackTrace();
             return false;
         }
         return true;
     }
-    
+
     @Override
     public void release() {
         t.release();
@@ -102,6 +110,5 @@ public class TextureResource extends Resource implements Texture {
     public void setTextureFilter(int i) {
         t.setTextureFilter(i);
     }
-    
-    
+
 }

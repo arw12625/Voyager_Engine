@@ -20,7 +20,7 @@ import resource.WavefrontModel;
  *
  * @author Andy
  */
-public class ThreeDModel extends GameObject implements ThreeD, Boundable {
+public class ThreeDModel extends resource.GraphicsResource implements ThreeD, Boundable {
 
     WavefrontModel m;
     int[] vboVertexHandle;
@@ -34,7 +34,12 @@ public class ThreeDModel extends GameObject implements ThreeD, Boundable {
     }
 
     @Override
-    public void create() {
+    protected boolean load() {
+        return true;
+    }
+    
+    @Override
+    public boolean processGraphics() {
         int numberOfObjects = m.getObjects().size();
         vboVertexHandle = new int[numberOfObjects];
         vboNormalHandle = new int[numberOfObjects];
@@ -89,6 +94,7 @@ public class ThreeDModel extends GameObject implements ThreeD, Boundable {
                 glBindBuffer(GL_ARRAY_BUFFER, 0);
             }
         }
+        return true;
     }
 
     @Override
@@ -157,4 +163,5 @@ public class ThreeDModel extends GameObject implements ThreeD, Boundable {
     public BoundingBox getBounds() {
         return m.getBounds();
     }
+
 }

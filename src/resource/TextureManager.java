@@ -27,7 +27,6 @@ public class TextureManager extends Manager {
     public TextureResource loadTextureResource(String path) {
         TextureResource t = new TextureResource(path);
         t.create();
-        System.out.println(textures);
         textures.add(t);
         return t;
     }

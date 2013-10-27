@@ -9,6 +9,7 @@ import input.InputManager;
 import resource.ResourceManager;
 import update.UpdateManager;
 import java.util.ArrayList;
+import script.ScriptManager;
 
 /**
  *
@@ -50,11 +51,13 @@ public class Game {
     }
 
     public static void run() {
-
+        
         updateManager.start();
+        while(resourceManager.isLoading() || updateManager.runningInitScripts()) {
+            resourceManager.processGraphics();
+        }
         while (!quit) {
-
-            resourceManager.hackyUpdate();
+            resourceManager.processGraphics();
             graphicsManager.render();
             if (graphicsManager.isCloseRequested()) {
                 quit();
