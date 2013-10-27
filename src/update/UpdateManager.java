@@ -105,6 +105,12 @@ public class UpdateManager extends StandardManager implements Runnable {
         return false;
     }
     
+    public boolean add(Updateable u) {
+
+        entities.add(u);
+        return true;
+    }
+    
     @Override
     public void remove(GameObject obj) {
         if(entities.contains(obj)) {
