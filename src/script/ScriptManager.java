@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+import util.DebugMessages;
 
 /**
  *
@@ -36,9 +37,11 @@ public class ScriptManager extends StandardManager {
         super.create();
         scripts = new ArrayList<GameScript>();
         // create a script engine manager
-        ScriptEngineManager factory = new ScriptEngineManager();
+        ScriptEngineManager manager = new ScriptEngineManager();
         // create a JavaScript engine
-        this.engine = factory.getEngineByName("JavaScript");
+        this.engine = manager.getEngineByName("JavaScript");
+        
+        System.out.println(engine.NAME);
         // evaluate JavaScript code from String
         loadStartupScripts();
     }

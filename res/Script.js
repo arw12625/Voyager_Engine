@@ -14,6 +14,7 @@ function create(prefix, path) {
     importClass(Packages.physics.CollisionMesh);
     importClass(Packages.physics.ThreeDPhysicsManager);
     importClass(Packages.update.Updateable);
+    importClass(Packages.update.UpdateManager);
 
     var r = new JavaAdapter(Updateable, {
         update: function(delta) {
@@ -29,7 +30,7 @@ function create(prefix, path) {
             return true;
         }
     });
-    /* UpdateManager.getInstance().add(r); */
+    UpdateManager.getInstance().add(r);
     
     return r;
 }
