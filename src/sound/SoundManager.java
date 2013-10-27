@@ -55,11 +55,13 @@ public class SoundManager extends Manager implements update.Updateable{
     }
 
     @Override
-    public void update(int delta) {
+    public boolean update(int delta) {
         for(Sound s : sounds.values()) {
             s.update(delta);
         }
         DebugMessages.getInstance().write("SoundManager updated");
+        
+        return false;
     }
     
     public void setListenerPVector3fosition(Vector3f r) {

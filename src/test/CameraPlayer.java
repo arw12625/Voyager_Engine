@@ -32,7 +32,7 @@ public class CameraPlayer extends game.Player {
     }
 
     @Override
-    public void update(int delta) {
+    public boolean update(int delta) {
         input.InputManager keyboard = input.InputManager.getInstance();
         
         float dx = input.InputManager.getInstance().getDX() / 100f;
@@ -70,6 +70,8 @@ public class CameraPlayer extends game.Player {
         
         vp.setPosition(position);
         vp.setOrientation(orientation);
+        
+        return false;
     }
 
     public Vector3f getPosition() {

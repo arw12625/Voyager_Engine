@@ -58,6 +58,7 @@ public class GameTest {
         graphicsManager.setViewPoint(player.getViewPoint());
 
         Console.getInstance().create();
+        Console.getInstance().setShowError(true);
         ScriptManager.getInstance().loadAndExecute("GameTest.js");
 
         ForceGenerator grav = new ForceGenerator() {
@@ -68,7 +69,7 @@ public class GameTest {
             }
         };
 
-        WavefrontModel ter = new WavefrontModel("teapot_fix");
+        WavefrontModel ter = new WavefrontModel("rocket/", "rocket");
         ter.create();
         ThreeDModel terDisp = new ThreeDModel(ter);
         terDisp.create();

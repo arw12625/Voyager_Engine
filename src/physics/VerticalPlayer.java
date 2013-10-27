@@ -34,7 +34,6 @@ public class VerticalPlayer extends Player implements graphics.ThreeD {
         BoundingBox playerBounds = new BoundingBox(new Vector3f(), new Vector3f(.25f, .5f, .25f));
         playerBounds.create();
         pe = new physics.PhysicalEntity(playerBounds) {
-
             @Override
             public void collide(ArrayList<Plane> collisions) {
             }
@@ -45,7 +44,8 @@ public class VerticalPlayer extends Player implements graphics.ThreeD {
             }
 
             @Override
-            public void update(int delta) {
+            public boolean update(int delta) {
+                return false;
             }
         };
         pe.create();
@@ -82,7 +82,7 @@ public class VerticalPlayer extends Player implements graphics.ThreeD {
     }
 
     @Override
-    public void update(int delta) {
+    public boolean update(int delta) {
         float dx = input.InputManager.getInstance().getDX() / 100f;
         float dy = -input.InputManager.getInstance().getDY() / 100f;
         xAngle += dy;
@@ -98,6 +98,8 @@ public class VerticalPlayer extends Player implements graphics.ThreeD {
         pe.getBounds().setOrientation(Quaternion.mul(quatFromAxisAngle(new Vector3f(1, 0, 0), xAngle), quatFromAxisAngle(new Vector3f(0, 1, 0), yAngle), null));
         vp.setPosition(pe.getBounds().getPosition());
         vp.setOrientation(pe.getBounds().getOrientation());
+        
+        return false;
     }
 
     public graphics.ViewPoint getViewPoint() {

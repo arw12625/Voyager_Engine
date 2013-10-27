@@ -45,8 +45,9 @@ public class PhysicalPlayer extends Player implements graphics.ThreeD {
                 //System.out.println(collision);
             }
 
-            @Override
-            public void update(int delta) {
+            
+            public boolean update(int delta) {
+                return false;
             }
         };
         pe.create();
@@ -83,7 +84,7 @@ public class PhysicalPlayer extends Player implements graphics.ThreeD {
     }
 
     @Override
-    public void update(int delta) {
+    public boolean update(int delta) {
         float dx = input.InputManager.getInstance().getDX() / 100f;
         float dy = -input.InputManager.getInstance().getDY() / 100f;
         xAngle += dy;
@@ -99,6 +100,8 @@ public class PhysicalPlayer extends Player implements graphics.ThreeD {
         orientation = (Quaternion.mul(quatFromAxisAngle(new Vector3f(1, 0, 0), xAngle), quatFromAxisAngle(new Vector3f(0, 1, 0), yAngle), null));
         vp.setPosition(pe.getBounds().getPosition());
         vp.setOrientation(orientation);
+        
+        return false;
     }
 
     public graphics.ViewPoint getViewPoint() {

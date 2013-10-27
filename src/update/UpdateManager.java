@@ -8,6 +8,7 @@ import game.Game;
 import game.GameObject;
 import game.StandardManager;
 import java.util.ArrayList;
+import java.util.Iterator;
 import org.lwjgl.Sys;
 import util.DebugMessages;
 
@@ -76,9 +77,14 @@ public class UpdateManager extends StandardManager implements Runnable {
         DebugMessages.getInstance().write("Updates starting");
         
         input.InputManager.getInstance().processInputs();
-                
-        for (Updateable e : entities) {
-            e.update(delta);
+        
+        Iterator<Updateable> iter = entities.iterator();
+        while (iter.hasNext()) {
+            Updateable e = iter.next();
+            boolean remove = e.update(delta);
+            if (remove) {
+                iter.remove();
+            }
         }
         
         DebugMessages.getInstance().write("Updates finished");
@@ -90,16 +96,22 @@ public class UpdateManager extends StandardManager implements Runnable {
 
     @Override
     public boolean add(GameObject obj) {
-        if(obj instanceof Updateable) {
+        if (obj instanceof Updateable) {
             entities.add((Updateable)obj);
             return true;
         }
         return false;
     }
-
+    
     @Override
     public void remove(GameObject obj) {
         if(entities.contains(obj)) {
+            entities.remove(obj);
+        }
+    }
+    
+    public void remove(Updateable obj) {
+        if (entities.contains(obj)) {
             entities.remove(obj);
         }
     }

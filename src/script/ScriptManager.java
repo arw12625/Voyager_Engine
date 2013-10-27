@@ -44,6 +44,7 @@ public class ScriptManager extends StandardManager {
     }
 
     private void loadStartupScripts() {
+        loadAndExecute("Console.js");
         loadAndExecute("Script.js");
     }
 
