@@ -78,13 +78,15 @@ public class UpdateManager extends StandardManager implements Runnable {
         
         input.InputManager.getInstance().processInputs();
         
-        Iterator<Updateable> iter = entities.iterator();
-        while (iter.hasNext()) {
-            Updateable e = iter.next();
-            boolean remove = e.update(delta);
-            if (remove) {
-                iter.remove();
+        ArrayList<Updateable> copy = new ArrayList<Updateable>(entities);
+        ArrayList<Updateable> toRemove = new ArrayList<Updateable>();
+        for(Updateable u : copy) {
+            if(u.update(delta)) {
+                toRemove.add(u);
             }
+        }
+        for(Updateable u : toRemove) {
+            remove(u);
         }
         
         DebugMessages.getInstance().write("Updates finished");
