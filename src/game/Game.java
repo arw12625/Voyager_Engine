@@ -53,7 +53,6 @@ public class Game {
 
         updateManager.start();
         while (!quit) {
-
             resourceManager.hackyUpdate();
             graphicsManager.render();
             if (graphicsManager.isCloseRequested()) {

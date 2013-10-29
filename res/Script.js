@@ -18,15 +18,18 @@ function create(prefix, path) {
 
     var r = new JavaAdapter(Updateable, {
         update: function(delta) {
-            var wfModel = new WavefrontModel(prefix, path);
-            wfModel.create();
-            var tdModel = new ThreeDModel(wfModel);
-            tdModel.create();
-            ThreeDGraphicsManager.getInstance().add(tdModel);
-            var cm = new CollisionMesh(wfModel.getObjects());
-            cm.create();
-            ThreeDPhysicsManager.getInstance().setCollisionMesh(cm);
-            
+            try {
+                var wfModel = new WavefrontModel(prefix, path);
+                wfModel.create();
+                var tdModel = new ThreeDModel(wfModel);
+                tdModel.create();
+                ThreeDGraphicsManager.getInstance().add(tdModel);
+                var cm = new CollisionMesh(wfModel.getObjects());
+                cm.create();
+                ThreeDPhysicsManager.getInstance().setCollisionMesh(cm);
+            } catch (e) {
+                echo("Wtf, " + e);
+            }
             return true;
         }
     });

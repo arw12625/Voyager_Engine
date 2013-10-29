@@ -113,9 +113,9 @@ public class WavefrontModel extends Resource implements physics.Boundable {
                     normals.add(new Vector3f(x, y, z));
                 } else if (line.startsWith("vt ")) {
                     String[] xyz = spaceSplit;
-                    float s = Float.valueOf(xyz[1]);
-                    float t = Float.valueOf(xyz[2]);
-                    texCoords.add(new Vector2f(s, t));
+                    float u = Float.valueOf(xyz[1]);
+                    float v = Float.valueOf(xyz[2]);
+                    texCoords.add(new Vector2f(u, 1 - v));
                 } else if (line.startsWith("f ")) {
                     String[] faceIndices = spaceSplit;
                     int[] vertexIndicesArray = {Integer.parseInt(faceIndices[1].split("/")[0]) - 1,
