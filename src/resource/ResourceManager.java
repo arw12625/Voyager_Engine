@@ -30,7 +30,6 @@ public class ResourceManager extends StandardManager implements Runnable {
         queuedGraphics = new LinkedList<GraphicsResource>();
         loaded = new HashMap<String, Resource>();
         resourceThread = new Thread(this);
-        resourceThread.setPriority(Thread.NORM_PRIORITY + 1);
     }
 
     public static ResourceManager getInstance() {

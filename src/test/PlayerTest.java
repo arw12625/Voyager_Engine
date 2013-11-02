@@ -36,14 +36,14 @@ public class PlayerTest {
         InputManager inputManager = InputManager.getInstance();
         ResourceManager resourceManager = ResourceManager.getInstance();
         GameObjectManager gameObjectManager = GameObjectManager.getInstance();
+        ScriptManager scriptManager = ScriptManager.getInstance();
 
-        Game.create("THE GAME", updateManager, graphicsManager, inputManager, resourceManager, gameObjectManager);
+        Game.create("THE GAME", updateManager, graphicsManager, inputManager, resourceManager, gameObjectManager, scriptManager);
 
         FontManager.getInstance().create();
         TextureManager.getInstance().create();
         SoundManager.getInstance().create();
         ThreeDPhysicsManager.getInstance().create();
-        ScriptManager.getInstance().create();
         DebugMessages.getInstance().create();
         GameStateManager.getInstance().create();
 

@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 import org.lwjgl.Sys;
 import resource.ResourceManager;
+import script.ScriptManager;
 import util.DebugMessages;
 
 /**
@@ -27,7 +28,6 @@ public class UpdateManager extends StandardManager implements Runnable {
     private long updateTime;
     private Thread updateThread;
     static final int defaultUpdateTime = 1000 / 60;
-    private boolean init;
     
     static UpdateManager instance;
     
@@ -35,8 +35,6 @@ public class UpdateManager extends StandardManager implements Runnable {
     public void create() {
         super.create();
         updateThread = new Thread(this);
-        this.updateTime = defaultUpdateTime;
-        lastTime = getTime();
         //entities = new ArrayList<>();
     }
     
@@ -58,17 +56,18 @@ public class UpdateManager extends StandardManager implements Runnable {
     }
     
     public void start() {
-        init = true;
         updateThread.start();
     }
     
     @Override
     public void run() {
-        while(ResourceManager.getInstance().isLoading() || script.ScriptManager.getInstance().hasExecutables()) {
+        System.out.println(Game.initializing());
+        while(Game.initializing()) {
             script.ScriptManager.getInstance().executeScripts();
+            Thread.yield();
         }
-        init = false;
-        System.out.println("EHEJE");
+        this.updateTime = defaultUpdateTime;
+        lastTime = getTime() - updateTime;
         while (Game.isRunning()) {
             DebugMessages.getInstance().write("UpdateManager Running");
             long currentTime = getTime();
@@ -90,6 +89,15 @@ public class UpdateManager extends StandardManager implements Runnable {
         
         input.InputManager.getInstance().processInputs();
         
+        ArrayList<Updateable> ucopy = new ArrayList<Updateable>(entities);
+        for(Updateable u : ucopy) {
+            boolean toRemove = u.update(delta);
+                if (toRemove) {
+                    entities.remove(u);
+                    System.out.println("Yolo");
+                }
+        }
+        /*
         Iterator<Updateable> iter = entities.iterator();
         while (iter.hasNext()) {
             try {
@@ -104,7 +112,7 @@ public class UpdateManager extends StandardManager implements Runnable {
                 break;
             }
             
-        }
+        }*/
         
         DebugMessages.getInstance().write("Updates finished");
     }
@@ -132,10 +140,6 @@ public class UpdateManager extends StandardManager implements Runnable {
         if(entities.contains(obj)) {
             entities.remove(obj);
         }
-    }
-
-    public boolean runningInitScripts() {
-        return init;
     }
 
     

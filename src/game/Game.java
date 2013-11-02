@@ -23,14 +23,17 @@ public class Game {
     public static InputManager inputManager;
     public static ResourceManager resourceManager;
     public static GameObjectManager gameObjectManager;
+    public static ScriptManager scriptManager;
     public static ArrayList<Manager> managers;
     public static Player player;
     private static boolean quit;
+    private static boolean init;
 
     public static void create(String title,
             UpdateManager updateManager,
             GraphicsManager graphicsManager, InputManager inputManager,
-            ResourceManager resourceManager, GameObjectManager gameObjectManager) {
+            ResourceManager resourceManager, GameObjectManager gameObjectManager,
+            ScriptManager scriptManager) {
 
         Game.title = title;
         Game.updateManager = updateManager;
@@ -38,23 +41,28 @@ public class Game {
         Game.inputManager = inputManager;
         Game.resourceManager = resourceManager;
         Game.gameObjectManager = gameObjectManager;
+        Game.scriptManager = scriptManager;
 
         managers = new ArrayList<Manager>();
+        setInitializing(true);
 
         gameObjectManager.create();
         updateManager.create();
         graphicsManager.create();
         inputManager.create();
         resourceManager.create();
+        scriptManager.create();
         resourceManager.start();
+        updateManager.start();
+        ScriptManager.getInstance().loadStartupScripts();
 
     }
 
     public static void run() {
         
-        updateManager.start();
-        while(resourceManager.isLoading() || updateManager.runningInitScripts()) {
+        while(initializing()) {
             resourceManager.processGraphics();
+            Thread.yield();
         }
         while (!quit) {
             resourceManager.processGraphics();
@@ -64,6 +72,7 @@ public class Game {
             }
 
         }
+        Game.destroy();
     }
 
     public static void destroy() {
@@ -110,5 +119,13 @@ public class Game {
 
     public static Player getPlayer() {
         return player;
+    }
+    
+    public static boolean initializing() {
+        return init;
+    }
+    
+    public static void setInitializing(boolean init) {
+        Game.init = init;
     }
 }

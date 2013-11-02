@@ -149,6 +149,7 @@ public class ThreeDGraphicsManager extends GraphicsManager {
     public boolean add(GameObject obj) {
         if(obj instanceof ThreeD) {
             addGraphic3D((ThreeD)obj, 0);
+            System.out.println(obj);
             return true;
         }
         if(obj instanceof TwoD) {

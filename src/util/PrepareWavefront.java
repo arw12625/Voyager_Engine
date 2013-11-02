@@ -15,6 +15,7 @@ import org.newdawn.slick.util.ResourceLoader;
 import resource.ResourceManager;
 import resource.TextureManager;
 import resource.WavefrontModel;
+import script.ScriptManager;
 import update.UpdateManager;
 
 /**
@@ -29,8 +30,9 @@ public class PrepareWavefront {
         InputManager inputManager = InputManager.getInstance();
         ResourceManager resourceManager = ResourceManager.getInstance();
         GameObjectManager gameObjectManager = GameObjectManager.getInstance();
+        ScriptManager scriptManager = ScriptManager.getInstance();
 
-        Game.create("THE GAME", updateManager, graphicsManager, inputManager, resourceManager, gameObjectManager);
+        Game.create("THE GAME", updateManager, graphicsManager, inputManager, resourceManager, gameObjectManager, scriptManager);
 
         TextureManager.getInstance().create();
         

@@ -21,8 +21,14 @@ public class RigidBody extends AbstractEntity {
     public static RigidBody rigidBodyFromPath(String mpath) {
         WavefrontModel w = new WavefrontModel(mpath);
         w.create();
+        while(!w.isLoaded()) {
+            Thread.yield();
+        }
         graphics.ThreeDModel model = new graphics.ThreeDModel(w);
         model.create();
+        while(!model.isProcessed()) {
+            Thread.yield();
+        }
         return new RigidBody(model);
     }
     

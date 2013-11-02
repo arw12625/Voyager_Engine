@@ -30,7 +30,7 @@ public abstract class PhysicalEntity extends GameObject implements update.Update
     private float mass;
     private Matrix3f invInertiaTensor;
     private float linearDrag = 0.999f;
-    private float angularDrag = .999f;
+    private float angularDrag = .95f;
     private boolean awake;
     private float minSpeedSquared = 0.001f;
     private float vAvg;

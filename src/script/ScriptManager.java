@@ -42,14 +42,13 @@ public class ScriptManager extends StandardManager {
         ScriptEngineManager manager = new ScriptEngineManager();
         // create a JavaScript engine
         this.engine = manager.getEngineByName("JavaScript");
-        
+
         System.out.println(engine.NAME);
         // evaluate JavaScript code from String
-        loadStartupScripts();
+        //loadStartupScripts();
     }
 
-    private void loadStartupScripts() {
-        loadAndExecute("Console.js");
+    public void loadStartupScripts() {
         loadAndExecute("Script.js");
     }
 
@@ -84,6 +83,7 @@ public class ScriptManager extends StandardManager {
     public GameScript loadScript(String path) {
         resource.TextResource text = new resource.TextResource(path);
         text.create();
+        System.out.println("LOADING SCRIPT: " + path);
         while (text.isLoaded() == false) {
             Thread.yield();
         }
@@ -96,19 +96,24 @@ public class ScriptManager extends StandardManager {
     public void loadAndExecute(String path) {
         scriptsToRun.add(loadScript(path));
     }
-    
+
     public void executeScripts() {
         ArrayList<GameScript> scriptsCopy = new ArrayList<GameScript>(scriptsToRun);
-        for(GameScript gs : scriptsCopy) {
+        if (!scriptsCopy.isEmpty()) {
+            System.out.println(scriptsCopy);
+        }
+        for (GameScript gs : scriptsCopy) {
             try {
+                System.out.println("OYEH");
                 execute(gs);
+                System.out.println("HEYO");
             } catch (ScriptException ex) {
                 ex.printStackTrace();
             }
+            scriptsToRun.remove(gs);
         }
-        scriptsToRun.clear();
     }
-    
+
     public boolean hasExecutables() {
         return !scriptsToRun.isEmpty();
     }

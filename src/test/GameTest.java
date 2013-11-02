@@ -41,14 +41,13 @@ public class GameTest {
         InputManager inputManager = InputManager.getInstance();
         ResourceManager resourceManager = ResourceManager.getInstance();
         GameObjectManager gameObjectManager = GameObjectManager.getInstance();
+        ScriptManager scriptManager = ScriptManager.getInstance();
 
-        Game.create("THE GAME", updateManager, graphicsManager, inputManager, resourceManager, gameObjectManager);
+        Game.create("THE GAME", updateManager, graphicsManager, inputManager, resourceManager, gameObjectManager, scriptManager);
 
-        ScriptManager.getInstance().create();
         ScriptManager.getInstance().loadAndExecute("GameTest.js");
 
         Game.run();
-        Game.destroy();
     }
 
     public static void addTestGraphic() {
