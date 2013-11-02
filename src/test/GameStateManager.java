@@ -33,13 +33,15 @@ public class GameStateManager extends Manager implements update.Updateable {
     }
 
     @Override
-    public void update(int delta) {
+    public boolean update(int delta) {
         if (input.InputManager.getInstance().get(exitKey).isPressed()) {
             Game.quit();
         }
         if (input.InputManager.getInstance().get(toggleKey).isPressed()) {
             togglePause();
         }
+        
+        return false;
     }
 
     public void togglePause() {

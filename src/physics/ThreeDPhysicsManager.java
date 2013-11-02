@@ -35,7 +35,7 @@ public class ThreeDPhysicsManager extends StandardManager implements update.Upda
     }
 
     @Override
-    public void update(int delta) {
+    public boolean update(int delta) {
 
         DebugMessages.getInstance().write("Physics starting");
 
@@ -138,6 +138,8 @@ public class ThreeDPhysicsManager extends StandardManager implements update.Upda
         }
 
         DebugMessages.getInstance().write("Physics finished");
+        
+        return false;
     }
 
     @Override

@@ -25,7 +25,7 @@ public abstract class AbstractEntity extends physics.PhysicalEntity implements g
     }
 
     @Override
-    public void update(int delta) {
+    public boolean update(int delta) {
 
         input.InputManager keyboard = input.InputManager.getInstance();
         Vector3f go = new Vector3f();
@@ -51,6 +51,8 @@ public abstract class AbstractEntity extends physics.PhysicalEntity implements g
             go.scale(2);
             applyForce(go);
         }
+        
+        return false;
     }
 
     @Override

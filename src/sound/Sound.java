@@ -37,12 +37,14 @@ public class Sound extends GameObject implements update.Updateable {
     }
     
     @Override
-    public void update(int delta) {
+    public boolean update(int delta) {
         if (playing) {
             if ((counter -= delta) < 0) {
                 playing = false;
             }
         }
+        
+        return false;
     }
     
     public void setPosition(Vector3f pos) {

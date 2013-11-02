@@ -34,7 +34,7 @@ public abstract class PhysicalEntity extends GameObject implements update.Update
     private boolean awake;
     private float minSpeedSquared = 0.001f;
     private float vAvg;
-    private Vector3f zero = new Vector3f();
+    private static Vector3f zero = new Vector3f();
 
     public PhysicalEntity(BoundingBox bounds) {
         this(bounds, 1f);

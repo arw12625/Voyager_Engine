@@ -11,5 +11,4 @@ import update.Updateable;
  * @author Andy
  */
 public abstract class Player extends GameObject implements Updateable {
-    
 }

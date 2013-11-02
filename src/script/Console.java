@@ -72,6 +72,8 @@ public class Console extends GameObject implements update.Updateable {
 
         setEnabled(false);
         
+        inputs.add("create('rocket/', 'rocket');"); // TODO: Remove this.
+        inputs.add("var r = create('rocket/', 'rocket');");
     }
 
     public static Console getInstance() {
@@ -90,7 +92,7 @@ public class Console extends GameObject implements update.Updateable {
     }
 
     @Override
-    public void update(int delta) {
+    public boolean update(int delta) {
         if (inputEnable) {
             String oldLine = line.toString();
             input.InputManager keyboard = input.InputManager.getInstance();
@@ -151,6 +153,8 @@ public class Console extends GameObject implements update.Updateable {
                 line.delete(0, str.length());
             }
         }
+        
+        return false;
     }
 
     private void updateMessage() {
@@ -279,5 +283,7 @@ public class Console extends GameObject implements update.Updateable {
         keyShift.put(Keyboard.KEY_PERIOD, '>');
         keyNorm.put(Keyboard.KEY_SLASH, '/');
         keyShift.put(Keyboard.KEY_SLASH, '?');
+        keyNorm.put(Keyboard.KEY_COLON, ';');
+        keyShift.put(Keyboard.KEY_COLON, ':');
     }
 }
