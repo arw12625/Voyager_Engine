@@ -18,8 +18,15 @@ public class RigidBody extends AbstractEntity {
         super(m);
     }
     
+    public static RigidBody rigidBodyFromPath(String prefix, String path) {
+        return rigidBodyFromWavefront(new WavefrontModel(prefix, path));
+    }
+    
     public static RigidBody rigidBodyFromPath(String mpath) {
-        WavefrontModel w = new WavefrontModel(mpath);
+        return rigidBodyFromWavefront(new WavefrontModel(mpath));
+    }
+    
+    private static RigidBody rigidBodyFromWavefront(WavefrontModel w) {
         w.create();
         while(!w.isLoaded()) {
             Thread.yield();

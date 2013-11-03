@@ -11,6 +11,7 @@ importClass(Packages.physics.CollisionMesh);
 importClass(Packages.physics.ThreeDPhysicsManager);
 importClass(Packages.update.Updateable);
 importClass(Packages.update.UpdateManager);
+importClass(Packages.script.ScriptUtil);
 importPackage(java.lang);
 
 System.out.println("Script.js start");

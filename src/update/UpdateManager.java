@@ -96,17 +96,6 @@ public class UpdateManager extends StandardManager implements Runnable {
             }
             i--;
         }
-        /*
-         * Iterator<Updateable> iter = entities.iterator(); while
-         * (iter.hasNext()) { try { Updateable u = iter.next(); boolean toRemove
-         * = u.update(delta); if (toRemove) {
-         * DebugMessages.getInstance().write("wtf?"); iter.remove(); } } catch
-         * (ConcurrentModificationException e) { System.out.println("Bleh.
-         * Breaking due to concurrentmodificationexception."); break; }
-         *
-         * }
-         */
-
         DebugMessages.getInstance().write("Updates finished");
     }
 

@@ -29,7 +29,7 @@ public class Console extends GameObject implements update.Updateable {
     private int underCounter;
     private static final int counterReset = 500;
     private boolean under;
-    private boolean error;
+    private boolean showError;
     private boolean show;
     private boolean inputEnable;
     static final int returnKey = Keyboard.KEY_RETURN;
@@ -71,9 +71,11 @@ public class Console extends GameObject implements update.Updateable {
         loadConsoleScripts();
 
         setEnabled(false);
+        setShowError(true);
         
         inputs.add("create('rocket/', 'rocket');"); // TODO: Remove this.
         inputs.add("var r = create('rocket/', 'rocket');");
+        inputs.add("ScriptUtil.insertModel({ prefix: \"rocket/\", path: \"rocket\" })");
     }
 
     public static Console getInstance() {
@@ -215,14 +217,14 @@ public class Console extends GameObject implements update.Updateable {
             scriptManager.eval(command);
         } catch (ScriptException se) {
             write("Not a valid command!");
-            if (error) {
+            if (showError) {
                 write(se.getMessage());
             }
         }
     }
 
     public void setShowError(boolean show) {
-        this.error = show;
+        this.showError = show;
     }
 
     public void setEnabled(boolean value) {
