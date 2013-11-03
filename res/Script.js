@@ -34,9 +34,7 @@ function create(prefix, path) {
                 tdModel.create();
                 yield(tdModel);
                 ThreeDGraphicsManager.getInstance().add(tdModel);
-                var cm = new CollisionMesh(wfModel.getObjects());
-                cm.create();
-                ThreeDPhysicsManager.getInstance().setCollisionMesh(cm);
+                ThreeDPhysicsManager.getInstance().getCollisionMesh().addMeshes(wfModel.getObjects());
             } catch (e) {
                 System.out.println("Wtf, " + e);
             }

@@ -53,6 +53,12 @@ public class CollisionMesh extends GameObject implements Boundable {
         }
     }
     
+    public void addMeshes(ArrayList<Mesh> meshes) {
+        for(Mesh m : meshes) {
+            addMesh(m);
+        }
+    }
+    
     public ArrayList<Plane> getPlanes(PhysicalEntity e) {
         return planes.queryRange(e.getBounds().getAlignedBounds());
     }

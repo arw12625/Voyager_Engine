@@ -161,4 +161,8 @@ public class ThreeDPhysicsManager extends StandardManager implements update.Upda
     public void setCollisionMesh(CollisionMesh cm) {
         this.collisionMesh = cm;
     }
+    
+    public CollisionMesh getCollisionMesh() {
+        return collisionMesh;
+    }
 }
