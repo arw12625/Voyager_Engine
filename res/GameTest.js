@@ -5,7 +5,9 @@
 
 importClass(Packages.test.GameTest);
 
-function enableDebug(enable) { GameTest.enableDebug(enable); }
+function enableDebug(enable) {
+    GameTest.enableDebug(enable);
+}
 
 importPackage(Packages.game);
 importPackage(Packages.resource);
@@ -46,33 +48,30 @@ ThreeDGraphicsManager.getInstance().setViewPoint(player.getViewPoint());
 var grav = new Gravity();
 var ter = new WavefrontModel("loop-smooth_fix");
 ter.create();
-try {
-    yield(ter);
-    var terDisp = new ThreeDModel(ter);
-    terDisp.create();
-    yield(terDisp);
-    ThreeDGraphicsManager.getInstance().add(terDisp);
-    var cm = new CollisionMesh(ter.getObjects());
-    cm.create();
-    ThreeDPhysicsManager.getInstance().setCollisionMesh(cm);
+
+yield(ter);
+var terDisp = new ThreeDModel(ter);
+terDisp.create();
+yield(terDisp);
+ThreeDGraphicsManager.getInstance().add(terDisp);
+var cm = new CollisionMesh(ter.getObjects());
+cm.create();
+ThreeDPhysicsManager.getInstance().setCollisionMesh(cm);
     
     
-    player.getPhysicalEntity().setPosition(new Vector3f(0, 7, 0));
+player.getPhysicalEntity().setPosition(new Vector3f(0, 7, 0));
     
-    var green = RigidBody.rigidBodyFromPath("box_fix");
-    green.create();
-    yield(green);
-    ThreeDGraphicsManager.getInstance().add(green);
-    green.setPosition(new Vector3f(-20, 15, 7));
-    ThreeDPhysicsManager.getInstance().add(green);
-    green.addForceGenerator(grav);
+var green = RigidBody.rigidBodyFromPath("box_fix");
+green.create();
+yield(green);
+ThreeDGraphicsManager.getInstance().add(green);
+green.setPosition(new Vector3f(-20, 15, 7));
+ThreeDPhysicsManager.getInstance().add(green);
+green.addForceGenerator(grav);
     
     
-    var s = new SkySphere(SkySphere.SkyType.PLAIN_NIGHT);
-    s.create();
-    ThreeDGraphicsManager.getInstance().addGraphic3D(s, -100);
+var s = new SkySphere(SkySphere.SkyType.PLAIN_NIGHT);
+s.create();
+ThreeDGraphicsManager.getInstance().addGraphic3D(s, -100);
     
-    Game.setInitializing(false);
-} catch(e) {
-    System.out.println(e);
-}
+Game.setInitializing(false);

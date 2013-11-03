@@ -10,7 +10,7 @@ import physics.ThreeDPhysicsManager;
 import resource.GraphicsResource;
 import resource.Resource;
 import resource.WavefrontModel;
-import sun.org.mozilla.javascript.Scriptable;
+import sun.org.mozilla.javascript.internal.Scriptable;
 import update.UpdateManager;
 import update.Updateable;
 
@@ -29,9 +29,9 @@ public class ScriptUtil {
     public static void insertModel(Scriptable args) {
         final String prefix = (String)getOrDefault(args, "prefix", null);
         final String path = (String)getOrDefault(args, "path", null);
-        final Float x = (Float)getOrDefault(args, "x", new Integer(0));
-        final Float y = (Float)getOrDefault(args, "y", new Integer(0));
-        final Float z = (Float)getOrDefault(args, "z", new Integer(0));
+        final Float x = (Float)getOrDefault(args, "x", new Float(0));
+        final Float y = (Float)getOrDefault(args, "y", new Float(0));
+        final Float z = (Float)getOrDefault(args, "z", new Float(0));
         
         
         Updateable updateable = new Updateable() {
