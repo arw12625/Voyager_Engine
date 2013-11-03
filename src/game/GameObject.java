@@ -31,9 +31,9 @@ public abstract class GameObject {
         Game.removeGameObject(this);
         util.DebugMessages.getInstance().write(this.getFullName() + " destroyed");
     }
-    
+
     public String getFullName() {
+        
         return getClass().getName() + id;
     }
-    
 }

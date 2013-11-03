@@ -35,7 +35,7 @@ public class WavefrontModel extends Resource implements physics.Boundable {
     public WavefrontModel(String path) {
         this("", path);
     }
-    
+
     public WavefrontModel(String prefix, String path) {
         this.path = path;
         this.pathPrefix = prefix;
@@ -138,7 +138,7 @@ public class WavefrontModel extends Resource implements physics.Boundable {
                     b.create();
                 }
             }
-            if(b.getDimension().lengthSquared() == 0) {
+            if (b.getDimension().lengthSquared() == 0) {
                 Vector3f[] yolo = new Vector3f[vertices.size()];
                 vertices.toArray(yolo);
                 BoundingBox fit = BoundingBox.boundsFromVerts(yolo);
@@ -195,18 +195,22 @@ public class WavefrontModel extends Resource implements physics.Boundable {
         }
         return materials;
     }
-    
+
     public static HashMap<String, graphics.Material> loadMaterialLibrary(String materialFilePath) {
         return loadMaterialLibrary("", materialFilePath);
     }
 
     public String toString() {
-        return getFullName()
-                + "\nObjects: " + objects.size()
-                + "\nVertices: " + vertices.size()
-                + "\nNormals: " + normals.size()
-                + "\nTexture Coordinates: " + texCoords.size()
-                + "\nMaterials: " + materialList.size();
+        if (objects == null) {
+            return getFullName();
+        } else {
+            return getFullName()
+                    + "\nObjects: " + objects.size()
+                    + "\nVertices: " + vertices.size()
+                    + "\nNormals: " + normals.size()
+                    + "\nTexture Coordinates: " + texCoords.size()
+                    + "\nMaterials: " + materialList.size();
+        }
     }
 
     @Override
@@ -220,5 +224,9 @@ public class WavefrontModel extends Resource implements physics.Boundable {
         currentMesh.setNormals(normals);
         currentMesh.setTexCoords(texCoords);
         currentMesh.setBounds(b);
+    }
+
+    public String getPath() {
+        return path;
     }
 }

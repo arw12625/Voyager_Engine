@@ -13,7 +13,7 @@ importClass(Packages.update.Updateable);
 importClass(Packages.update.UpdateManager);
 importPackage(java.lang);
 
-System.out.println("Script.js");
+System.out.println("Script.js start");
 
 function quit() {
     Game.quit();
@@ -27,10 +27,8 @@ function create(prefix, path) {
     var r = new JavaAdapter(Updateable, {
         update: function(delta) {
             try {
-                System.out.println("Wtf1");
                 var wfModel = new WavefrontModel(prefix, path);
                 wfModel.create();
-                System.out.println("Wtf");
                 yield(wfModel);
                 var tdModel = new ThreeDModel(wfModel);
                 tdModel.create();
@@ -55,7 +53,6 @@ function testing() {
 }
 
 function yield(resource) {
-    System.out.println("WTF3");
     if(resource instanceof Resource) {
         while(!resource.isLoaded()) {
         }

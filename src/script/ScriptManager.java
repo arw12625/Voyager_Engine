@@ -104,9 +104,9 @@ public class ScriptManager extends StandardManager {
         }
         for (GameScript gs : scriptsCopy) {
             try {
-                System.out.println("OYEH");
+                System.out.println("Script Start");
                 execute(gs);
-                System.out.println("HEYO");
+                System.out.println("Script End");
             } catch (ScriptException ex) {
                 ex.printStackTrace();
             }

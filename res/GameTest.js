@@ -38,7 +38,6 @@ InputManager.getInstance().put(Keyboard.KEY_S);
 InputManager.getInstance().put(Keyboard.KEY_A);
 InputManager.getInstance().put(Keyboard.KEY_D);
 Mouse.setGrabbed(true);
-
 var player = new PhysicalPlayer();
 player.create();
 Game.setPlayer(player);
@@ -47,13 +46,13 @@ ThreeDGraphicsManager.getInstance().setViewPoint(player.getViewPoint());
 var grav = new Gravity();
 var ter = new WavefrontModel("loop-smooth_fix");
 ter.create();
+try {
 yield(ter);
 var terDisp = new ThreeDModel(ter);
 terDisp.create();
 yield(terDisp);
 ThreeDGraphicsManager.getInstance().add(terDisp);
 var cm = new CollisionMesh(ter.getObjects());
-System.out.println("PRE Create");
 cm.create();
 ThreeDPhysicsManager.getInstance().setCollisionMesh(cm);
 
@@ -73,6 +72,7 @@ var s = new SkySphere(SkySphere.SkyType.PLAIN_NIGHT);
 s.create();
 ThreeDGraphicsManager.getInstance().addGraphic3D(s, -100);
 
-System.out.println("Init DONE");
-
 Game.setInitializing(false);
+} catch(e) {
+    System.out.println(e);
+}
