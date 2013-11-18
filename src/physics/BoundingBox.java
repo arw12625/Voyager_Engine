@@ -74,63 +74,63 @@ public class BoundingBox extends game.GameObject implements Boundable, graphics.
 
     }
 
-    public void translate(Vector3f t) {
+    public synchronized void translate(Vector3f t) {
         Vector3f.add(position, t, position);
         deriveGlobalData();
     }
 
-    public void rotate(Quaternion q) {
+    public synchronized void rotate(Quaternion q) {
         Quaternion.mul(orientation, q, orientation);
         deriveGlobalData();
     }
 
-    public void setPosition(Vector3f position) {
+    public synchronized void setPosition(Vector3f position) {
         this.position = position;
         deriveGlobalData();
     }
 
-    public void setOrientation(Quaternion orientation) {
+    public synchronized void setOrientation(Quaternion orientation) {
         this.orientation = orientation;
         deriveGlobalData();
     }
 
-    public Vector3f getPosition() {
+    public synchronized Vector3f getPosition() {
         return position;
     }
 
-    public Quaternion getOrientation() {
+    public synchronized Quaternion getOrientation() {
         return orientation;
     }
 
-    public Vector3f getDimension() {
+    public synchronized Vector3f getDimension() {
         return dimension;
     }
 
-    public Vector3f getHalf() {
+    public synchronized Vector3f getHalf() {
         return half;
     }
 
-    public Vector3f[] getLocalVertices() {
+    public synchronized Vector3f[] getLocalVertices() {
         return localVerts;
     }
 
-    public Vector3f[] getLocalAxes() {
+    public synchronized Vector3f[] getLocalAxes() {
         return localAxes;
     }
 
-    public Vector3f[] getGlobalVertices() {
+    public synchronized Vector3f[] getGlobalVertices() {
         return globalVerts;
     }
 
-    public Vector3f[] getGlobalAxes() {
+    public synchronized Vector3f[] getGlobalAxes() {
         return globalAxes;
     }
 
-    public Vector3f getCenter() {
+    public synchronized Vector3f getCenter() {
         return position;
     }
 
-    public BoundingBox getAlignedBounds() {
+    public synchronized BoundingBox getAlignedBounds() {
         if (aligned) {
             return this;
         } else {
@@ -138,7 +138,7 @@ public class BoundingBox extends game.GameObject implements Boundable, graphics.
         }
     }
 
-    private void deriveGlobalData() {
+    private synchronized void deriveGlobalData() {
         if (globalVerts != null) {
             for (int i = 0; i < globalVerts.length; i++) {
                 globalVerts[i] = Utilities.transform(localVerts[i], orientation);
@@ -157,18 +157,18 @@ public class BoundingBox extends game.GameObject implements Boundable, graphics.
         }
     }
 
-    public Vector3f localize(Vector3f v) {
+    public synchronized Vector3f localize(Vector3f v) {
         return Utilities.inverseTransform(Vector3f.sub(v, position, null), orientation);
     }
 
-    public boolean contains(Vector3f v) {
+    public synchronized boolean contains(Vector3f v) {
         Vector3f local = localize(v);
         return Math.abs(local.getX()) < half.getX()
                 && Math.abs(local.getY()) < half.getY()
                 && Math.abs(local.getZ()) < half.getZ();
     }
 
-    public boolean contains(BoundingBox b) {
+    public synchronized boolean contains(BoundingBox b) {
         BoundingBox bAlign = b.getAlignedBounds();
         Vector3f rel = localize(bAlign.getPosition());
         Vector3f bAlignHalf = bAlign.getHalf();
@@ -178,7 +178,7 @@ public class BoundingBox extends game.GameObject implements Boundable, graphics.
         return xOverlap && yOverlap && zOverlap;
     }
 
-    public boolean intersects(BoundingBox b) {
+    public synchronized boolean intersects(BoundingBox b) {
         BoundingBox bAlign = b.getAlignedBounds();
         Vector3f rel = localize(bAlign.getPosition());
         Vector3f bAlignHalf = bAlign.getHalf();
@@ -253,12 +253,12 @@ public class BoundingBox extends game.GameObject implements Boundable, graphics.
     }
 
     @Override
-    public BoundingBox getBounds() {
+    public synchronized BoundingBox getBounds() {
         return this;
     }
 
     @Override
-    public void render() {
+    public synchronized void render() {
         Vector3f[] verts = getGlobalVertices();
         Vector3f[] alignedVerts = getAlignedBounds().getGlobalVertices();
         if (points) {
@@ -328,7 +328,7 @@ public class BoundingBox extends game.GameObject implements Boundable, graphics.
         BoundingBox.lines = lines;
     }
 
-    public void setDimension(Vector3f dimension) {
+    public synchronized void setDimension(Vector3f dimension) {
         this.dimension = dimension;
     }
 

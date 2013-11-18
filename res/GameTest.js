@@ -40,13 +40,13 @@ InputManager.getInstance().put(Keyboard.KEY_S);
 InputManager.getInstance().put(Keyboard.KEY_A);
 InputManager.getInstance().put(Keyboard.KEY_D);
 Mouse.setGrabbed(true);
-var player = new PhysicalPlayer();
+var player = new CameraPlayer();
 player.create();
 Game.setPlayer(player);
 ThreeDGraphicsManager.getInstance().setViewPoint(player.getViewPoint());
 
 var grav = new Gravity();
-var ter = new WavefrontModel("loop-smooth_fix");
+var ter = new WavefrontModel("terrain-fix");
 ter.create();
 
 yield(ter);
@@ -59,13 +59,13 @@ cm.create();
 ThreeDPhysicsManager.getInstance().setCollisionMesh(cm);
     
     
-player.getPhysicalEntity().setPosition(new Vector3f(0, 7, 0));
-    
-var green = RigidBody.rigidBodyFromPath("box_fix");
+player.setPosition(new Vector3f(-5,5, -5));
+/*player.getPhysicalEntity().addForceGenerator(grav);*/
+
+var green = RigidBody.rigidBodyFromPath("tall_fix");
 green.create();
-yield(green);
 ThreeDGraphicsManager.getInstance().add(green);
-green.setPosition(new Vector3f(-20, 15, 7));
+green.setPosition(new Vector3f(-15, 10, -10));
 ThreeDPhysicsManager.getInstance().add(green);
 green.addForceGenerator(grav);
     

@@ -19,7 +19,7 @@ import static org.lwjgl.opengl.GL11.*;
  *
  * @author Andy
  */
-public class PhysicalPlayer extends Player implements graphics.ThreeD {
+public class PhysicalPlayer extends Player implements graphics.ThreeD, Boundable {
 
     graphics.ViewPoint vp;
     physics.PhysicalEntity pe;
@@ -32,9 +32,9 @@ public class PhysicalPlayer extends Player implements graphics.ThreeD {
     @Override
     public void create() {
         super.create();
-        BoundingBox playerBounds = new BoundingBox(new Vector3f(), new Vector3f(.25f, .5f, .25f));
+        BoundingBox playerBounds = new BoundingBox(new Vector3f(), new Vector3f(.5f, 1f, .5f));
         playerBounds.create();
-        pe = new physics.PhysicalEntity(playerBounds) {
+        pe = new physics.PhysicalEntity(playerBounds, 5) {
 
             @Override
             public void collide(ArrayList<Plane> collisions) {
@@ -75,7 +75,7 @@ public class PhysicalPlayer extends Player implements graphics.ThreeD {
                 if (go.lengthSquared() != 0) {
                     pe.setAwake(true);
                     go = transform(go, orientation);
-                    go.scale(2);
+                    go.scale(8);
                     pe.applyForce(go);
                     //pe.setVelocity(go);
                 }
@@ -84,7 +84,7 @@ public class PhysicalPlayer extends Player implements graphics.ThreeD {
     }
 
     @Override
-    public boolean update(int delta) {
+    public synchronized  boolean update(int delta) {
         float dx = input.InputManager.getInstance().getDX() / 100f;
         float dy = -input.InputManager.getInstance().getDY() / 100f;
         xAngle += dy;
@@ -104,16 +104,21 @@ public class PhysicalPlayer extends Player implements graphics.ThreeD {
         return false;
     }
 
-    public graphics.ViewPoint getViewPoint() {
+    public synchronized graphics.ViewPoint getViewPoint() {
         return vp;
     }
 
-    public PhysicalEntity getPhysicalEntity() {
+    public synchronized PhysicalEntity getPhysicalEntity() {
         return pe;
     }
 
     @Override
-    public void render() {
+    public synchronized void render() {
         pe.getBounds().render();
+    }
+
+    @Override
+    public BoundingBox getBounds() {
+        return getPhysicalEntity().getBounds();
     }
 }

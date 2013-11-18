@@ -37,7 +37,7 @@ public class PrepareWavefront {
         TextureManager.getInstance().create();
         
         if (args.length == 0) {
-            prepareMesh("teapot", "teapot_fix");
+            prepareMesh("tall", "tall_fix");
         } else if(args.length == 1) {
             prepareMesh(args[0], args[0] + "_fix");
         } else if(args.length == 2) {

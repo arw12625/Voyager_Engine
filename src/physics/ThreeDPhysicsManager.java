@@ -6,6 +6,7 @@ package physics;
 
 import game.*;
 import java.util.ArrayList;
+import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Vector3f;
 import util.DebugMessages;
 import util.Utilities;
@@ -18,7 +19,7 @@ public class ThreeDPhysicsManager extends StandardManager implements update.Upda
 
     ArrayList<PhysicalEntity> pe;
     CollisionMesh collisionMesh;
-    float restitution = 0.2f;
+    float restitution = 0.1f;
     static ThreeDPhysicsManager instance;
 
     @Override
@@ -40,8 +41,8 @@ public class ThreeDPhysicsManager extends StandardManager implements update.Upda
         DebugMessages.getInstance().write("Physics starting");
 
         //Motion update
-        float division = 3;
-        float collision = 3;
+        float division = 6;
+        float collision = 1;
         float time = delta / 1000f / division;
         for (int j = 0; j < division; j++) {
             for (PhysicalEntity e : pe) {
@@ -65,14 +66,17 @@ public class ThreeDPhysicsManager extends StandardManager implements update.Upda
                             for (Vector3f v : vertices) {
                                 float highestVelocity = Float.MAX_VALUE;
                                 Plane toResolve = null;
+                                Vector3f relativeContact = Vector3f.sub(v, e.getPosition(), null);
                                 for (Plane p : cols) {
                                     float distance = p.getDistance(v);
                                     if (distance > 0) {
                                         continue;
                                     }
 
-                                    Vector3f pointVelocity = Vector3f.add(e.getVelocity(), Vector3f.cross(Utilities.transform(e.getAngularVelocity(), e.getOrientation()), Vector3f.sub(v, e.getPosition(), null), null), null);
+                                    Vector3f angularComponent = Vector3f.cross(e.getAngularVelocity(), relativeContact, null);
+                                    Vector3f pointVelocity = Vector3f.add(e.getVelocity(), angularComponent, null);
                                     float seperatingVelocity = Vector3f.dot(pointVelocity, p.getNormal());
+
                                     if (seperatingVelocity < highestVelocity) {
                                         highestVelocity = seperatingVelocity;
                                         toResolve = p;
@@ -84,25 +88,34 @@ public class ThreeDPhysicsManager extends StandardManager implements update.Upda
                                 }
 
                                 float newVelocity = -highestVelocity;
-
-                                Vector3f accCausedVelocity = e.getAcceleration();
-                                float accCausedSepVelocity =
-                                        Vector3f.dot(accCausedVelocity,
-                                        toResolve.getNormal()) * time;
-                                if (accCausedSepVelocity < 0) {
-                                    newVelocity +=
-                                            accCausedSepVelocity;
-                                    if (newVelocity < 0) {
-                                        newVelocity = 0;
-                                    }
-                                }
-
                                 newVelocity *= restitution;
+
+                                /*
+                                 * Vector3f accCausedVelocity =
+                                 * e.getAcceleration(); float
+                                 * accCausedSepVelocity =
+                                 * Vector3f.dot(accCausedVelocity,
+                                 * toResolve.getNormal()) * time; if
+                                 * (accCausedSepVelocity < 0) { newVelocity +=
+                                 * accCausedSepVelocity; if (newVelocity < 0) {
+                                 * newVelocity = 0; } }
+                                 */
 
                                 float deltaV = newVelocity - highestVelocity;
                                 Vector3f normal = new Vector3f(toResolve.getNormal());
-                                normal.scale(deltaV * e.getMass() / 10f);
-                                e.applyImpulseAtPoint(normal, v);
+
+                                Vector3f deltaVPerImpulseVec = new Vector3f();
+                                Vector3f.cross(relativeContact, normal, deltaVPerImpulseVec);
+                                Matrix3f.transform(e.getInvInertiaTensor(), deltaVPerImpulseVec, deltaVPerImpulseVec);
+                                Vector3f.cross(deltaVPerImpulseVec, relativeContact, deltaVPerImpulseVec);
+                                // Work out the change in velocity in contact coordinates.
+                                float deltaVPerImpulse = Vector3f.dot(deltaVPerImpulseVec, normal);
+                                // Add the linear component of velocity change.
+                                deltaVPerImpulse += e.getInvMass();
+
+                                Vector3f impulse = new Vector3f(normal);
+                                impulse.scale(deltaV / deltaVPerImpulse);
+                                e.applyImpulseAtPoint(impulse, v);
                             }
                         }
                         for (int i = 0; i < collision; i++) {
@@ -138,7 +151,7 @@ public class ThreeDPhysicsManager extends StandardManager implements update.Upda
         }
 
         DebugMessages.getInstance().write("Physics finished");
-        
+
         return false;
     }
 
@@ -161,7 +174,7 @@ public class ThreeDPhysicsManager extends StandardManager implements update.Upda
     public void setCollisionMesh(CollisionMesh cm) {
         this.collisionMesh = cm;
     }
-    
+
     public CollisionMesh getCollisionMesh() {
         return collisionMesh;
     }

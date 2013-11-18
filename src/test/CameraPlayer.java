@@ -64,7 +64,7 @@ public class CameraPlayer extends game.Player {
         }
         if (go.lengthSquared() != 0) {
             go = Utilities.transform(go, orientation);
-            go.scale(0.03f);
+            go.scale(0.08f);
             Vector3f.add(position, go, position);
         }
         

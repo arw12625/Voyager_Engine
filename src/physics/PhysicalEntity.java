@@ -5,6 +5,8 @@
 package physics;
 
 import game.GameObject;
+import graphics.ThreeDGraphicsManager;
+import graphics.VectorGraphic;
 import java.util.ArrayList;
 import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Quaternion;
@@ -28,13 +30,15 @@ public abstract class PhysicalEntity extends GameObject implements update.Update
     private Vector3f torqueBuffer;
     private float invMass;
     private float mass;
+    private Matrix3f inertiaTensor;
     private Matrix3f invInertiaTensor;
-    private float linearDrag = 0.999f;
+    private float linearDrag = 0.99f;
     private float angularDrag = .95f;
     private boolean awake;
     private float minSpeedSquared = 0.001f;
     private float vAvg;
     private static Vector3f zero = new Vector3f();
+        VectorGraphic vg;
 
     public PhysicalEntity(BoundingBox bounds) {
         this(bounds, 1f);
@@ -55,9 +59,12 @@ public abstract class PhysicalEntity extends GameObject implements update.Update
         torqueBuffer = new Vector3f();
         invMass = 1f / mass;
         this.mass = mass;
+        this.inertiaTensor = inertiaTensor;
         invInertiaTensor = (Matrix3f) inertiaTensor.invert();
         vAvg = 100;
         awake = true;
+        vg = new VectorGraphic(new Vector3f(), new Vector3f());
+        ThreeDGraphicsManager.getInstance().addGraphic3D(vg, 100);
     }
 
     @Override
@@ -75,15 +82,14 @@ public abstract class PhysicalEntity extends GameObject implements update.Update
         }
     }
 
-    public void integrate(float delta) {
+    public synchronized void integrate(float delta) {
         // Calculate linear acceleration from force inputs.
-        Vector3f lastFrameAcceleration = new Vector3f(acceleration);
         acceleration = (Vector3f) forceBuffer.scale(invMass);
         // Calculate angular acceleration from torque inputs.
-        angularAcceleration = Matrix3f.transform(invInertiaTensor, Utilities.inverseTransform(torqueBuffer, orientedBounds.getOrientation()), null);
+        angularAcceleration = Matrix3f.transform(invInertiaTensor, torqueBuffer, null);
         // Adjust velocities
         // Update linear velocity from both acceleration and impulse.
-        velocity = addScaledVector(velocity, lastFrameAcceleration, delta);
+        velocity = addScaledVector(velocity, acceleration, delta);
         // Update angular velocity from both acceleration and impulse.
         angularVelocity = addScaledVector(angularVelocity, angularAcceleration, delta);
         // Impose drag.
@@ -109,35 +115,39 @@ public abstract class PhysicalEntity extends GameObject implements update.Update
         forceGenerators.add(fg);
     }
 
-    public void applyForce(Vector3f force) {
+    public synchronized void applyForce(Vector3f force) {
         Vector3f.add(forceBuffer, force, forceBuffer);
     }
 
-    public void applyForceAtPoint(Vector3f force, Vector3f application) {
+    public synchronized void applyForceAtPoint(Vector3f force, Vector3f application) {
         Vector3f.add(forceBuffer, force, forceBuffer);
         Vector3f.add(torqueBuffer, Vector3f.cross(Vector3f.sub(application, orientedBounds.getPosition(), null), force, null), torqueBuffer);
     }
 
-    public void applyTorque(Vector3f torque) {
+    public synchronized void applyTorque(Vector3f torque) {
         Vector3f.add(torqueBuffer, torque, torqueBuffer);
     }
 
-    public void applyImpulseAtPoint(Vector3f impulse, Vector3f application) {
+    public synchronized void applyImpulseAtPoint(Vector3f impulse, Vector3f application) {
         velocity = Utilities.addScaledVector(velocity, impulse, invMass);
-        Vector3f angularImpulse = Vector3f.cross(Vector3f.sub(application, orientedBounds.getPosition(), null), impulse, null);
-        Vector3f deltaAngularVelocity = Matrix3f.transform(invInertiaTensor, Utilities.inverseTransform(angularImpulse, orientedBounds.getOrientation()), null);        
+        Vector3f angularImpulse = Vector3f.cross(Vector3f.sub(application, orientedBounds.getPosition(), null), impulse, null);vg.setPosition(application);
+        Vector3f yo = new Vector3f(angularImpulse);
+        yo.normalise();
+        yo.scale(4f);
+        vg.setVector(yo);
+        Vector3f deltaAngularVelocity = Matrix3f.transform(invInertiaTensor, angularImpulse, null);        
         Vector3f.add(angularVelocity, deltaAngularVelocity, angularVelocity);
     }
     
-    public Vector3f getVelocity() {
+    public synchronized Vector3f getVelocity() {
         return velocity;
     }
     
-    public Vector3f getAngularVelocity() {
+    public synchronized Vector3f getAngularVelocity() {
         return angularVelocity;
     }
     
-    public Vector3f getAcceleration() {
+    public synchronized Vector3f getAcceleration() {
         return acceleration;
     }
     
@@ -149,11 +159,11 @@ public abstract class PhysicalEntity extends GameObject implements update.Update
         return mass;
     }
     
-    public boolean canSleep() {
+    public synchronized boolean canSleep() {
         return vAvg < minSpeedSquared;
     }
 
-    public void setAwake(boolean awake) {
+    public synchronized void setAwake(boolean awake) {
         this.awake = awake;
         if (awake) {
             vAvg = 100;
@@ -164,20 +174,26 @@ public abstract class PhysicalEntity extends GameObject implements update.Update
         }
     }
 
-    public void setVelocity(Vector3f vel) {
+    public synchronized void setVelocity(Vector3f vel) {
         this.velocity = vel;
-        this.vAvg = vel.lengthSquared();
     }
 
-    public void setAngularVelocity(Vector3f angVel) {
+    public synchronized void setAngularVelocity(Vector3f angVel) {
         this.angularVelocity = angVel;
-        this.vAvg = angVel.lengthSquared();
     }
     
-    public boolean isAwake() {
-        return awake;
+    public synchronized boolean isAwake() {
+        return true;
     }
 
+    public synchronized Matrix3f getInertiaTensor() {
+        return inertiaTensor;
+    }
+    
+    public synchronized Matrix3f getInvInertiaTensor() {
+        return invInertiaTensor;
+    }
+    
     public static Matrix3f getRectangularPrismInertiaTensor(final BoundingBox b, final float mass) {
         return new Matrix3f() {
 
@@ -193,20 +209,28 @@ public abstract class PhysicalEntity extends GameObject implements update.Update
         };
     }
     
-    public Vector3f getPosition() {
+    public synchronized Vector3f getPosition() {
         return orientedBounds.getPosition();
     }
     
-    public void setPosition(Vector3f r) {
+    public synchronized void setPosition(Vector3f r) {
         orientedBounds.setPosition(r);
     }
 
-    public Quaternion getOrientation() {
+    public synchronized Quaternion getOrientation() {
         return getBounds().getOrientation();
     }
 
-    public void setOrientation(Quaternion orientation) {
+    public synchronized void setOrientation(Quaternion orientation) {
         orientedBounds.setOrientation(orientation);
+    }
+    
+    public synchronized void setLinearDrag(float drag) {
+        this.linearDrag = drag;
+    }
+    
+    public synchronized void setAngularDrag(float drag) {
+        this.angularDrag = drag;
     }
 
 }

@@ -4,9 +4,14 @@
  */
 package test;
 
+import graphics.ThreeDGraphicsManager;
+import graphics.VectorGraphic;
 import java.util.ArrayList;
+import org.lwjgl.util.vector.Matrix3f;
+import org.lwjgl.util.vector.Quaternion;
+import org.lwjgl.util.vector.Vector3f;
 import resource.WavefrontModel;
-
+import util.Utilities;
 
 /**
  *
@@ -16,29 +21,38 @@ public class RigidBody extends AbstractEntity {
 
     public RigidBody(graphics.ThreeDModel m) {
         super(m);
+        setOrientation(Utilities.quatFromAxisAngle(new Vector3f(0, 0, 1), (float)Math.PI / 4));
+        setAngularDrag(.99f);
     }
-    
+
     public static RigidBody rigidBodyFromPath(String prefix, String path) {
         return rigidBodyFromWavefront(new WavefrontModel(prefix, path));
     }
-    
+
     public static RigidBody rigidBodyFromPath(String mpath) {
         return rigidBodyFromWavefront(new WavefrontModel(mpath));
     }
-    
+
     private static RigidBody rigidBodyFromWavefront(WavefrontModel w) {
         w.create();
-        while(!w.isLoaded()) {
+        while (!w.isLoaded()) {
             Thread.yield();
         }
         graphics.ThreeDModel model = new graphics.ThreeDModel(w);
         model.create();
-        while(!model.isProcessed()) {
+        while (!model.isProcessed()) {
             Thread.yield();
         }
         return new RigidBody(model);
     }
-    
+
+    @Override
+    public boolean update(int delta) {
+        boolean x = super.update(delta);
+
+        return x;
+    }
+
     @Override
     public void collide(ArrayList<physics.Plane> collisions) {
     }
@@ -46,5 +60,4 @@ public class RigidBody extends AbstractEntity {
     @Override
     public void collide(physics.PhysicalEntity collisions) {
     }
-
 }

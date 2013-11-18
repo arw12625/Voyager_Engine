@@ -67,6 +67,7 @@ public class ThreeDModel extends resource.GraphicsResource implements ThreeD, Bo
                     if (mesh.hasNormals()) {
                         normals.put(asFloats(m.getNormals().get(face.getNormalIndices()[j])));
                     }
+            
                     if (mesh.hasTexCoords()) {
                         texCoords.put(asFloats(m.getTexCoords().get(face.getTextureCoordinateIndices()[j])));
                     }
