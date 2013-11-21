@@ -75,7 +75,7 @@ public class PhysicalPlayer extends Player implements graphics.ThreeD, Boundable
                 if (go.lengthSquared() != 0) {
                     pe.setAwake(true);
                     go = transform(go, orientation);
-                    go.scale(8);
+                    go.scale(20);
                     pe.applyForce(go);
                     //pe.setVelocity(go);
                 }

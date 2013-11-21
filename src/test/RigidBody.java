@@ -21,8 +21,6 @@ public class RigidBody extends AbstractEntity {
 
     public RigidBody(graphics.ThreeDModel m) {
         super(m);
-        setOrientation(Utilities.quatFromAxisAngle(new Vector3f(0, 0, 1), (float)Math.PI / 4));
-        setAngularDrag(.99f);
     }
 
     public static RigidBody rigidBodyFromPath(String prefix, String path) {

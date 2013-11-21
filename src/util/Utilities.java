@@ -78,6 +78,8 @@ public class Utilities {
         float half = theta / 2;
         float sin = (float) Math.sin(half);
         float cos = (float) Math.cos(half);
-        return new Quaternion(v.getX() * sin, v.getY() * sin, v.getZ() * sin, cos);
+        Quaternion q = new Quaternion(v.getX() * sin, v.getY() * sin, v.getZ() * sin, cos);
+        q.normalise();
+        return q;
     }
 }

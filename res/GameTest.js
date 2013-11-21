@@ -22,6 +22,7 @@ importClass(org.lwjgl.input.Keyboard);
 importClass(org.lwjgl.input.Mouse);
 importPackage(java.lang);
 importClass(org.lwjgl.util.vector.Vector3f);
+importClass(org.lwjgl.util.vector.Quaternion);
 
 FontManager.getInstance().create();
 TextureManager.getInstance().create();
@@ -40,13 +41,14 @@ InputManager.getInstance().put(Keyboard.KEY_S);
 InputManager.getInstance().put(Keyboard.KEY_A);
 InputManager.getInstance().put(Keyboard.KEY_D);
 Mouse.setGrabbed(true);
-var player = new CameraPlayer();
+var player = new PhysicalPlayer();
 player.create();
 Game.setPlayer(player);
 ThreeDGraphicsManager.getInstance().setViewPoint(player.getViewPoint());
+ThreeDPhysicsManager.getInstance().add(player);
 
 var grav = new Gravity();
-var ter = new WavefrontModel("terrain-fix");
+var ter = new WavefrontModel("terrain_test_fix");
 ter.create();
 
 yield(ter);
@@ -59,13 +61,14 @@ cm.create();
 ThreeDPhysicsManager.getInstance().setCollisionMesh(cm);
     
     
-player.setPosition(new Vector3f(-5,5, -5));
-/*player.getPhysicalEntity().addForceGenerator(grav);*/
+player.getPhysicalEntity().setPosition(new Vector3f(-18, 16.6, 7.7));
+player.getPhysicalEntity().addForceGenerator(grav);
 
 var green = RigidBody.rigidBodyFromPath("tall_fix");
 green.create();
 ThreeDGraphicsManager.getInstance().add(green);
-green.setPosition(new Vector3f(-15, 10, -10));
+green.setPosition(new Vector3f(0, 16.6, 0));
+green.setOrientation(Utilities.quatFromAxisAngle(new Vector3f(0, 0, 1), 3.14 / 4));
 ThreeDPhysicsManager.getInstance().add(green);
 green.addForceGenerator(grav);
     

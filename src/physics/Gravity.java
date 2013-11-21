@@ -14,7 +14,7 @@ public class Gravity implements ForceGenerator {
 
     @Override
     public void applyForce(PhysicalEntity pe) {
-        pe.applyForce(new Vector3f(0, -pe.getMass() * 8, 0));
+        pe.applyForce(new Vector3f(0, -pe.getMass() * 4, 0));
     }
     
 }

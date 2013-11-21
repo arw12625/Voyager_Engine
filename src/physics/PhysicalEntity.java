@@ -32,13 +32,12 @@ public abstract class PhysicalEntity extends GameObject implements update.Update
     private float mass;
     private Matrix3f inertiaTensor;
     private Matrix3f invInertiaTensor;
-    private float linearDrag = 0.99f;
-    private float angularDrag = .95f;
+    private float linearDrag = 0.999f;
+    private float angularDrag = .995f;
     private boolean awake;
     private float minSpeedSquared = 0.001f;
     private float vAvg;
     private static Vector3f zero = new Vector3f();
-        VectorGraphic vg;
 
     public PhysicalEntity(BoundingBox bounds) {
         this(bounds, 1f);
@@ -63,8 +62,6 @@ public abstract class PhysicalEntity extends GameObject implements update.Update
         invInertiaTensor = (Matrix3f) inertiaTensor.invert();
         vAvg = 100;
         awake = true;
-        vg = new VectorGraphic(new Vector3f(), new Vector3f());
-        ThreeDGraphicsManager.getInstance().addGraphic3D(vg, 100);
     }
 
     @Override
@@ -86,7 +83,8 @@ public abstract class PhysicalEntity extends GameObject implements update.Update
         // Calculate linear acceleration from force inputs.
         acceleration = (Vector3f) forceBuffer.scale(invMass);
         // Calculate angular acceleration from torque inputs.
-        angularAcceleration = Matrix3f.transform(invInertiaTensor, torqueBuffer, null);
+        angularAcceleration = new Vector3f(torqueBuffer);
+        angularAcceleration.scale(invMomentOfInertiaAround(torqueBuffer));
         // Adjust velocities
         // Update linear velocity from both acceleration and impulse.
         velocity = addScaledVector(velocity, acceleration, delta);
@@ -99,7 +97,9 @@ public abstract class PhysicalEntity extends GameObject implements update.Update
         // Update linear position.
         orientedBounds.setPosition(addScaledVector(orientedBounds.getPosition(), velocity, delta));
         // Update angular position.
-        orientedBounds.setOrientation(addScaledVector(orientedBounds.getOrientation(), angularVelocity, -delta).normalise(null));
+        
+        orientedBounds.setOrientation(addScaledVector(getOrientation(), Utilities.inverseTransform(angularVelocity, getOrientation()), -delta).normalise(null));
+        
         // Normalize the orientation, and update the matrices with the new
         // position and orientation.
 
@@ -130,35 +130,32 @@ public abstract class PhysicalEntity extends GameObject implements update.Update
 
     public synchronized void applyImpulseAtPoint(Vector3f impulse, Vector3f application) {
         velocity = Utilities.addScaledVector(velocity, impulse, invMass);
-        Vector3f angularImpulse = Vector3f.cross(Vector3f.sub(application, orientedBounds.getPosition(), null), impulse, null);vg.setPosition(application);
-        Vector3f yo = new Vector3f(angularImpulse);
-        yo.normalise();
-        yo.scale(4f);
-        vg.setVector(yo);
-        Vector3f deltaAngularVelocity = Matrix3f.transform(invInertiaTensor, angularImpulse, null);        
+        Vector3f angularImpulse = Vector3f.cross(Vector3f.sub(application, orientedBounds.getPosition(), null), impulse, null);
+        Vector3f deltaAngularVelocity = new Vector3f(angularImpulse);
+        deltaAngularVelocity.scale(invMomentOfInertiaAround(angularImpulse));
         Vector3f.add(angularVelocity, deltaAngularVelocity, angularVelocity);
     }
-    
+
     public synchronized Vector3f getVelocity() {
         return velocity;
     }
-    
+
     public synchronized Vector3f getAngularVelocity() {
         return angularVelocity;
     }
-    
+
     public synchronized Vector3f getAcceleration() {
         return acceleration;
     }
-    
+
     public float getInvMass() {
         return invMass;
     }
-    
+
     public float getMass() {
         return mass;
     }
-    
+
     public synchronized boolean canSleep() {
         return vAvg < minSpeedSquared;
     }
@@ -181,7 +178,7 @@ public abstract class PhysicalEntity extends GameObject implements update.Update
     public synchronized void setAngularVelocity(Vector3f angVel) {
         this.angularVelocity = angVel;
     }
-    
+
     public synchronized boolean isAwake() {
         return true;
     }
@@ -189,11 +186,11 @@ public abstract class PhysicalEntity extends GameObject implements update.Update
     public synchronized Matrix3f getInertiaTensor() {
         return inertiaTensor;
     }
-    
+
     public synchronized Matrix3f getInvInertiaTensor() {
         return invInertiaTensor;
     }
-    
+
     public static Matrix3f getRectangularPrismInertiaTensor(final BoundingBox b, final float mass) {
         return new Matrix3f() {
 
@@ -201,18 +198,28 @@ public abstract class PhysicalEntity extends GameObject implements update.Update
                 float widthSquare = (float) Math.pow(b.getDimension().getX(), 2);
                 float heightSquare = (float) Math.pow(b.getDimension().getY(), 2);
                 float depthSquare = (float) Math.pow(b.getDimension().getZ(), 2);
-                float mult = mass/12f;
+                float mult = mass / 12f;
                 m00 = mult * (heightSquare * depthSquare);
                 m11 = mult * (widthSquare * depthSquare);
                 m22 = mult * (heightSquare * widthSquare);
+
             }
         };
     }
-    
+
+    public synchronized float invMomentOfInertiaAround(Vector3f axis) {
+        if(axis.lengthSquared() == 0) {
+            return 0;
+        }
+        Vector3f s = new Vector3f(axis);
+        s.normalise();
+        return 1.0f / Vector3f.dot(s, Utilities.transform(Matrix3f.transform(inertiaTensor, Utilities.inverseTransform(s, getOrientation()), null), getOrientation()));
+    }
+
     public synchronized Vector3f getPosition() {
         return orientedBounds.getPosition();
     }
-    
+
     public synchronized void setPosition(Vector3f r) {
         orientedBounds.setPosition(r);
     }
@@ -224,13 +231,12 @@ public abstract class PhysicalEntity extends GameObject implements update.Update
     public synchronized void setOrientation(Quaternion orientation) {
         orientedBounds.setOrientation(orientation);
     }
-    
+
     public synchronized void setLinearDrag(float drag) {
         this.linearDrag = drag;
     }
-    
+
     public synchronized void setAngularDrag(float drag) {
         this.angularDrag = drag;
     }
-
 }

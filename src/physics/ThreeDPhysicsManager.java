@@ -19,7 +19,7 @@ public class ThreeDPhysicsManager extends StandardManager implements update.Upda
 
     ArrayList<PhysicalEntity> pe;
     CollisionMesh collisionMesh;
-    float restitution = 0.1f;
+    float restitution = 0.2f;
     static ThreeDPhysicsManager instance;
 
     @Override
@@ -41,7 +41,7 @@ public class ThreeDPhysicsManager extends StandardManager implements update.Upda
         DebugMessages.getInstance().write("Physics starting");
 
         //Motion update
-        float division = 6;
+        float division = 1;
         float collision = 1;
         float time = delta / 1000f / division;
         for (int j = 0; j < division; j++) {
@@ -62,10 +62,11 @@ public class ThreeDPhysicsManager extends StandardManager implements update.Upda
                     if (!cols.isEmpty()) {
                         Vector3f[] vertices;
                         for (int i = 0; i < collision; i++) {
+                            float highestVelocity = Float.MAX_VALUE;
+                            Plane collisionPlane = null;
+                            Vector3f collisionVector = null;
                             vertices = e.getBounds().getGlobalVertices();
                             for (Vector3f v : vertices) {
-                                float highestVelocity = Float.MAX_VALUE;
-                                Plane toResolve = null;
                                 Vector3f relativeContact = Vector3f.sub(v, e.getPosition(), null);
                                 for (Plane p : cols) {
                                     float distance = p.getDistance(v);
@@ -79,13 +80,14 @@ public class ThreeDPhysicsManager extends StandardManager implements update.Upda
 
                                     if (seperatingVelocity < highestVelocity) {
                                         highestVelocity = seperatingVelocity;
-                                        toResolve = p;
+                                        collisionPlane = p;
+                                        collisionVector = v;
                                     }
                                 }
 
-                                if (highestVelocity >= 0) {
-                                    continue;
-                                }
+                            }
+
+                            if (highestVelocity < 0) {
 
                                 float newVelocity = -highestVelocity;
                                 newVelocity *= restitution;
@@ -102,38 +104,41 @@ public class ThreeDPhysicsManager extends StandardManager implements update.Upda
                                  */
 
                                 float deltaV = newVelocity - highestVelocity;
-                                Vector3f normal = new Vector3f(toResolve.getNormal());
+                                Vector3f normal = new Vector3f(collisionPlane.getNormal());
+                                Vector3f relativeContact = Vector3f.sub(collisionVector, e.getPosition(), null);
 
-                                Vector3f deltaVPerImpulseVec = new Vector3f();
+                                /*Vector3f deltaVPerImpulseVec = new Vector3f();
                                 Vector3f.cross(relativeContact, normal, deltaVPerImpulseVec);
                                 Matrix3f.transform(e.getInvInertiaTensor(), deltaVPerImpulseVec, deltaVPerImpulseVec);
                                 Vector3f.cross(deltaVPerImpulseVec, relativeContact, deltaVPerImpulseVec);
                                 // Work out the change in velocity in contact coordinates.
                                 float deltaVPerImpulse = Vector3f.dot(deltaVPerImpulseVec, normal);
                                 // Add the linear component of velocity change.
-                                deltaVPerImpulse += e.getInvMass();
+                                deltaVPerImpulse += e.getInvMass();*/
+                                
+                                Vector3f axis = Vector3f.cross(relativeContact, normal, null);
+                                float deltaVPerImpulse = e.getInvMass() + relativeContact.lengthSquared() * e.invMomentOfInertiaAround(axis);
 
                                 Vector3f impulse = new Vector3f(normal);
                                 impulse.scale(deltaV / deltaVPerImpulse);
-                                e.applyImpulseAtPoint(impulse, v);
+                                e.applyImpulseAtPoint(impulse, collisionVector);
                             }
                         }
                         for (int i = 0; i < collision; i++) {
                             vertices = e.getBounds().getGlobalVertices();
+                            float highestPenetration = Float.MAX_VALUE;
+                            Plane collisionPlane = null;
                             for (Vector3f v : vertices) {
-                                float highestPenetration = Float.MAX_VALUE;
-                                Plane toResolve = null;
                                 for (Plane p : cols) {
                                     float distance = p.getDistance(v);
                                     if (distance < highestPenetration) {
                                         highestPenetration = distance;
-                                        toResolve = p;
+                                        collisionPlane = p;
                                     }
                                 }
-                                if (highestPenetration > 0) {
-                                    continue;
-                                }
-                                e.setPosition(Utilities.addScaledVector(e.getPosition(), toResolve.getNormal(), -1f * highestPenetration));
+                            }
+                            if (highestPenetration < 0) {
+                                e.setPosition(Utilities.addScaledVector(e.getPosition(), collisionPlane.getNormal(), -1.01f * highestPenetration));
                             }
                         }
                         e.collide(cols);
