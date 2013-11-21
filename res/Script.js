@@ -22,44 +22,8 @@ function quit() {
 function exit() {
     Game.quit();
 }
-
-function create(prefix, path) {
-
-    var r = new JavaAdapter(Updateable, {
-        update: function(delta) {
-            try {
-                var wfModel = new WavefrontModel(prefix, path);
-                wfModel.create();
-                yield(wfModel);
-                var tdModel = new ThreeDModel(wfModel);
-                tdModel.create();
-                yield(tdModel);
-                ThreeDGraphicsManager.getInstance().add(tdModel);
-                ThreeDPhysicsManager.getInstance().getCollisionMesh().addMeshes(wfModel.getObjects());
-            } catch (e) {
-                System.out.println("Wtf, " + e);
-            }
-            return true;
-        }
-    });
-    UpdateManager.getInstance().add(r);
-    
-    return r;
-}
-
 function testing() {
     System.out.println("rawr");
-}
-
-function yield(resource) {
-    if(resource instanceof Resource) {
-        while(!resource.isLoaded()) {
-        }
-    }
-    if(resource instanceof GraphicsResource) {
-        while(!resource.isProcessed()) {
-        }
-    }
 }
 
 System.out.println("Script.js Done");

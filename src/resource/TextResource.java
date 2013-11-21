@@ -34,6 +34,7 @@ public class TextResource extends resource.Resource {
             String line;
             while ((line = br.readLine()) != null) {
                 sb.append(line);
+                sb.append("\n");
             }
             this.textString = sb.toString();
         } catch (IOException ex) {

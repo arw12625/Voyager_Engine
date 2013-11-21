@@ -51,10 +51,10 @@ var grav = new Gravity();
 var ter = new WavefrontModel("terrain_test_fix");
 ter.create();
 
-yield(ter);
+ScriptUtil.waitUntilLoaded(ter);
 var terDisp = new ThreeDModel(ter);
 terDisp.create();
-yield(terDisp);
+ScriptUtil.waitUntilLoaded(terDisp);
 ThreeDGraphicsManager.getInstance().add(terDisp);
 var cm = new CollisionMesh(ter.getObjects());
 cm.create();

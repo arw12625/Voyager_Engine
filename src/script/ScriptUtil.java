@@ -76,7 +76,7 @@ public class ScriptUtil {
         }
     }
     
-    private static void waitUntilLoaded(Resource r) {
+    public static void waitUntilLoaded(Resource r) {
         if (r instanceof Resource) {
             while (!r.isLoaded()) {
                 Thread.yield();
