@@ -158,6 +158,7 @@ public class WavefrontModel extends Resource implements physics.Boundable {
     public static HashMap<String, graphics.Material> loadMaterialLibrary(String pathPrefix, String materialFilePath) {
         HashMap<String, graphics.Material> materials = new HashMap<String, graphics.Material>();
         try {
+            System.out.println("WHAT + " + materialFilePath);
             BufferedReader reader = new BufferedReader(new InputStreamReader(
                     ResourceLoader.getResourceAsStream("res/" + pathPrefix + materialFilePath)));
             String line;

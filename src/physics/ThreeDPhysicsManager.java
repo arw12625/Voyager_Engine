@@ -5,6 +5,8 @@
 package physics;
 
 import game.*;
+import graphics.ThreeDGraphicsManager;
+import graphics.VectorGraphic;
 import java.util.ArrayList;
 import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Vector3f;
@@ -21,6 +23,7 @@ public class ThreeDPhysicsManager extends StandardManager implements update.Upda
     CollisionMesh collisionMesh;
     float restitution = 0.2f;
     static ThreeDPhysicsManager instance;
+    private float coefficientOfFriction = .3f;
 
     @Override
     public void create() {
@@ -41,13 +44,12 @@ public class ThreeDPhysicsManager extends StandardManager implements update.Upda
         DebugMessages.getInstance().write("Physics starting");
 
         //Motion update
-        float division = 1;
-        float collision = 1;
+        float division = 4;
+        float collision = 4;
         float time = delta / 1000f / division;
         for (int j = 0; j < division; j++) {
             for (PhysicalEntity e : pe) {
 
-                e.setAwake(!e.canSleep());
                 e.updateForces();
                 if (e.isAwake()) {
                     e.integrate(time);
@@ -65,6 +67,7 @@ public class ThreeDPhysicsManager extends StandardManager implements update.Upda
                             float highestVelocity = Float.MAX_VALUE;
                             Plane collisionPlane = null;
                             Vector3f collisionVector = null;
+                            Vector3f collisionVelocity = null;
                             vertices = e.getBounds().getGlobalVertices();
                             for (Vector3f v : vertices) {
                                 Vector3f relativeContact = Vector3f.sub(v, e.getPosition(), null);
@@ -82,6 +85,7 @@ public class ThreeDPhysicsManager extends StandardManager implements update.Upda
                                         highestVelocity = seperatingVelocity;
                                         collisionPlane = p;
                                         collisionVector = v;
+                                        collisionVelocity = pointVelocity;
                                     }
                                 }
 
@@ -89,55 +93,59 @@ public class ThreeDPhysicsManager extends StandardManager implements update.Upda
 
                             if (highestVelocity < 0) {
 
-                                float newVelocity = -highestVelocity;
+                                Vector3f normal = new Vector3f(collisionPlane.getNormal());
+
+                                float accCausedV = Vector3f.dot((Vector3f) (new Vector3f(e.getAcceleration()).scale(time)), normal);
+                                float newVelocity = -highestVelocity - accCausedV;
                                 newVelocity *= restitution;
 
-                                /*
-                                 * Vector3f accCausedVelocity =
-                                 * e.getAcceleration(); float
-                                 * accCausedSepVelocity =
-                                 * Vector3f.dot(accCausedVelocity,
-                                 * toResolve.getNormal()) * time; if
-                                 * (accCausedSepVelocity < 0) { newVelocity +=
-                                 * accCausedSepVelocity; if (newVelocity < 0) {
-                                 * newVelocity = 0; } }
-                                 */
-
-                                float deltaV = newVelocity - highestVelocity;
-                                Vector3f normal = new Vector3f(collisionPlane.getNormal());
+                                float deltaV = newVelocity - highestVelocity - accCausedV;
                                 Vector3f relativeContact = Vector3f.sub(collisionVector, e.getPosition(), null);
 
-                                /*Vector3f deltaVPerImpulseVec = new Vector3f();
-                                Vector3f.cross(relativeContact, normal, deltaVPerImpulseVec);
-                                Matrix3f.transform(e.getInvInertiaTensor(), deltaVPerImpulseVec, deltaVPerImpulseVec);
-                                Vector3f.cross(deltaVPerImpulseVec, relativeContact, deltaVPerImpulseVec);
-                                // Work out the change in velocity in contact coordinates.
-                                float deltaVPerImpulse = Vector3f.dot(deltaVPerImpulseVec, normal);
-                                // Add the linear component of velocity change.
-                                deltaVPerImpulse += e.getInvMass();*/
-                                
                                 Vector3f axis = Vector3f.cross(relativeContact, normal, null);
                                 float deltaVPerImpulse = e.getInvMass() + relativeContact.lengthSquared() * e.invMomentOfInertiaAround(axis);
 
-                                Vector3f impulse = new Vector3f(normal);
-                                impulse.scale(deltaV / deltaVPerImpulse);
-                                e.applyImpulseAtPoint(impulse, collisionVector);
+                                float impulse = deltaV / deltaVPerImpulse;
+                                Vector3f impulseVector = new Vector3f(normal);
+                                impulseVector.scale(impulse);
+                                Vector3f slide = Vector3f.sub(collisionVelocity, (Vector3f) (new Vector3f(normal).scale(highestVelocity)), null);
+                                Vector3f friction = new Vector3f();
+                                if (slide.lengthSquared() > .1f) {
+                                    slide.normalise();
+                                    friction = (Vector3f) slide.scale(-coefficientOfFriction * impulse);
+                                }
+                                e.applyImpulseAtPoint(Vector3f.add(impulseVector, friction, null), collisionVector);
+
                             }
                         }
                         for (int i = 0; i < collision; i++) {
                             vertices = e.getBounds().getGlobalVertices();
                             float highestPenetration = Float.MAX_VALUE;
                             Plane collisionPlane = null;
+                            Vector3f collisionVector = null;
                             for (Vector3f v : vertices) {
                                 for (Plane p : cols) {
                                     float distance = p.getDistance(v);
                                     if (distance < highestPenetration) {
                                         highestPenetration = distance;
+                                        collisionVector = v;
                                         collisionPlane = p;
                                     }
                                 }
                             }
                             if (highestPenetration < 0) {
+                                /*Vector3f normal = new Vector3f(collisionPlane.getNormal());
+                                Vector3f relative = Vector3f.sub(collisionVector, e.getPosition(), null);
+                                Vector3f axis = Vector3f.cross(relative, normal, null);
+                                axis.normalise();
+                                float momentOfInertia = e.invMomentOfInertiaAround(axis);
+                                float linearInertia = e.getInvMass();
+                                float angularInertia = collisionVector.lengthSquared() / momentOfInertia;
+                                float totalInertia = linearInertia + angularInertia;
+                                float linearMove = highestPenetration * linearInertia / totalInertia;
+                                float angularMove = highestPenetration / collisionVector.length() * angularInertia / totalInertia;
+                                e.setPosition(Utilities.addScaledVector(e.getPosition(), normal, -1.01f * linearMove));
+                                e.setOrientation(Utilities.addScaledVector(e.getOrientation(), axis.negate(null), angularMove));*/
                                 e.setPosition(Utilities.addScaledVector(e.getPosition(), collisionPlane.getNormal(), -1.01f * highestPenetration));
                             }
                         }

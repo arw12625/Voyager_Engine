@@ -32,10 +32,10 @@ public abstract class PhysicalEntity extends GameObject implements update.Update
     private float mass;
     private Matrix3f inertiaTensor;
     private Matrix3f invInertiaTensor;
-    private float linearDrag = 0.999f;
-    private float angularDrag = .995f;
+    private float linearDrag = 0.996f;
+    private float angularDrag = .993f;
     private boolean awake;
-    private float minSpeedSquared = 0.001f;
+    private float minSpeedSquared = 0.015f;
     private float vAvg;
     private static Vector3f zero = new Vector3f();
 
@@ -59,7 +59,9 @@ public abstract class PhysicalEntity extends GameObject implements update.Update
         invMass = 1f / mass;
         this.mass = mass;
         this.inertiaTensor = inertiaTensor;
-        invInertiaTensor = (Matrix3f) inertiaTensor.invert();
+        invInertiaTensor = new Matrix3f();
+        invInertiaTensor.load(inertiaTensor);
+        invInertiaTensor.invert();
         vAvg = 100;
         awake = true;
     }
@@ -81,7 +83,7 @@ public abstract class PhysicalEntity extends GameObject implements update.Update
 
     public synchronized void integrate(float delta) {
         // Calculate linear acceleration from force inputs.
-        acceleration = (Vector3f) forceBuffer.scale(invMass);
+        acceleration = (Vector3f) new Vector3f(forceBuffer).scale(invMass);
         // Calculate angular acceleration from torque inputs.
         angularAcceleration = new Vector3f(torqueBuffer);
         angularAcceleration.scale(invMomentOfInertiaAround(torqueBuffer));
@@ -97,9 +99,9 @@ public abstract class PhysicalEntity extends GameObject implements update.Update
         // Update linear position.
         orientedBounds.setPosition(addScaledVector(orientedBounds.getPosition(), velocity, delta));
         // Update angular position.
-        
+
         orientedBounds.setOrientation(addScaledVector(getOrientation(), Utilities.inverseTransform(angularVelocity, getOrientation()), -delta).normalise(null));
-        
+
         // Normalize the orientation, and update the matrices with the new
         // position and orientation.
 
@@ -108,7 +110,11 @@ public abstract class PhysicalEntity extends GameObject implements update.Update
         torqueBuffer.set(zero);
 
         vAvg += velocity.lengthSquared() + angularVelocity.lengthSquared();
-        vAvg *= 0.7;
+        vAvg *= 0.5;
+        System.out.println(vAvg);
+        if(canSleep() && isAwake()) {
+            setAwake(false);
+        }
     }
 
     public void addForceGenerator(ForceGenerator fg) {
@@ -208,7 +214,7 @@ public abstract class PhysicalEntity extends GameObject implements update.Update
     }
 
     public synchronized float invMomentOfInertiaAround(Vector3f axis) {
-        if(axis.lengthSquared() == 0) {
+        if (axis.lengthSquared() == 0) {
             return 0;
         }
         Vector3f s = new Vector3f(axis);
