@@ -19,7 +19,7 @@ import static org.lwjgl.opengl.GL11.*;
  *
  * @author Andy
  */
-public class VerticalPlayer extends Player implements graphics.ThreeD {
+public class VerticalPlayer extends Player implements graphics.ThreeD, Boundable {
 
     graphics.ViewPoint vp;
     physics.PhysicalEntity pe;
@@ -113,5 +113,15 @@ public class VerticalPlayer extends Player implements graphics.ThreeD {
     @Override
     public void render() {
         pe.getBounds().render();
+    }
+
+    @Override
+    public BoundingBox getBounds() {
+        return getPhysicalEntity().getBounds();
+    }
+
+    @Override
+    public Vector3f getPosition() {
+        return getBounds().getPosition();
     }
 }

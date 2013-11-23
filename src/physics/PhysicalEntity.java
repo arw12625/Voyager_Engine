@@ -111,7 +111,6 @@ public abstract class PhysicalEntity extends GameObject implements update.Update
 
         vAvg += velocity.lengthSquared() + angularVelocity.lengthSquared();
         vAvg *= 0.5;
-        System.out.println(vAvg);
         if(canSleep() && isAwake()) {
             setAwake(false);
         }
@@ -222,6 +221,7 @@ public abstract class PhysicalEntity extends GameObject implements update.Update
         return 1.0f / Vector3f.dot(s, Utilities.transform(Matrix3f.transform(inertiaTensor, Utilities.inverseTransform(s, getOrientation()), null), getOrientation()));
     }
 
+    @Override
     public synchronized Vector3f getPosition() {
         return orientedBounds.getPosition();
     }

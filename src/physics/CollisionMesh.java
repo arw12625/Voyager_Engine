@@ -66,5 +66,10 @@ public class CollisionMesh extends GameObject implements Boundable {
     public boolean isEmpty() {
         return planes == null || planes.isEmpty();
     }
+
+    @Override
+    public Vector3f getPosition() {
+        return getBounds().getPosition();
+    }
     
 }

@@ -230,4 +230,9 @@ public class WavefrontModel extends Resource implements physics.Boundable {
     public String getPath() {
         return path;
     }
+
+    @Override
+    public Vector3f getPosition() {
+        return getBounds().getPosition();
+    }
 }

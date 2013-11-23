@@ -121,4 +121,9 @@ public class PhysicalPlayer extends Player implements graphics.ThreeD, Boundable
     public BoundingBox getBounds() {
         return getPhysicalEntity().getBounds();
     }
+
+    @Override
+    public Vector3f getPosition() {
+        return getBounds().getPosition();
+    }
 }

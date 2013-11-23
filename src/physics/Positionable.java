@@ -4,12 +4,12 @@
  */
 package physics;
 
+import org.lwjgl.util.vector.Vector3f;
+
 /**
  *
  * @author Andy
  */
-public interface Boundable extends Positionable {
-    
-    public BoundingBox getBounds();
-    
+public interface Positionable {
+    public Vector3f getPosition();
 }

@@ -94,4 +94,9 @@ public class Mesh extends game.GameObject implements Boundable {
     public boolean hasTexCoords() {
         return texCoords != null && texCoords.size() > 0;
     }
+
+    @Override
+    public Vector3f getPosition() {
+        return getBounds().getPosition();
+    }
 }
