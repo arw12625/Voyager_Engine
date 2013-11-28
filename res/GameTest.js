@@ -40,6 +40,7 @@ InputManager.getInstance().put(Keyboard.KEY_W);
 InputManager.getInstance().put(Keyboard.KEY_S);
 InputManager.getInstance().put(Keyboard.KEY_A);
 InputManager.getInstance().put(Keyboard.KEY_D);
+InputManager.getInstance().put(Keyboard.KEY_K);
 Mouse.setGrabbed(true);
 var player = new PhysicalPlayer();
 player.create();
@@ -71,7 +72,14 @@ green.setPosition(new Vector3f(0, 16.6, 0));
 green.setOrientation(Utilities.quatFromAxisAngle(new Vector3f(0, 0, 1), 3.14 / 4));
 ThreeDPhysicsManager.getInstance().add(green);
 green.addForceGenerator(grav);
-    
+
+var keyListenerGenerator = new JavaAdapter(ForceGenerator, {
+    applyForce: function(physEnt) {
+        if (InputManager.getInstance().get(Keyboard.KEY_K).isDown()) {
+            physEnt.applyForce(new Vector3f(5, 0, 0));
+        }
+    }});
+green.addForceGenerator(keyListenerGenerator);
     
 var s = new SkySphere(SkySphere.SkyType.PLAIN_NIGHT);
 s.create();
