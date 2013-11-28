@@ -57,10 +57,14 @@ public class ScriptManager extends StandardManager {
     }
 
     public void execute(GameScript s) throws ScriptException {
-        if (s.getContext() != null) {
-            engine.eval(s.getScript(), s.getContext());
-        } else {
-            engine.eval(s.getScript());
+        try {
+            if (s.getContext() != null) {
+                engine.eval(s.getScript(), s.getContext());
+            } else {
+                engine.eval(s.getScript());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
