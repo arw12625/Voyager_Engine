@@ -5,6 +5,8 @@
 package graphics;
 
 import game.Manager;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
@@ -16,8 +18,8 @@ import static org.lwjgl.opengl.GL11.*;
  */
 public abstract class GraphicsManager extends Manager {
 
-    int width, height;
     DisplayMode displayMode;
+    private DisplayMode desiredDisplayMode;
     static final int defaultWidth = 640, defaultHeight = 480;
     private int updateTime;
     static final int defaultUpdateTime = 1000 / 60;
@@ -27,9 +29,8 @@ public abstract class GraphicsManager extends Manager {
     public void create() {
         super.create();
         this.displayMode = new DisplayMode(defaultWidth, defaultHeight);
-        setDisplayMode(displayMode);
-        this.width = displayMode.getWidth();
-        this.height = displayMode.getHeight();
+        this.desiredDisplayMode = displayMode;
+        applyDisplayMode();
         this.updateTime = defaultUpdateTime;
         Display.setVSyncEnabled(true);
         try {
@@ -37,7 +38,7 @@ public abstract class GraphicsManager extends Manager {
         } catch (LWJGLException ex) {
             ex.printStackTrace();
         }
-        glViewport(0, 0, width, height);
+        glViewport(0, 0, displayMode.getWidth(), displayMode.getHeight());
         glClearColor(0f, 0f, 0f, 0f);
 
     }
@@ -49,32 +50,41 @@ public abstract class GraphicsManager extends Manager {
     }
 
     public void setDisplayMode(DisplayMode displayMode) {
-        try {
-            Display.setDisplayMode(displayMode);
-        } catch (LWJGLException ex) {
-            ex.printStackTrace();
-        }
+        this.desiredDisplayMode = displayMode;
     }
-    
+
     public void setTitle(String title) {
         Display.setTitle(title);
     }
-    
+
     public int getWidth() {
-        return width;
+        return displayMode.getWidth();
     }
 
     public int getHeight() {
-        return height;
+        return displayMode.getHeight();
     }
 
     public boolean isCloseRequested() {
         return closeRequested;
     }
-    
+
     public void render() {
         closeRequested = Display.isCloseRequested();
         Display.update();
         Display.sync(updateTime);
+        if (!desiredDisplayMode.equals(displayMode)) {
+            displayMode = desiredDisplayMode;
+            applyDisplayMode();
+            glViewport(0, 0, getWidth(), getHeight());
+        }
+    }
+
+    private void applyDisplayMode() {
+        try {
+            Display.setDisplayMode(displayMode);
+        } catch (LWJGLException ex) {
+            ex.printStackTrace();
+        }
     }
 }

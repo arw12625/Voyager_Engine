@@ -80,7 +80,6 @@ public class SoundManager extends Manager implements update.Updateable{
 
     public SoundResource loadSoundResource(String path) {
         SoundResource resource = new SoundResource(path);
-        resource.create();
         resources.put(resource.getFullName(), resource);
         return resource;
     }

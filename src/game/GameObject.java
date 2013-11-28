@@ -24,6 +24,7 @@ public abstract class GameObject {
         }
         instances.put(name, id + 1);
         Game.addGameObject(this);
+        
         util.DebugMessages.getInstance().write(this.getFullName() + " created");
     }
 

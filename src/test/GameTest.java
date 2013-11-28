@@ -8,22 +8,10 @@ import physics.Mesh;
 import input.InputManager;
 import resource.ResourceManager;
 import update.UpdateManager;
-import sound.SoundManager;
 import game.*;
 import graphics.*;
-import org.lwjgl.input.Keyboard;
-import physics.ThreeDPhysicsManager;
-import physics.VerticalPlayer;
-import script.Console;
 import util.DebugMessages;
 import java.util.ArrayList;
-import javax.script.ScriptException;
-import org.lwjgl.input.Mouse;
-import org.lwjgl.util.vector.Vector3f;
-import physics.*;
-import resource.FontManager;
-import resource.TextureManager;
-import resource.WavefrontModel;
 import script.ScriptManager;
 
 /**
@@ -35,7 +23,7 @@ public class GameTest {
     static ArrayList<TestGraphic> graphics;
 
     public static void main(String[] args) {
-
+        
         UpdateManager updateManager = UpdateManager.getInstance();
         ThreeDGraphicsManager graphicsManager = ThreeDGraphicsManager.getInstance();
         InputManager inputManager = InputManager.getInstance();
@@ -45,7 +33,7 @@ public class GameTest {
 
         Game.create("THE GAME", updateManager, graphicsManager, inputManager, resourceManager, gameObjectManager, scriptManager);
 
-        ScriptManager.getInstance().loadAndExecute("FocusTest.js");
+        ScriptManager.getInstance().loadAndExecute("SoundTest.js");
 
         Game.run();
     }
