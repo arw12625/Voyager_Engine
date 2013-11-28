@@ -24,12 +24,14 @@ public class Plane implements Boundable, graphics.ThreeD {
 
     }
 
+    @Override
     public BoundingBox getBounds() {
 
         return bounds;
 
     }
 
+    @Override
     public String toString() {
 
         return bounds.toString();
@@ -51,5 +53,10 @@ public class Plane implements Boundable, graphics.ThreeD {
     @Override
     public void render() {
         bounds.render();
+    }
+
+    @Override
+    public Vector3f getPosition() {
+        return getBounds().getPosition();
     }
 }

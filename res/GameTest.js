@@ -49,7 +49,7 @@ ThreeDGraphicsManager.getInstance().setViewPoint(player.getViewPoint());
 ThreeDPhysicsManager.getInstance().add(player);
 
 var grav = new Gravity();
-var ter = new WavefrontModel("terrain_test_fix");
+var ter = new WavefrontModel("launch_pad_fix");
 ter.create();
 
 ScriptUtil.waitUntilLoaded(ter);
@@ -68,7 +68,7 @@ player.getPhysicalEntity().addForceGenerator(grav);
 var green = RigidBody.rigidBodyFromPath("tall_fix");
 green.create();
 ThreeDGraphicsManager.getInstance().add(green);
-green.setPosition(new Vector3f(0, 16.6, 0));
+green.setPosition(new Vector3f(10, 16.6, 0));
 green.setOrientation(Utilities.quatFromAxisAngle(new Vector3f(0, 0, 1), 3.14 / 4));
 ThreeDPhysicsManager.getInstance().add(green);
 green.addForceGenerator(grav);
@@ -80,6 +80,13 @@ var keyListenerGenerator = new JavaAdapter(ForceGenerator, {
         }
     }});
 green.addForceGenerator(keyListenerGenerator);
+    
+var rocket = RigidBody.rigidBodyFromPath("solid_rocket_fix");
+rocket.create();
+ThreeDGraphicsManager.getInstance().add(rocket);
+rocket.setPosition(new Vector3f(0, 8, 0));
+ThreeDPhysicsManager.getInstance().add(rocket);
+rocket.addForceGenerator(grav);
     
 var s = new SkySphere(SkySphere.SkyType.PLAIN_NIGHT);
 s.create();

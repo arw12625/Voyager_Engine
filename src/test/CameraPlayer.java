@@ -13,7 +13,7 @@ import util.Utilities;
  *
  * @author Andy
  */
-public class CameraPlayer extends game.Player {
+public class CameraPlayer extends game.Player implements physics.Positionable {
 
     Vector3f position;
     Quaternion orientation;

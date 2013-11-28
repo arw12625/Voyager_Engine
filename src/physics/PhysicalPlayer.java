@@ -75,7 +75,7 @@ public class PhysicalPlayer extends Player implements graphics.ThreeD, Boundable
                 if (go.lengthSquared() != 0) {
                     pe.setAwake(true);
                     go = transform(go, orientation);
-                    go.scale(20);
+                    go.scale(80);
                     pe.applyForce(go);
                     //pe.setVelocity(go);
                 }
@@ -120,5 +120,10 @@ public class PhysicalPlayer extends Player implements graphics.ThreeD, Boundable
     @Override
     public BoundingBox getBounds() {
         return getPhysicalEntity().getBounds();
+    }
+
+    @Override
+    public Vector3f getPosition() {
+        return getBounds().getPosition();
     }
 }

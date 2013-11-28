@@ -165,4 +165,9 @@ public class ThreeDModel extends resource.GraphicsResource implements ThreeD, Bo
         return m.getBounds();
     }
 
+    @Override
+    public Vector3f getPosition() {
+        return getBounds().getPosition();
+    }
+
 }

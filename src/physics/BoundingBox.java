@@ -172,20 +172,19 @@ public class BoundingBox extends game.GameObject implements Boundable, graphics.
         BoundingBox bAlign = b.getAlignedBounds();
         Vector3f rel = localize(bAlign.getPosition());
         Vector3f bAlignHalf = bAlign.getHalf();
-        boolean xOverlap = Math.abs(rel.getX()) + bAlignHalf.x < getAlignedBounds().getHalf().getX();
-        boolean yOverlap = Math.abs(rel.getY()) + bAlignHalf.y < getAlignedBounds().getHalf().getY();
-        boolean zOverlap = Math.abs(rel.getZ()) + bAlignHalf.z < getAlignedBounds().getHalf().getZ();
-        return xOverlap && yOverlap && zOverlap;
+        return Math.abs(rel.getX()) + bAlignHalf.x < getAlignedBounds().getHalf().getX() && //x overlap
+               Math.abs(rel.getY()) + bAlignHalf.y < getAlignedBounds().getHalf().getY() && //y overlap
+               Math.abs(rel.getZ()) + bAlignHalf.z < getAlignedBounds().getHalf().getZ();   //z overlap
     }
 
     public synchronized boolean intersects(BoundingBox b) {
         BoundingBox bAlign = b.getAlignedBounds();
         Vector3f rel = localize(bAlign.getPosition());
         Vector3f bAlignHalf = bAlign.getHalf();
-        boolean xOverlap = Math.abs(rel.getX()) - bAlignHalf.x < getAlignedBounds().getHalf().getX();
-        boolean yOverlap = Math.abs(rel.getY()) - bAlignHalf.y < getAlignedBounds().getHalf().getY();
-        boolean zOverlap = Math.abs(rel.getZ()) - bAlignHalf.z < getAlignedBounds().getHalf().getZ();
-        return xOverlap && yOverlap && zOverlap;
+        return Math.abs(rel.getX()) - bAlignHalf.x < getAlignedBounds().getHalf().getX() && //x overlap
+               Math.abs(rel.getY()) - bAlignHalf.y < getAlignedBounds().getHalf().getY() && //y overlap
+               Math.abs(rel.getZ()) - bAlignHalf.z < getAlignedBounds().getHalf().getZ();   //z overlap
+                
     }
 
     public boolean valueInRange(float value, float min, float max) {

@@ -45,7 +45,7 @@ public class GameTest {
 
         Game.create("THE GAME", updateManager, graphicsManager, inputManager, resourceManager, gameObjectManager, scriptManager);
 
-        ScriptManager.getInstance().loadAndExecute("GameTest.js");
+        ScriptManager.getInstance().loadAndExecute("FocusTest.js");
 
         Game.run();
     }

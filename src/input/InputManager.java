@@ -20,6 +20,7 @@ public class InputManager extends Manager {
     HashMap<Integer, KeyStatus> map;
     private int x, y;
     private int dx, dy;
+    private int dWheel;
     static InputManager instance;
 
     @Override
@@ -58,6 +59,7 @@ public class InputManager extends Manager {
         }
         dx = Mouse.getDX();
         dy = Mouse.getDY();
+        dWheel = Mouse.getDWheel();
         x = Mouse.getX();
         y = Mouse.getY();
 
@@ -100,6 +102,14 @@ public class InputManager extends Manager {
 
     public void setGrabbed(boolean isGrabbed) {
         Mouse.setGrabbed(isGrabbed);
+    }
+    
+    public boolean isMouseButtonDown(int button) {
+       return Mouse.isButtonDown(button);
+    }
+    
+    public int getDWheel() {
+        return this.dWheel;
     }
 
     @Override
