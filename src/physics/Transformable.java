@@ -8,8 +8,7 @@ package physics;
  *
  * @author Andy
  */
-public interface Boundable {
-    
-    public BoundingBox getBounds();
-    
+public interface Transformable {
+    public Transform getTransform();
+    public void setTransform(Transform t);
 }

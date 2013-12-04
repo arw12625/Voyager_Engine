@@ -102,6 +102,9 @@ public class ThreeDModel extends resource.GraphicsResource implements ThreeD, Bo
     public void render() {
         for (int i = 0; i < m.getObjects().size(); i++) {
 
+            if(m.getObjects().get(i).getName().toLowerCase().contains("bound")) {
+                continue;
+            }
             glBindBuffer(GL_ARRAY_BUFFER, vboVertexHandle[i]);
             glVertexPointer(3, GL_FLOAT, 0, 0L);
 
@@ -163,11 +166,6 @@ public class ThreeDModel extends resource.GraphicsResource implements ThreeD, Bo
     @Override
     public BoundingBox getBounds() {
         return m.getBounds();
-    }
-
-    @Override
-    public Vector3f getPosition() {
-        return getBounds().getPosition();
     }
 
 }

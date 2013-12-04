@@ -19,10 +19,10 @@ import static org.lwjgl.opengl.GL11.*;
  *
  * @author Andy
  */
-public class VerticalPlayer extends Player implements graphics.ThreeD, Boundable {
+public class VerticalPlayer extends Player implements Boundable {
 
     graphics.ViewPoint vp;
-    physics.PhysicalEntity pe;
+    physics.DynamicEntity pe;
     private float xAngle;
     private float yAngle;
     private float piOver180 = (float) (Math.PI / 180f);
@@ -33,21 +33,7 @@ public class VerticalPlayer extends Player implements graphics.ThreeD, Boundable
         super.create();
         BoundingBox playerBounds = new BoundingBox(new Vector3f(), new Vector3f(.25f, .5f, .25f));
         playerBounds.create();
-        pe = new physics.PhysicalEntity(playerBounds) {
-            @Override
-            public void collide(ArrayList<Plane> collisions) {
-            }
-
-            @Override
-            public void collide(PhysicalEntity collision) {
-                //System.out.println(collision);
-            }
-
-            @Override
-            public boolean update(int delta) {
-                return false;
-            }
-        };
+        pe = new physics.DynamicEntity(playerBounds);
         pe.create();
         ThreeDPhysicsManager.getInstance().add(pe);
         graphics.ThreeDGraphicsManager.getInstance().add(this);
@@ -55,7 +41,7 @@ public class VerticalPlayer extends Player implements graphics.ThreeD, Boundable
         pe.addForceGenerator(new ForceGenerator() {
 
             @Override
-            public void applyForce(PhysicalEntity pe) {
+            public void applyForce(DynamicEntity pe) {
                 input.InputManager keyboard = input.InputManager.getInstance();
                 Vector3f go = new Vector3f();
                 if (keyboard.get(Keyboard.KEY_UP).isDown() || keyboard.get(Keyboard.KEY_W).isDown()) {
@@ -106,13 +92,8 @@ public class VerticalPlayer extends Player implements graphics.ThreeD, Boundable
         return vp;
     }
 
-    public PhysicalEntity getPhysicalEntity() {
+    public DynamicEntity getPhysicalEntity() {
         return pe;
-    }
-
-    @Override
-    public void render() {
-        pe.getBounds().render();
     }
 
     @Override
@@ -120,8 +101,4 @@ public class VerticalPlayer extends Player implements graphics.ThreeD, Boundable
         return getPhysicalEntity().getBounds();
     }
 
-    @Override
-    public Vector3f getPosition() {
-        return getBounds().getPosition();
-    }
 }

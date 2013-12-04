@@ -10,7 +10,7 @@ import physics.ThreeDPhysicsManager;
 import resource.GraphicsResource;
 import resource.Resource;
 import resource.WavefrontModel;
-import sun.org.mozilla.javascript.Scriptable;
+import org.mozilla.javascript.Scriptable;
 import update.UpdateManager;
 import update.Updateable;
 

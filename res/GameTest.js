@@ -42,6 +42,7 @@ InputManager.getInstance().put(Keyboard.KEY_A);
 InputManager.getInstance().put(Keyboard.KEY_D);
 InputManager.getInstance().put(Keyboard.KEY_K);
 Mouse.setGrabbed(true);
+
 var player = new PhysicalPlayer();
 player.create();
 Game.setPlayer(player);
@@ -61,17 +62,23 @@ var cm = new CollisionMesh(ter.getObjects());
 cm.create();
 ThreeDPhysicsManager.getInstance().setCollisionMesh(cm);
     
-    
 player.getPhysicalEntity().setPosition(new Vector3f(-18, 16.6, 7.7));
+player.getPhysicalEntity().setOrientation(Utilities.quatFromAxisAngle(new Vector3f(0, 0, 1), 3.14 / 4));
 player.getPhysicalEntity().addForceGenerator(grav);
 
-var green = RigidBody.rigidBodyFromPath("tall_fix");
+var green = SimpleModelEntity.simpleModelEntityFromPath("aggtest_fix");
 green.create();
 ThreeDGraphicsManager.getInstance().add(green);
 green.setPosition(new Vector3f(10, 16.6, 0));
 green.setOrientation(Utilities.quatFromAxisAngle(new Vector3f(0, 0, 1), 3.14 / 4));
 ThreeDPhysicsManager.getInstance().add(green);
 green.addForceGenerator(grav);
+
+var agg = AggregateModelEntity.aggregateModelEntityFromPath("agg4");
+ThreeDGraphicsManager.getInstance().add(agg);
+agg.setPosition(new Vector3f(-14, 12, 3));
+ThreeDPhysicsManager.getInstance().add(agg);
+agg.addForceGenerator(grav);
 
 var keyListenerGenerator = new JavaAdapter(ForceGenerator, {
     applyForce: function(physEnt) {
@@ -81,7 +88,7 @@ var keyListenerGenerator = new JavaAdapter(ForceGenerator, {
     }});
 green.addForceGenerator(keyListenerGenerator);
     
-var rocket = RigidBody.rigidBodyFromPath("solid_rocket_fix");
+var rocket = SimpleModelEntity.simpleModelEntityFromPath("solid_rocket_fix");
 rocket.create();
 ThreeDGraphicsManager.getInstance().add(rocket);
 rocket.setPosition(new Vector3f(0, 8, 0));

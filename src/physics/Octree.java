@@ -146,9 +146,4 @@ public class Octree<T extends Boundable> extends GameObject implements Boundable
     public boolean isEmpty() {
         return !(objects.size() > 0 || hasSubdivided);
     }
-
-    @Override
-    public Vector3f getPosition() {
-        return getBounds().getPosition();
-    }
 }

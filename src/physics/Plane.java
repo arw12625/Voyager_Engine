@@ -10,7 +10,7 @@ import org.lwjgl.util.vector.Vector3f;
  *
  * @author Andy
  */
-public class Plane implements Boundable, graphics.ThreeD {
+public class Plane implements Boundable {
     
     public BoundingBox bounds;
     Vector3f normal;
@@ -50,13 +50,4 @@ public class Plane implements Boundable, graphics.ThreeD {
         return bounds.getPosition();
     }
 
-    @Override
-    public void render() {
-        bounds.render();
-    }
-
-    @Override
-    public Vector3f getPosition() {
-        return getBounds().getPosition();
-    }
 }

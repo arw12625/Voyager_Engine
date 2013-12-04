@@ -10,6 +10,6 @@ package physics;
  */
 public interface ForceGenerator {
     
-    public void applyForce(PhysicalEntity pe);
+    public void applyForce(DynamicEntity pe);
     
 }

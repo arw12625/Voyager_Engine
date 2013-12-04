@@ -39,6 +39,23 @@ public class Utilities {
         return quat;
     }
 
+    public static Matrix3f matFromQuat(Quaternion q) {
+
+        float x = q.getX(), y = q.getY(), z = q.getZ(), w = q.getW();
+        float mag = w * w + x * x + y * y + z * z;
+        float s = (mag > 0.0) ? 2f / mag : 0f;
+        float X = x * s, Y = y * s, Z = z * s;
+        final float wX = w * X, wY = w * Y, wZ = w * Z;
+        final float xX = x * X, xY = x * Y, xZ = x * Z;
+        final float yY = y * Y, yZ = y * Z, zZ = z * Z;
+
+        return new Matrix3f() {{
+                m00 = 1 - (yY + zZ); m10 = xY - wZ; m20 = xZ + wY;
+                m01 = xY + wZ; m11 = 1 - (xX + zZ); m21 = yZ - wX;
+                m02 = xZ - wY; m12 = yZ + wX; m22 = 1 - (xX + yY);
+        }};
+    }
+
     public static Matrix3f scale(final Matrix3f m, final float scale) {
         return new Matrix3f() {
 
@@ -63,7 +80,7 @@ public class Utilities {
         Quaternion.mul(resQ, q, resQ);
         return new Vector3f(resQ.getX(), resQ.getY(), resQ.getZ());
     }
-    
+
     public static Vector3f inverseTransform(Vector3f orig, Quaternion q) {
         return transform(orig, inverse(q));
     }
@@ -81,5 +98,35 @@ public class Utilities {
         Quaternion q = new Quaternion(v.getX() * sin, v.getY() * sin, v.getZ() * sin, cos);
         q.normalise();
         return q;
+    }
+
+    public static Quaternion quatFromBasis(final Vector3f x, final Vector3f y, final Vector3f z) {
+        Matrix3f rot = new Matrix3f() {{
+            m00 = x.getX(); m10 = x.getY(); m20 = x.getZ();
+            m01 = y.getX(); m11 = y.getY(); m21 = y.getZ();
+            m02 = z.getX(); m12 = z.getY(); m22 = z.getZ();
+        }};
+        rot = Utilities.scale(rot, -1);
+        rot.invert();
+        Quaternion q = new Quaternion();
+        q.setFromMatrix(rot);
+        q.normalise();
+        return q;
+    }
+    
+    public static Matrix3f skewMatrix(final Vector3f v) {
+        return new Matrix3f() {{
+                m10 = -v.getZ();
+                m20 = v.getY();
+                m01 = v.getZ();
+                m21 = -v.getX();
+                m02 = -v.getY();
+                m12 = v.getX();
+        }};
+    }
+
+    public static boolean approximate(Vector3f u, Vector3f v) {
+        Vector3f diff = Vector3f.sub(u, v, null);
+        return diff.lengthSquared() < 0.0001f;
     }
 }

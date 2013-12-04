@@ -4,6 +4,7 @@
  */
 package resource;
 
+import graphics.Face;
 import graphics.Material;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -30,6 +31,7 @@ public class WavefrontModel extends Resource implements physics.Boundable {
     private ArrayList<Vector2f> texCoords;
     private ArrayList<graphics.Material> materialList;
     private ArrayList<Mesh> objects;
+    private ArrayList<BoundingBox> bounds;
     BoundingBox b;
 
     public WavefrontModel(String path) {
@@ -54,6 +56,10 @@ public class WavefrontModel extends Resource implements physics.Boundable {
     public ArrayList<Vector2f> getTexCoords() {
         return texCoords;
     }
+    
+    public ArrayList<BoundingBox> getCustomBounds() {
+        return bounds;
+    }
 
     public ArrayList<Mesh> getObjects() {
         return objects;
@@ -66,6 +72,7 @@ public class WavefrontModel extends Resource implements physics.Boundable {
         texCoords = new ArrayList<Vector2f>();
         materialList = new ArrayList<graphics.Material>();
         objects = new ArrayList<Mesh>();
+        bounds = new ArrayList<BoundingBox>();
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(
                     ResourceLoader.getResourceAsStream("res/" + this.fullName + ".obj")));
@@ -147,9 +154,26 @@ public class WavefrontModel extends Resource implements physics.Boundable {
                 b.create();
             }
             reader.close();
+            for(Mesh possible : objects) {
+                if(possible.getName().toLowerCase().contains("bound")) {
+                    ArrayList<Vector3f> corners = new ArrayList<Vector3f>();
+                    for(Face f : possible.getFaces()) {
+                        for(int k : f.getVertexIndices()) {
+                            Vector3f possibleVector = vertices.get(k);
+                            if(!corners.contains(possibleVector)) {
+                                corners.add(possibleVector);
+                            }
+                        }
+                    }
+                    Vector3f[] cornerArray = new Vector3f[corners.size()];
+                    corners.toArray(cornerArray);
+                    bounds.add(BoundingBox.boundsFromRectangularPoints(cornerArray));
+                }
+            }
             materialList = new ArrayList<graphics.Material>(materials.values());
 
         } catch (IOException e) {
+            e.printStackTrace();
             return false;
         }
         return true;
@@ -231,8 +255,4 @@ public class WavefrontModel extends Resource implements physics.Boundable {
         return path;
     }
 
-    @Override
-    public Vector3f getPosition() {
-        return getBounds().getPosition();
-    }
 }

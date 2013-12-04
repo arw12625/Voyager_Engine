@@ -5,6 +5,8 @@
 package physics;
 
 import game.Player;
+import graphics.BoundingBoxGraphic;
+import graphics.ThreeDGraphicsManager;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import org.lwjgl.input.Keyboard;
@@ -19,35 +21,28 @@ import static org.lwjgl.opengl.GL11.*;
  *
  * @author Andy
  */
-public class PhysicalPlayer extends Player implements graphics.ThreeD, Boundable {
+public class PhysicalPlayer extends Player implements Boundable {
 
     graphics.ViewPoint vp;
-    physics.PhysicalEntity pe;
+    physics.DynamicEntity pe;
     private float xAngle;
     private float yAngle;
     private float piOver180 = (float) (Math.PI / 180f);
     private Quaternion orientation;
     private float maxDeviation = 85f * piOver180;
+    BoundingBoxGraphic bbGraphic;
 
     @Override
     public void create() {
         super.create();
         BoundingBox playerBounds = new BoundingBox(new Vector3f(), new Vector3f(.5f, 1f, .5f));
         playerBounds.create();
-        pe = new physics.PhysicalEntity(playerBounds, 5) {
-
+        bbGraphic = new BoundingBoxGraphic(playerBounds);
+        ThreeDGraphicsManager.getInstance().add(bbGraphic);
+        pe = new physics.DynamicEntity(playerBounds, 5) {
             @Override
-            public void collide(ArrayList<Plane> collisions) {
-            }
-
-            @Override
-            public void collide(PhysicalEntity collision) {
-                //System.out.println(collision);
-            }
-
-            
-            public boolean update(int delta) {
-                return false;
+            public void collide(Plane p, Vector3f v) {
+                //System.out.println(v);
             }
         };
         pe.create();
@@ -57,7 +52,8 @@ public class PhysicalPlayer extends Player implements graphics.ThreeD, Boundable
         pe.addForceGenerator(new ForceGenerator() {
 
             @Override
-            public void applyForce(PhysicalEntity pe) {
+            public void applyForce(DynamicEntity pe) {
+                bbGraphic.setBoundingBox(pe);
                 input.InputManager keyboard = input.InputManager.getInstance();
                 Vector3f go = new Vector3f();
                 if (keyboard.get(Keyboard.KEY_UP).isDown() || keyboard.get(Keyboard.KEY_W).isDown()) {
@@ -82,7 +78,7 @@ public class PhysicalPlayer extends Player implements graphics.ThreeD, Boundable
             }
         });
     }
-
+    
     @Override
     public synchronized  boolean update(int delta) {
         float dx = input.InputManager.getInstance().getDX() / 100f;
@@ -100,7 +96,7 @@ public class PhysicalPlayer extends Player implements graphics.ThreeD, Boundable
         orientation = (Quaternion.mul(quatFromAxisAngle(new Vector3f(1, 0, 0), xAngle), quatFromAxisAngle(new Vector3f(0, 1, 0), yAngle), null));
         vp.setPosition(pe.getBounds().getPosition());
         vp.setOrientation(orientation);
-        
+        //bbGraphic.setBoundingBox(pe);
         return false;
     }
 
@@ -108,13 +104,8 @@ public class PhysicalPlayer extends Player implements graphics.ThreeD, Boundable
         return vp;
     }
 
-    public synchronized PhysicalEntity getPhysicalEntity() {
+    public synchronized DynamicEntity getPhysicalEntity() {
         return pe;
-    }
-
-    @Override
-    public synchronized void render() {
-        pe.getBounds().render();
     }
 
     @Override
@@ -122,8 +113,4 @@ public class PhysicalPlayer extends Player implements graphics.ThreeD, Boundable
         return getPhysicalEntity().getBounds();
     }
 
-    @Override
-    public Vector3f getPosition() {
-        return getBounds().getPosition();
-    }
 }

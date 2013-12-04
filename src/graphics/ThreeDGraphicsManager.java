@@ -69,13 +69,13 @@ public class ThreeDGraphicsManager extends GraphicsManager {
         return instance;
     }
 
-    public void threeDView() {
+    private void threeDView() {
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_LIGHTING);
         glEnable(GL_CULL_FACE);
     }
 
-    public void overlayView() {
+    private void overlayView() {
 
         glLoadIdentity();
         glMatrixMode(GL_PROJECTION);
@@ -90,7 +90,7 @@ public class ThreeDGraphicsManager extends GraphicsManager {
     }
 
     @Override
-    public void render() {
+    public synchronized void render() {
         util.DebugMessages.getInstance().write("Rendering started");
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -114,7 +114,7 @@ public class ThreeDGraphicsManager extends GraphicsManager {
         util.DebugMessages.getInstance().write("Rendering finished");
     }
 
-    public void addGraphic3D(ThreeD de, int z) {
+    public synchronized void addGraphic3D(ThreeD de, int z) {
         int i = 0;
         while (i < graphics3D.size() && zIndices3D.get(i) < z) {
             i++;
@@ -123,7 +123,7 @@ public class ThreeDGraphicsManager extends GraphicsManager {
         zIndices3D.add(i, z);
     }
 
-    public void addGraphic2D(TwoD de, int z) {
+    public synchronized void addGraphic2D(TwoD de, int z) {
         int i = 0;
         while (i < graphics2D.size() && zIndices2D.get(i) < z) {
             i++;
@@ -132,12 +132,12 @@ public class ThreeDGraphicsManager extends GraphicsManager {
         zIndices2D.add(i, z);
     }
 
-    public void setViewPoint(ViewPoint vp) {
+    public synchronized void setViewPoint(ViewPoint vp) {
         this.vp = vp;
     }
 
     @Override
-    public void remove(GameObject obj) {
+    public synchronized void remove(GameObject obj) {
         if(graphics2D.contains(obj)) {
             graphics2D.remove(obj);
         }
@@ -146,7 +146,7 @@ public class ThreeDGraphicsManager extends GraphicsManager {
         }
     }
 
-    public boolean add(GameObject obj) {
+    public synchronized boolean add(GameObject obj) {
         if(obj instanceof ThreeD) {
             addGraphic3D((ThreeD)obj, 0);
             return true;

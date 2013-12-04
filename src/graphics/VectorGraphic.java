@@ -6,12 +6,13 @@ package graphics;
 
 import org.lwjgl.util.vector.Vector3f;
 import static org.lwjgl.opengl.GL11.*;
+import physics.Positionable;
 
 /**
  *
  * @author Andy
  */
-public class VectorGraphic extends game.GameObject implements graphics.ThreeD {
+public class VectorGraphic extends game.GameObject implements Positionable, graphics.ThreeD {
 
     Vector3f position;
     Vector3f vec;
@@ -35,6 +36,12 @@ public class VectorGraphic extends game.GameObject implements graphics.ThreeD {
         super.create();
     }
 
+    @Override
+    public Vector3f getPosition() {
+        return position;
+    }
+    
+    @Override
     public void setPosition(Vector3f pos) {
         this.position = pos;
     }

@@ -79,7 +79,7 @@ public class Mesh extends game.GameObject implements Boundable {
         this.b = b;
     }
 
-    public Object getName() {
+    public String getName() {
         return name;
     }
 
@@ -93,10 +93,5 @@ public class Mesh extends game.GameObject implements Boundable {
     
     public boolean hasTexCoords() {
         return texCoords != null && texCoords.size() > 0;
-    }
-
-    @Override
-    public Vector3f getPosition() {
-        return getBounds().getPosition();
     }
 }

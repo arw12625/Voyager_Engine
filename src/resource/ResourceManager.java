@@ -98,7 +98,6 @@ public class ResourceManager extends StandardManager implements Runnable {
                 g.setIsprocessed(true);
             }
         }
-        Thread.yield();
     }
 
     public boolean isLoading() {

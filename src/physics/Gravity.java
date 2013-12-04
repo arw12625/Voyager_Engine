@@ -13,7 +13,7 @@ import org.lwjgl.util.vector.Vector3f;
 public class Gravity implements ForceGenerator {
 
     @Override
-    public void applyForce(PhysicalEntity pe) {
+    public void applyForce(DynamicEntity pe) {
         pe.applyForce(new Vector3f(0, -pe.getMass() * 4, 0));
     }
     

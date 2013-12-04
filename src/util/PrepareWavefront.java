@@ -37,7 +37,7 @@ public class PrepareWavefront {
         TextureManager.getInstance().create();
         
         if (args.length == 0) {
-            prepareMesh("launch_pad", "launch_pad_fix");
+            prepareMesh("aggtest", "aggtest_fix");
         } else if(args.length == 1) {
             prepareMesh(args[0], args[0] + "_fix");
         } else if(args.length == 2) {

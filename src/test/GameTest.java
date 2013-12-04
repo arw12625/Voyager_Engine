@@ -12,6 +12,9 @@ import game.*;
 import graphics.*;
 import util.DebugMessages;
 import java.util.ArrayList;
+import org.lwjgl.util.vector.Matrix3f;
+import org.lwjgl.util.vector.Vector3f;
+import physics.AggregateEntity;
 import script.ScriptManager;
 
 /**
@@ -33,8 +36,8 @@ public class GameTest {
 
         Game.create("THE GAME", updateManager, graphicsManager, inputManager, resourceManager, gameObjectManager, scriptManager);
 
-        ScriptManager.getInstance().loadAndExecute("SoundTest.js");
-
+        ScriptManager.getInstance().loadAndExecute("GameTest.js");
+            
         Game.run();
     }
 
