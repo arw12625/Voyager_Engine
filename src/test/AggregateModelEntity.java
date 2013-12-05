@@ -5,6 +5,7 @@
 package test;
 
 import graphics.BoundingBoxGraphic;
+import graphics.ThreeDGraphicsManager;
 import java.util.ArrayList;
 import org.lwjgl.input.Keyboard;
 import static org.lwjgl.opengl.GL11.*;
@@ -26,6 +27,7 @@ public class AggregateModelEntity extends AggregateEntity implements graphics.Th
 
     graphics.ThreeDModel m;
     ArrayList<BoundingBoxGraphic> bbg;
+    BoundingBoxGraphic all;
 
     public AggregateModelEntity(graphics.ThreeDModel m, ArrayList<StaticEntity> bodies, BoundingBox b, float mass, Matrix3f inertia) {
         super(bodies, b, mass, inertia);
@@ -34,8 +36,11 @@ public class AggregateModelEntity extends AggregateEntity implements graphics.Th
         for(StaticEntity se : bodies) {
             BoundingBoxGraphic bggggg = new BoundingBoxGraphic(se);
             bggggg.create();
-            bbg.add(bggggg);
+            //bbg.add(bggggg);
         }
+        all = new BoundingBoxGraphic(this);
+        all.create();
+        //ThreeDGraphicsManager.getInstance().add(all);
     }
 
     public AggregateModelEntity(graphics.ThreeDModel m, AggregateEntity a) {
@@ -62,7 +67,7 @@ public class AggregateModelEntity extends AggregateEntity implements graphics.Th
         }
         ArrayList<StaticEntity> ents = new ArrayList<StaticEntity>();
         for (BoundingBox b : w.getCustomBounds()) {
-            StaticEntity stat = new StaticEntity(b);
+            StaticEntity stat = new StaticEntity(b, b.getVolume());
             stat.create();
             ents.add(stat);
         }
@@ -80,7 +85,7 @@ public class AggregateModelEntity extends AggregateEntity implements graphics.Th
         glPushMatrix();
         glTranslatef(pos.getX(), pos.getY(), pos.getZ());
         glRotatef(-angle, orientation.getX(), orientation.getY(), orientation.getZ());
-        for(int i = 0; i < getPhysicalBodies().size(); i++) {
+        for(int i = 0; i < bbg.size(); i++) {
             bbg.get(i).setBoundingBox(getPhysicalBodies().get(i));
             bbg.get(i).render();
         }

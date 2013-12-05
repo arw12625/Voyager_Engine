@@ -313,17 +313,15 @@ public class BoundingBox extends Transform implements Boundable {
         }
         pos.scale(1f / 8f);
 
-        for (Vector3f a : axes) {
-            VectorGraphic vg = new VectorGraphic(pos, a);
-            vg.create();
-            ThreeDGraphicsManager.getInstance().add(vg);
-        }
-
         BoundingBox b = new BoundingBox(pos, dim, orientation);
         b.create();
         return b;
     }
 
+    public synchronized float getVolume() {
+        return dimension.getX() * dimension.getY() * dimension.getZ();
+    }
+    
     public synchronized void setDimension(Vector3f dimension) {
         this.dimension = dimension;
     }

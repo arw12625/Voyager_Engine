@@ -49,6 +49,10 @@ public class StaticEntity extends BoundingBox {
         return mass;
     }
 
+    public Vector3f getCenterOfMass() {
+        return getCenter();
+    }
+    
     public Matrix3f getInertiaTensor() {
         return inertiaTensor;
     }

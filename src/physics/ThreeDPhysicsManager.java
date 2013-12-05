@@ -47,7 +47,7 @@ public class ThreeDPhysicsManager extends StandardManager implements update.Upda
         DebugMessages.getInstance().write("Physics starting");
 
         //Motion update
-        float division = 4;
+        float division = 1;
         float collision = 4;
         float time = delta / 1000f / division;
         for (int j = 0; j < division; j++) {
@@ -124,8 +124,9 @@ public class ThreeDPhysicsManager extends StandardManager implements update.Upda
                                         slide.normalise();
                                         friction = (Vector3f) slide.scale(-coefficientOfFriction * impulse);
                                     }
+                                    
                                     cast.applyImpulseAtPoint(Vector3f.add(impulseVector, friction, null), collisionVector);
-
+                                    
                                 }
                             }
                         }

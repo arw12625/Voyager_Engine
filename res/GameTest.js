@@ -62,7 +62,7 @@ var cm = new CollisionMesh(ter.getObjects());
 cm.create();
 ThreeDPhysicsManager.getInstance().setCollisionMesh(cm);
     
-player.getPhysicalEntity().setPosition(new Vector3f(-18, 16.6, 7.7));
+player.getPhysicalEntity().setPosition(new Vector3f(-13, 3, -6));
 player.getPhysicalEntity().setOrientation(Utilities.quatFromAxisAngle(new Vector3f(0, 0, 1), 3.14 / 4));
 player.getPhysicalEntity().addForceGenerator(grav);
 
@@ -74,9 +74,9 @@ green.setOrientation(Utilities.quatFromAxisAngle(new Vector3f(0, 0, 1), 3.14 / 4
 ThreeDPhysicsManager.getInstance().add(green);
 green.addForceGenerator(grav);
 
-var agg = AggregateModelEntity.aggregateModelEntityFromPath("agg4");
+var agg = AggregateModelEntity.aggregateModelEntityFromPath("buggy_fix");
 ThreeDGraphicsManager.getInstance().add(agg);
-agg.setPosition(new Vector3f(-14, 12, 3));
+agg.setPosition(new Vector3f(-14, 1, 3));
 ThreeDPhysicsManager.getInstance().add(agg);
 agg.addForceGenerator(grav);
 
