@@ -23,7 +23,7 @@ public class CollisionMesh extends GameObject implements Boundable {
         planes = new Octree<Plane>(b);
         planes.create();
         bbg = new BoundingBoxGraphic(b);
-        ThreeDGraphicsManager.getInstance().add(bbg);
+        //ThreeDGraphicsManager.getInstance().add(bbg);
         
     }
     

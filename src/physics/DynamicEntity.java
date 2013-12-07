@@ -25,10 +25,10 @@ public class DynamicEntity extends StaticEntity  {
     private ArrayList<ForceGenerator> forceGenerators;
     private Vector3f forceBuffer;
     private Vector3f torqueBuffer;
-    private float linearDrag = 0.996f;
-    private float angularDrag = .993f;
+    private float linearDrag = 0.998f;
+    private float angularDrag = .996f;
     private boolean awake;
-    private float minSpeedSquared = 0.015f;
+    private float minSpeedSquared = 0.0015f;
     private float vAvg;
     private static final Vector3f zero = new Vector3f();
 
@@ -56,6 +56,11 @@ public class DynamicEntity extends StaticEntity  {
         vAvg = 100;
         awake = true;
     }
+
+    public void resetBuffers() {
+        forceBuffer.set(zero);
+        torqueBuffer.set(zero);
+    }
     
     public synchronized void integrate(float delta) {
         // Calculate linear acceleration from force inputs.
@@ -81,12 +86,8 @@ public class DynamicEntity extends StaticEntity  {
         // Normalize the orientation, and update the matrices with the new
         // position and orientation.
 
-        // Clear accumulators.
-        forceBuffer.set(zero);
-        torqueBuffer.set(zero);
-
-        vAvg += velocity.lengthSquared() + angularVelocity.lengthSquared();
-        vAvg *= 0.5;
+        vAvg += velocity.lengthSquared() + angularVelocity.lengthSquared() / 2f;
+        vAvg *= 0.5f;
         if (canSleep() && isAwake()) {
             setAwake(false);
         }

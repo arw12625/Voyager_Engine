@@ -55,8 +55,10 @@ public class ThreeDPhysicsManager extends StandardManager implements update.Upda
 
                 e.updateForces();
                 if (e.isAwake()) {
+                    e.runScripts("integrate", new Object[] {e, time});
                     e.integrate(time);
                 }
+                e.resetBuffers();
 
             }
 

@@ -56,7 +56,7 @@ public class WavefrontModel extends Resource implements physics.Boundable {
     public ArrayList<Vector2f> getTexCoords() {
         return texCoords;
     }
-    
+
     public ArrayList<BoundingBox> getCustomBounds() {
         return bounds;
     }
@@ -154,13 +154,13 @@ public class WavefrontModel extends Resource implements physics.Boundable {
                 b.create();
             }
             reader.close();
-            for(Mesh possible : objects) {
-                if(possible.getName().toLowerCase().contains("bound")) {
+            for (Mesh possible : objects) {
+                if (possible.getName().toLowerCase().contains("bound")) {
                     ArrayList<Vector3f> corners = new ArrayList<Vector3f>();
-                    for(Face f : possible.getFaces()) {
-                        for(int k : f.getVertexIndices()) {
+                    for (Face f : possible.getFaces()) {
+                        for (int k : f.getVertexIndices()) {
                             Vector3f possibleVector = vertices.get(k);
-                            if(!corners.contains(possibleVector)) {
+                            if (!corners.contains(possibleVector)) {
                                 corners.add(possibleVector);
                             }
                         }
@@ -197,7 +197,11 @@ public class WavefrontModel extends Resource implements physics.Boundable {
                     if (!materialName.equals("")) {
                         materials.put(materialName, parseMaterial);
                     }
-                    materialName = spaceSplit[1];
+                    if (spaceSplit.length == 1) {
+                        materialName = "";
+                    } else {
+                        materialName = spaceSplit[1];
+                    }
                     parseMaterial = new graphics.Material(materialName);
                 } else if (line.startsWith("Ns ")) {
                     parseMaterial.setSpecularCoefficient(Float.valueOf(spaceSplit[1]));
@@ -254,5 +258,4 @@ public class WavefrontModel extends Resource implements physics.Boundable {
     public String getPath() {
         return path;
     }
-
 }

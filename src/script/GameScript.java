@@ -6,6 +6,7 @@ package script;
 
 import game.GameObject;
 import javax.script.ScriptContext;
+import org.mozilla.javascript.Scriptable;
 
 /**
  *
@@ -28,7 +29,7 @@ public class GameScript extends GameObject {
         return script;
     }
     
-    public ScriptContext getContext() {
+    public Scriptable getScope() {
         return null;
     }
     

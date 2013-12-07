@@ -3,11 +3,11 @@
  * and open the template in the editor.
  */
 
-importClass(Packages.test.GameTest);
 
 function enableDebug(enable) {
     GameTest.enableDebug(enable);
 }
+
 
 importPackage(Packages.game);
 importPackage(Packages.resource);
@@ -18,9 +18,8 @@ importPackage(Packages.test);
 importPackage(Packages.graphics);
 importPackage(Packages.script);
 importPackage(Packages.input);
-importClass(org.lwjgl.input.Keyboard);
-importClass(org.lwjgl.input.Mouse);
 importPackage(java.lang);
+importPackage(org.lwjgl.input);
 importClass(org.lwjgl.util.vector.Vector3f);
 importClass(org.lwjgl.util.vector.Quaternion);
 
@@ -40,17 +39,11 @@ InputManager.getInstance().put(Keyboard.KEY_W);
 InputManager.getInstance().put(Keyboard.KEY_S);
 InputManager.getInstance().put(Keyboard.KEY_A);
 InputManager.getInstance().put(Keyboard.KEY_D);
-InputManager.getInstance().put(Keyboard.KEY_K);
+InputManager.getInstance().put(Keyboard.KEY_LSHIFT);
 Mouse.setGrabbed(true);
 
-var player = new PhysicalPlayer();
-player.create();
-Game.setPlayer(player);
-ThreeDGraphicsManager.getInstance().setViewPoint(player.getViewPoint());
-ThreeDPhysicsManager.getInstance().add(player);
-
 var grav = new Gravity();
-var ter = new WavefrontModel("launch_pad_fix");
+var ter = new WavefrontModel("water_map_fix");
 ter.create();
 
 ScriptUtil.waitUntilLoaded(ter);
@@ -61,32 +54,48 @@ ThreeDGraphicsManager.getInstance().add(terDisp);
 var cm = new CollisionMesh(ter.getObjects());
 cm.create();
 ThreeDPhysicsManager.getInstance().setCollisionMesh(cm);
-    
-player.getPhysicalEntity().setPosition(new Vector3f(-13, 3, -6));
-player.getPhysicalEntity().setOrientation(Utilities.quatFromAxisAngle(new Vector3f(0, 0, 1), 3.14 / 4));
-player.getPhysicalEntity().addForceGenerator(grav);
 
-var green = SimpleModelEntity.simpleModelEntityFromPath("aggtest_fix");
-green.create();
-ThreeDGraphicsManager.getInstance().add(green);
-green.setPosition(new Vector3f(10, 16.6, 0));
-green.setOrientation(Utilities.quatFromAxisAngle(new Vector3f(0, 0, 1), 3.14 / 4));
-ThreeDPhysicsManager.getInstance().add(green);
-green.addForceGenerator(grav);
-
-var agg = AggregateModelEntity.aggregateModelEntityFromPath("buggy_fix");
+var agg = AggregateModelEntity.aggregateModelEntityFromPath("landing_module_fix");
+var gs = new GameScript("function update(ent, delta) { System.out.println(1000 / delta); }");
+gs.create();
+agg.addScript(gs);
 ThreeDGraphicsManager.getInstance().add(agg);
-agg.setPosition(new Vector3f(-14, 1, 3));
+agg.setPosition(new Vector3f(0, -200, 0));
 ThreeDPhysicsManager.getInstance().add(agg);
 agg.addForceGenerator(grav);
 
+var player = new FocusPlayer(agg);
+player.create();
+Game.setPlayer(player);
+ThreeDGraphicsManager.getInstance().setViewPoint(player.getViewPoint());
+
 var keyListenerGenerator = new JavaAdapter(ForceGenerator, {
     applyForce: function(physEnt) {
-        if (InputManager.getInstance().get(Keyboard.KEY_K).isDown()) {
-            physEnt.applyForce(new Vector3f(5, 0, 0));
+        if (InputManager.getInstance().get(Keyboard.KEY_LSHIFT).isDown()) {
+            var up = new Vector3f(0, 80, 0);
+            physEnt.applyForce(Utilities.transform(up, physEnt.getOrientation()));
+            physEnt.setAwake(true);
+        }
+        var torque = new Vector3f();
+        if (InputManager.getInstance().get(Keyboard.KEY_W).isDown()) {
+            torque.setX(torque.getX() - 1);
+        }
+        if (InputManager.getInstance().get(Keyboard.KEY_S).isDown()) {
+            torque.setX(torque.getX() + 1);
+        }
+        if (InputManager.getInstance().get(Keyboard.KEY_A).isDown()) {
+            torque.setZ(torque.getZ() + 1);
+        }
+        if (InputManager.getInstance().get(Keyboard.KEY_D).isDown()) {
+            torque.setZ(torque.getZ() - 1);
+        }
+        if(torque.lengthSquared() > 0) {
+            torque.normalise();
+            torque.scale(25);
+            physEnt.applyTorque(torque);
         }
     }});
-green.addForceGenerator(keyListenerGenerator);
+agg.addForceGenerator(keyListenerGenerator);
     
 var rocket = SimpleModelEntity.simpleModelEntityFromPath("solid_rocket_fix");
 rocket.create();

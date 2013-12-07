@@ -4,15 +4,14 @@
  */
 package script;
 
+import com.sun.j3d.utils.geometry.Cone;
 import game.GameObject;
 import game.Manager;
 import game.StandardManager;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
+import java.util.HashMap;
+import org.mozilla.javascript.*;
+import org.mozilla.javascript.ast.Scope;
 import util.DebugMessages;
 
 /**
@@ -21,9 +20,10 @@ import util.DebugMessages;
  */
 public class ScriptManager extends StandardManager {
 
-    ScriptEngine engine;
     ArrayList<GameScript> scripts;
     ArrayList<GameScript> scriptsToRun;
+    HashMap<String, Context> contexts;
+    Scriptable globalScope;
     static ScriptManager instance;
 
     public static ScriptManager getInstance() {
@@ -38,12 +38,14 @@ public class ScriptManager extends StandardManager {
         super.create();
         scripts = new ArrayList<GameScript>();
         scriptsToRun = new ArrayList<GameScript>();
-        // create a script engine manager
-        ScriptEngineManager manager = new ScriptEngineManager();
-        // create a JavaScript engine
-        this.engine = manager.getEngineByName("JavaScript");
 
-        System.out.println(engine.NAME);
+        contexts = new HashMap<String, Context>();
+
+        Context cx = Context.enter();
+        globalScope = new ImporterTopLevel(cx);
+        cx.exit();
+
+
         // evaluate JavaScript code from String
         //loadStartupScripts();
     }
@@ -52,16 +54,22 @@ public class ScriptManager extends StandardManager {
         loadAndExecute("Script.js");
     }
 
-    public void eval(String command) throws ScriptException {
-        engine.eval(command);
+    public void eval(String command, Scriptable scope) {
+        Context c = Context.enter();
+        c.evaluateString(scope, command, "yolo", 1, null);
+        c.exit();
     }
 
-    public void execute(GameScript s) throws ScriptException {
+    public void eval(String command) {
+        eval(command, globalScope);
+    }
+
+    public void execute(GameScript s) {
         try {
-            if (s.getContext() != null) {
-                engine.eval(s.getScript(), s.getContext());
+            if (s.getScope() == null) {
+                eval(s.getScript());
             } else {
-                engine.eval(s.getScript());
+                eval(s.getScript(), s.getScope());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -103,22 +111,29 @@ public class ScriptManager extends StandardManager {
 
     public void executeScripts() {
         ArrayList<GameScript> scriptsCopy = new ArrayList<GameScript>(scriptsToRun);
-        if (!scriptsCopy.isEmpty()) {
-            System.out.println(scriptsCopy);
-        }
         for (GameScript gs : scriptsCopy) {
-            try {
-                System.out.println("Script Start");
-                execute(gs);
-                System.out.println("Script End");
-            } catch (ScriptException ex) {
-                ex.printStackTrace();
-            }
+            System.out.println("Script Start");
+            execute(gs);
+            System.out.println("Script End");
             scriptsToRun.remove(gs);
         }
     }
 
     public boolean hasExecutables() {
         return !scriptsToRun.isEmpty();
+    }
+
+    public Object runScriptFunc(GameScript s, String func, Object[] args) {
+        Context cx = Context.enter();
+        Object result = null;
+        try {
+            Function fct = (Function) globalScope.get(func, globalScope);
+            result = fct.call(cx, globalScope, globalScope, args);
+            //System.out.println(result);
+        } catch (Exception e) {
+        } finally {
+            cx.exit();
+        }
+        return result;
     }
 }

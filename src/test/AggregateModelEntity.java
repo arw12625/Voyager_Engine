@@ -23,7 +23,7 @@ import util.Utilities;
  *
  * @author Andy
  */
-public class AggregateModelEntity extends AggregateEntity implements graphics.ThreeD {
+public class AggregateModelEntity extends AggregateEntity implements graphics.ThreeD, update.Updateable {
 
     graphics.ThreeDModel m;
     ArrayList<BoundingBoxGraphic> bbg;
@@ -91,5 +91,10 @@ public class AggregateModelEntity extends AggregateEntity implements graphics.Th
         }
         m.render();
         glPopMatrix();
+    }
+
+    @Override
+    public boolean update(int delta) {
+        return false;
     }
 }

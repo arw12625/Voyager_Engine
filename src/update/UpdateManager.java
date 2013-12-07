@@ -90,7 +90,11 @@ public class UpdateManager extends StandardManager implements Runnable {
         int i = entities.size() - 1;
 
         while (i >= 0) { // Subject to off-by-one
-            boolean removeThisObject = entities.get(i).update(delta);
+            Updateable u = entities.get(i);
+            if(u instanceof GameObject) {
+                ((GameObject)u).runScripts("update", new Object[]{u, delta});
+            }
+            boolean removeThisObject = u.update(delta);
             if (removeThisObject) {
                 entities.remove(i);
             }

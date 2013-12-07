@@ -38,7 +38,8 @@ public class PhysicalPlayer extends Player implements Boundable {
         BoundingBox playerBounds = new BoundingBox(new Vector3f(), new Vector3f(.5f, 1f, .5f));
         playerBounds.create();
         bbGraphic = new BoundingBoxGraphic(playerBounds);
-        ThreeDGraphicsManager.getInstance().add(bbGraphic);
+        bbGraphic.create();
+        //ThreeDGraphicsManager.getInstance().add(bbGraphic);
         pe = new physics.DynamicEntity(playerBounds, 5) {
             @Override
             public void collide(Plane p, Vector3f v) {

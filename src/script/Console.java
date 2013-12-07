@@ -213,14 +213,11 @@ public class Console extends GameObject implements update.Updateable {
     }
 
     private void execute(String command) {
-        try {
             scriptManager.eval(command);
-        } catch (ScriptException se) {
             write("Not a valid command!");
             if (showError) {
-                write(se.getMessage());
+                //write(se.getMessage());
             }
-        }
     }
 
     public void setShowError(boolean show) {

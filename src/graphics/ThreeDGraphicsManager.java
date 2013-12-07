@@ -51,8 +51,12 @@ public class ThreeDGraphicsManager extends GraphicsManager {
         glEnable(GL_LIGHTING);
         
         glEnable(GL_LIGHT0);
-        glLight(GL_LIGHT0, GL_DIFFUSE, asFloatBuffer(new float[]{.5f, .5f, .5f, 1}));
+        glLight(GL_LIGHT0, GL_DIFFUSE, asFloatBuffer(new float[]{.3f, .3f, .3f, 1}));
         glLight(GL_LIGHT0, GL_POSITION, asFloatBuffer(new float[]{0f, 0f, 0f, 1}));
+        
+        glEnable(GL_LIGHT2);
+        glLight(GL_LIGHT2, GL_DIFFUSE, asFloatBuffer(new float[]{.5f, .5f, .5f, 1}));
+        glLight(GL_LIGHT2, GL_POSITION, asFloatBuffer(new float[]{0f, 0f, 0f, 1}));
         
         glEnable(GL_LIGHT1);
         glLight(GL_LIGHT1, GL_AMBIENT, asFloatBuffer(new float[]{.0f, .0f, .0f, 1}));
@@ -97,16 +101,22 @@ public class ThreeDGraphicsManager extends GraphicsManager {
 
         vp.perspectiveView();
         vp.adjustToView();
-        glLight(GL_LIGHT1, GL_POSITION, asFloatBuffer(new float[]{vp.getX(), vp.getY(), vp.getZ(), 0}));
+        glLight(GL_LIGHT2, GL_POSITION, asFloatBuffer(new float[]{vp.getX(), vp.getY(), vp.getZ(), 1}));
         glBindTexture(GL_TEXTURE_2D, 0);
         
         threeDView();
         for (Displayable de : graphics3D) {
+            if(de instanceof GameObject) {
+                ((GameObject)de).runScripts("render", null);
+            }
             de.render();
         }
 
         overlayView();
         for (Displayable de : graphics2D) {
+            if(de instanceof GameObject) {
+                ((GameObject)de).runScripts("render", null);
+            }
             de.render();
         }
 
