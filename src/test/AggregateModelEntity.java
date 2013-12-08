@@ -6,6 +6,7 @@ package test;
 
 import graphics.BoundingBoxGraphic;
 import graphics.ThreeDGraphicsManager;
+import graphics.VectorGraphic;
 import java.util.ArrayList;
 import org.lwjgl.input.Keyboard;
 import static org.lwjgl.opengl.GL11.*;
@@ -38,6 +39,7 @@ public class AggregateModelEntity extends AggregateEntity implements graphics.Th
             bggggg.create();
             //bbg.add(bggggg);
         }
+        
         all = new BoundingBoxGraphic(this);
         all.create();
         //ThreeDGraphicsManager.getInstance().add(all);

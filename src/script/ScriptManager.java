@@ -4,7 +4,6 @@
  */
 package script;
 
-import com.sun.j3d.utils.geometry.Cone;
 import game.GameObject;
 import game.Manager;
 import game.StandardManager;
@@ -24,6 +23,7 @@ public class ScriptManager extends StandardManager {
     ArrayList<GameScript> scriptsToRun;
     HashMap<String, Context> contexts;
     Scriptable globalScope;
+    Function setCurrent;
     static ScriptManager instance;
 
     public static ScriptManager getInstance() {
@@ -43,6 +43,9 @@ public class ScriptManager extends StandardManager {
 
         Context cx = Context.enter();
         globalScope = new ImporterTopLevel(cx);
+        eval("var currentObject; function setCurrentObject(obj) { currentObject = obj; }");
+        setCurrent = (Function) globalScope.get("setCurrentObject", globalScope);
+
         cx.exit();
 
 
@@ -112,7 +115,7 @@ public class ScriptManager extends StandardManager {
     public void executeScripts() {
         ArrayList<GameScript> scriptsCopy = new ArrayList<GameScript>(scriptsToRun);
         for (GameScript gs : scriptsCopy) {
-            System.out.println("Script Start");
+            System.out.println("Script Start" + gs.getFullName());
             execute(gs);
             System.out.println("Script End");
             scriptsToRun.remove(gs);
@@ -135,5 +138,11 @@ public class ScriptManager extends StandardManager {
             cx.exit();
         }
         return result;
+    }
+
+    public void setCurrentObject(GameObject current) {
+        Context c = Context.enter();
+        setCurrent.call(c, globalScope, globalScope, new Object[]{current});
+        c.exit();
     }
 }

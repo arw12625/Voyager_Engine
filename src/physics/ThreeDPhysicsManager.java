@@ -23,7 +23,7 @@ public class ThreeDPhysicsManager extends StandardManager implements update.Upda
     ArrayList<StaticEntity> se;
     ArrayList<DynamicEntity> de;
     CollisionMesh collisionMesh;
-    float restitution = 0.2f;
+    float restitution = 0.01f;
     static ThreeDPhysicsManager instance;
     private float coefficientOfFriction = .3f;
 
@@ -55,7 +55,7 @@ public class ThreeDPhysicsManager extends StandardManager implements update.Upda
 
                 e.updateForces();
                 if (e.isAwake()) {
-                    e.runScripts("integrate", new Object[] {e, time});
+                    e.runScripts("integrate", new Object[] {time});
                     e.integrate(time);
                 }
                 e.resetBuffers();
@@ -149,7 +149,7 @@ public class ThreeDPhysicsManager extends StandardManager implements update.Upda
                                 }
                             }
                             if (dynamic && highestPenetration < 0) {
-                                e.setPosition(Utilities.addScaledVector(e.getPosition(), collisionPlane.getNormal(), -1.01f * highestPenetration));
+                                //e.setPosition(Utilities.addScaledVector(e.getPosition(), collisionPlane.getNormal(), -.1f * highestPenetration));
                             }
                         }
                     }

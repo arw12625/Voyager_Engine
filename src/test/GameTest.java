@@ -39,7 +39,10 @@ public class GameTest {
 
         Game.create("THE GAME", updateManager, graphicsManager, inputManager, resourceManager, gameObjectManager, scriptManager);
 
-        ScriptManager.getInstance().loadAndExecute("GameTest.js");
+        ScriptManager.getInstance().loadAndExecute("startinit.js");
+        ScriptManager.getInstance().loadAndExecute("default.js");
+        ScriptManager.getInstance().loadAndExecute("MockGame.js");
+        ScriptManager.getInstance().loadAndExecute("endinit.js");
 
         Game.run();
     }

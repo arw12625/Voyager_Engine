@@ -18,13 +18,12 @@ import util.DebugMessages;
  *
  * @author Andy
  */
-public class SoundManager extends Manager implements update.Updateable{
+public class SoundManager extends Manager implements update.Updateable {
 
     HashMap<String, SoundResource> resources;
     HashMap<String, Sound> sounds;
     private boolean muted;
     float xScale = 0.01f, yScale = 0.01f, zScale = 0.01f;
-    
     static SoundManager instance;
 
     @Override
@@ -42,12 +41,12 @@ public class SoundManager extends Manager implements update.Updateable{
     }
 
     public static SoundManager getInstance() {
-        if(instance == null) {
+        if (instance == null) {
             instance = new SoundManager();
         }
         return instance;
     }
-    
+
     @Override
     public void destroy() {
         super.destroy();
@@ -56,14 +55,14 @@ public class SoundManager extends Manager implements update.Updateable{
 
     @Override
     public boolean update(int delta) {
-        for(Sound s : sounds.values()) {
+        for (Sound s : sounds.values()) {
             s.update(delta);
         }
         DebugMessages.getInstance().write("SoundManager updated");
-        
+
         return false;
     }
-    
+
     public void setListenerPVector3fosition(Vector3f r) {
         alListener3f(AL_POSITION, r.getX() * xScale, r.getY() * yScale, r.getZ() * zScale);
     }
@@ -73,7 +72,7 @@ public class SoundManager extends Manager implements update.Updateable{
         sounds.put(s.getFullName(), s);
         return s;
     }
-    
+
     public Sound createSound(String name, SoundResource r) {
         return createSound(name, r.getBuffer(), r.getLength());
     }
@@ -83,7 +82,7 @@ public class SoundManager extends Manager implements update.Updateable{
         resources.put(resource.getFullName(), resource);
         return resource;
     }
-    
+
     public void mute(boolean muted) {
         this.muted = muted;
         for (Sound s : sounds.values()) {
@@ -104,12 +103,11 @@ public class SoundManager extends Manager implements update.Updateable{
 
     @Override
     public void remove(GameObject obj) {
-        if(sounds.containsKey(obj.getFullName())) {
+        if (sounds.containsKey(obj.getFullName())) {
             sounds.remove(obj.getFullName());
         }
-        if(resources.containsKey(obj.getFullName())) {
+        if (resources.containsKey(obj.getFullName())) {
             resources.remove(obj.getFullName());
         }
     }
-
 }

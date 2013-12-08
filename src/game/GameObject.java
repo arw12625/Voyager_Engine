@@ -34,13 +34,13 @@ public abstract class GameObject {
         instances.put(name, id + 1);
         Game.addGameObject(this);
 
-        runScripts("create", new Object[] {this});
+        runScripts("create", null);
 
         util.DebugMessages.getInstance().write(this.getFullName() + " created");
     }
 
     public void destroy() {
-        runScripts("destroy", new Object[] {this});
+        runScripts("destroy", null);
         Game.removeGameObject(this);
         util.DebugMessages.getInstance().write(this.getFullName() + " destroyed");
     }
@@ -54,12 +54,14 @@ public abstract class GameObject {
     }
 
     public void addScript(script.GameScript script) {
+            ScriptManager.getInstance().setCurrentObject(this);
         scripts.add(script);
         ScriptManager.getInstance().execute(script);
     }
 
     public void runScripts(String func, Object[] args) {
         for (script.GameScript s : scripts) {
+            ScriptManager.getInstance().setCurrentObject(this);
             script.ScriptManager.getInstance().runScriptFunc(s, func, args);
         }
     }

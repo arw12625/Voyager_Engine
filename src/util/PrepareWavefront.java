@@ -37,7 +37,7 @@ public class PrepareWavefront {
         TextureManager.getInstance().create();
         
         if (args.length == 0) {
-            prepareMesh("landing_module", "landing_module_fix");
+            prepareMesh("water_map_col", "water_map_col_fix");
         } else if(args.length == 1) {
             prepareMesh(args[0], args[0] + "_fix");
         } else if(args.length == 2) {
