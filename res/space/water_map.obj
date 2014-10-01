@@ -1,6 +1,6 @@
 # Blender v2.63 (sub 0) OBJ File: 'water_map.blend'
 # www.blender.org
-mtllib water_map.mtl
+mtllib space/water_map.mtl
 o Plane.004_Plane.002
 v 17.093496 -181.594269 193.082153
 v 31.509966 -153.083710 195.329437

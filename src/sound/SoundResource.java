@@ -32,7 +32,7 @@ public class SoundResource extends resource.Resource {
     @Override
     public boolean load() {
         WaveData data = null;
-        data = WaveData.create(new BufferedInputStream(ResourceLoader.getResourceAsStream(path)));
+        data = WaveData.create(new BufferedInputStream(ResourceLoader.getResourceAsStream("res/" + path)));
         bufferNum = alGenBuffers();
         alBufferData(bufferNum, data.format, data.data, data.samplerate);
         length = (int) ((float) data.data.capacity()

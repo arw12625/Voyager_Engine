@@ -1,7 +1,7 @@
 dim 1041.1028 595.09045 1041.1028
 # Blender v2.63 (sub 0) OBJ File: 'water_map.blend'
 # www.blender.org
-mtllib water_map.mtl
+mtllib space/water_map.mtl
 o Plane.004_Plane.002
 v -8.914011 -285.092 230.4303
 v 5.5024586 -256.58145 232.67758

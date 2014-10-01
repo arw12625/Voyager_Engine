@@ -29,11 +29,14 @@ public class UpdateManager extends StandardManager implements Runnable {
     private Thread updateThread;
     static final int defaultUpdateTime = 1000 / 60;
     static UpdateManager instance;
+    private boolean paused;
 
     @Override
     public void create() {
         super.create();
         updateThread = new Thread(this);
+        paused = true;
+        this.updateTime = defaultUpdateTime;
         //entities = new ArrayList<>();
     }
 
@@ -60,23 +63,29 @@ public class UpdateManager extends StandardManager implements Runnable {
 
     @Override
     public void run() {
-        while (Game.initializing()) {
-            script.ScriptManager.getInstance().executeScripts();
-            Thread.yield();
-        }
-        this.updateTime = defaultUpdateTime;
-        lastTime = getTime() - updateTime;
         while (Game.isRunning()) {
-            DebugMessages.getInstance().write("UpdateManager Running");
-            long currentTime = getTime();
-            long deltaTime = currentTime - lastTime;
-            update((int) deltaTime);
-            script.ScriptManager.getInstance().executeScripts();
-            lastTime = currentTime;
-            try {
-                Thread.sleep(updateTime);
-            } catch (Exception e) {
-                e.printStackTrace();
+            if (paused) {
+                Thread.yield();
+                lastTime = getTime() - updateTime;
+            } else {
+                if (Game.initializing()) {
+                    script.ScriptManager.getInstance().executeScripts();
+                    Thread.yield();
+                } else {
+                    DebugMessages.getInstance().write("UpdateManager Running");
+                    long currentTime = getTime();
+                    long deltaTime = currentTime - lastTime;
+                    if (!paused) {
+                        update((int) deltaTime);
+                    }
+                    script.ScriptManager.getInstance().executeScripts();
+                    lastTime = currentTime;
+                    try {
+                        Thread.sleep(updateTime);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
     }
@@ -91,8 +100,8 @@ public class UpdateManager extends StandardManager implements Runnable {
 
         while (i >= 0) { // Subject to off-by-one
             Updateable u = entities.get(i);
-            if(u instanceof GameObject) {
-                ((GameObject)u).runScripts("update", new Object[]{delta});
+            if (u instanceof GameObject) {
+                ((GameObject) u).runScripts("update", new Object[]{delta});
             }
             boolean removeThisObject = u.update(delta);
             if (removeThisObject) {
@@ -132,5 +141,9 @@ public class UpdateManager extends StandardManager implements Runnable {
         if (entities.contains(obj)) {
             entities.remove(obj);
         }
+    }
+
+    public void setPaused(boolean paused) {
+        this.paused = paused;
     }
 }

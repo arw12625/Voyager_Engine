@@ -16,11 +16,13 @@ import script.ScriptManager;
 public abstract class GameObject {
 
     int id;
+    Object_State state;
     ArrayList<script.GameScript> scripts;
     static HashMap<String, Integer> instances = new HashMap<String, Integer>();
 
     public GameObject() {
         scripts = new ArrayList<GameScript>();
+        state = Object_State.NOT_CREATED;
     }
 
     public void create() {
@@ -37,12 +39,14 @@ public abstract class GameObject {
         runScripts("create", null);
 
         util.DebugMessages.getInstance().write(this.getFullName() + " created");
+        state = Object_State.CREATED;
     }
 
     public void destroy() {
         runScripts("destroy", null);
         Game.removeGameObject(this);
         util.DebugMessages.getInstance().write(this.getFullName() + " destroyed");
+        state = Object_State.DESTROYED;
     }
 
     public String getFullName() {
@@ -56,7 +60,7 @@ public abstract class GameObject {
     public void addScript(script.GameScript script) {
             ScriptManager.getInstance().setCurrentObject(this);
         scripts.add(script);
-        ScriptManager.getInstance().execute(script);
+        ScriptManager.getInstance().addToQueue(script);
     }
 
     public void runScripts(String func, Object[] args) {
@@ -64,5 +68,9 @@ public abstract class GameObject {
             ScriptManager.getInstance().setCurrentObject(this);
             script.ScriptManager.getInstance().runScriptFunc(s, func, args);
         }
+    }
+    
+    enum Object_State {
+        NOT_CREATED, CREATED, DESTROYED
     }
 }

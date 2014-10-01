@@ -21,7 +21,7 @@ public class FontManager extends Manager {
     public void create() {
         super.create();
         fonts = new ArrayList<FontResource>();
-        createFont("default");
+        createFont("text/default");
     }
 
     public static FontManager getInstance() {

@@ -53,10 +53,8 @@ public class InputManager extends Manager {
         Mouse.destroy();
     }
 
-    public void processInputs() {
-        for (Integer request : map.keySet()) {
-            updateKey(request);
-        }
+    public synchronized void processInputs() {
+        updateKeyBoard();
         dx = Mouse.getDX();
         dy = Mouse.getDY();
         dWheel = Mouse.getDWheel();
@@ -66,8 +64,16 @@ public class InputManager extends Manager {
         util.DebugMessages.getInstance().write("Inputs processed");
     }
 
-    public void updateKey(int key) {
-        map.get(key).update(Keyboard.isKeyDown(key));
+    public void updateKeyBoard() {
+        while (Keyboard.next()) {
+            updateKey(Keyboard.getEventKey(), Keyboard.getEventKeyState());
+        }
+    }
+
+    public void updateKey(int key, boolean down) {
+        if (map.containsKey(key)) {
+            map.get(key).update(down);
+        }
     }
 
     public void put(int key) {
@@ -76,7 +82,7 @@ public class InputManager extends Manager {
         }
     }
 
-    public KeyStatus get(int key) {
+    public KeyStatus getKey(int key) {
         return map.get(key);
     }
 
@@ -103,11 +109,11 @@ public class InputManager extends Manager {
     public void setGrabbed(boolean isGrabbed) {
         Mouse.setGrabbed(isGrabbed);
     }
-    
+
     public boolean isMouseButtonDown(int button) {
-       return Mouse.isButtonDown(button);
+        return Mouse.isButtonDown(button);
     }
-    
+
     public int getDWheel() {
         return this.dWheel;
     }
@@ -115,5 +121,4 @@ public class InputManager extends Manager {
     @Override
     public void remove(GameObject obj) {
     }
-    
 }

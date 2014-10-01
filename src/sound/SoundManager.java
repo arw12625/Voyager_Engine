@@ -55,8 +55,10 @@ public class SoundManager extends Manager implements update.Updateable {
 
     @Override
     public boolean update(int delta) {
-        for (Sound s : sounds.values()) {
-            s.update(delta);
+        if (sounds != null) {
+            for (Sound s : sounds.values()) {
+                s.update(delta);
+            }
         }
         DebugMessages.getInstance().write("SoundManager updated");
 

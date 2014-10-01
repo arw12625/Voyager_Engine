@@ -1,7 +1,7 @@
 dim 2.773148 11.201251 2.773148
 # Blender v2.63 (sub 0) OBJ File: 'solid rocket.blend'
 # www.blender.org
-mtllib solid_rocket.mtl
+mtllib space/solid_rocket.mtl
 o Cylinder
 v -0.0 -4.4446096 -0.822484
 v 0.0 -4.1721005 -1.0

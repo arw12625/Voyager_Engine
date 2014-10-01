@@ -7,6 +7,7 @@ package script;
 import game.GameObject;
 import javax.script.ScriptContext;
 import org.mozilla.javascript.Scriptable;
+import org.mozilla.javascript.ast.Scope;
 
 /**
  *
@@ -14,23 +15,44 @@ import org.mozilla.javascript.Scriptable;
  */
 public class GameScript extends GameObject {
 
-    String script;
-    
-    public GameScript(String script) {
-        this.script = script;
+    private String script;
+    private Scriptable scope;
+    private boolean script_is_running;
+
+    protected GameScript(String script) {
+        this(script, null);
     }
-    
+
+    protected GameScript(String script, Scriptable scope) {
+        this.script = script;
+        setScope(scope);
+    }
+
     @Override
     public void create() {
         super.create();
     }
-    
+
     public String getScript() {
         return script;
     }
-    
+
     public Scriptable getScope() {
-        return null;
+        return scope;
     }
-    
+
+    public void setScope(Scriptable scope) {
+        this.scope = scope;
+        if (scope != null) {
+            scope.put("this_script", scope, this);
+        }
+    }
+
+    public void setRunning(boolean running) {
+        script_is_running = running;
+    }
+
+    public boolean isRunning() {
+        return script_is_running;
+    }
 }

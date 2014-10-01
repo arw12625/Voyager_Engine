@@ -55,7 +55,6 @@ public class VectorGraphic extends game.GameObject implements Positionable, grap
 
     @Override
     public void render() {
-        glDisable(GL_DEPTH_TEST);
         glLineWidth(2);
         glPushMatrix();
         glTranslatef(position.getX(), position.getY(), position.getZ());
@@ -66,6 +65,5 @@ public class VectorGraphic extends game.GameObject implements Positionable, grap
         glVertex3f(vec.getX(), vec.getY(), vec.getZ());
         glEnd();
         glPopMatrix();
-        glEnable(GL_DEPTH_TEST);
     }
 }

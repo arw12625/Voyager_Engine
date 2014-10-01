@@ -22,7 +22,7 @@ import update.UpdateManager;
  *
  * @author Andy
  */
-public class PrepareWavefront {
+public class CenterMesh {
 
     public static void main(String[] args) {
         UpdateManager updateManager = UpdateManager.getInstance();
@@ -37,7 +37,7 @@ public class PrepareWavefront {
         TextureManager.getInstance().create();
         
         if (args.length == 0) {
-            prepareMesh("water_map_col", "water_map_col_fix");
+            prepareMesh("agg8", "agg8_fix");
         } else if(args.length == 1) {
             prepareMesh(args[0], args[0] + "_fix");
         } else if(args.length == 2) {
@@ -108,7 +108,7 @@ public class PrepareWavefront {
         Vector3f half = new Vector3f(dim);
         half.scale(0.5f);
         Vector3f pos = Vector3f.add(min, half, null);
-        physics.BoundingBox b = new physics.BoundingBox(pos, dim, true);
+        physics.BoundingBox b = new physics.BoundingBox(pos, dim);
         return b;
     }
 

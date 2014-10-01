@@ -29,7 +29,9 @@ public class GameTest {
     static ArrayList<TestGraphic> graphics;
 
     public static void main(String[] args) {
-
+        
+        
+        
         UpdateManager updateManager = UpdateManager.getInstance();
         ThreeDGraphicsManager graphicsManager = ThreeDGraphicsManager.getInstance();
         InputManager inputManager = InputManager.getInstance();
@@ -38,11 +40,6 @@ public class GameTest {
         ScriptManager scriptManager = ScriptManager.getInstance();
 
         Game.create("THE GAME", updateManager, graphicsManager, inputManager, resourceManager, gameObjectManager, scriptManager);
-
-        ScriptManager.getInstance().loadAndExecute("startinit.js");
-        ScriptManager.getInstance().loadAndExecute("default.js");
-        ScriptManager.getInstance().loadAndExecute("MockGame.js");
-        ScriptManager.getInstance().loadAndExecute("endinit.js");
 
         Game.run();
     }

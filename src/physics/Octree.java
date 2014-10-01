@@ -5,6 +5,7 @@
 package physics;
 
 import game.GameObject;
+import graphics.BoundingBoxGraphic;
 import graphics.ThreeDGraphicsManager;
 import java.util.ArrayList;
 import org.lwjgl.util.vector.Vector3f;
@@ -43,36 +44,36 @@ public class Octree<T extends Boundable> extends GameObject implements Boundable
         myNumber = total++;
     }
 
-    public void insert(T object) {
+    public boolean insert(T object) {
+        //System.out.println("Object " + object.getBounds());
+        //System.out.println("OCtree " + boundary);
         if (!boundary.intersects(object.getBounds())) {
-            return;
+            return false;
         }
         if (!hasSubdivided) {
             if (objects.size() > MAX_OBJECTS) {
                 subdivide();
-                ArrayList<T> oldObjects = objects;
-                objects = new ArrayList<T>();
-                for (T obj : oldObjects) {
-                    insert(obj);
+                ArrayList<T> objectsCP = new ArrayList<T>(objects);
+                for (T obj : objectsCP) {
+                    if (insert(obj)) {
+                        objects.remove(obj);
+                    }
                 }
             } else {
                 objects.add(object);
             }
         } else {
-            ArrayList<Octree> toAddTo = new ArrayList<Octree>(9);
-            for (Octree Octree : children) {
-                if (Octree.boundary.intersects(object.getBounds())) {
-                    toAddTo.add(Octree);
+            boolean addedBelow = false;
+            for (Octree octree : children) {
+                if(octree.insert(object)) {
+                    addedBelow = true;
                 }
             }
-            if (toAddTo.size() == 8) {
-                this.objects.add(object);
-            } else {
-                for (Octree Octree : toAddTo) {
-                    Octree.insert(object);
-                }
+            if(!addedBelow) {
+                objects.add(object);
             }
         }
+        return true;
     }
 
     public ArrayList<T> queryRange(BoundingBox range) {
@@ -128,13 +129,13 @@ public class Octree<T extends Boundable> extends GameObject implements Boundable
 
         Vector3f center = getBounds().getCenter();
         children = new Octree[8];
-        for(int i = 0; i < children.length; i++) {
+        for (int i = 0; i < children.length; i++) {
             newBounds[i].create();
             newBounds[i].setPosition(Vector3f.add(center, newBounds[i].getPosition(), null));
             children[i] = new Octree(newBounds[i]);
-            //graphics.ThreeDGraphicsManager.getInstance().addGraphic3D(newBounds[i], 0);
+            //graphics.ThreeDGraphicsManager.getInstance().addGraphic3D(new BoundingBoxGraphic(newBounds[i]), 0);
         }
-        
+
 
     }
 

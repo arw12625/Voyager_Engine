@@ -10,6 +10,9 @@ import resource.ResourceManager;
 import update.UpdateManager;
 import java.util.ArrayList;
 import script.ScriptManager;
+import state.GameLoading;
+import state.GameState;
+import state.Quit;
 
 /**
  *
@@ -18,6 +21,7 @@ import script.ScriptManager;
 public class Game {
 
     public static String title;
+    private static GameState state;
     public static UpdateManager updateManager;
     public static GraphicsManager graphicsManager;
     public static InputManager inputManager;
@@ -26,8 +30,6 @@ public class Game {
     public static ScriptManager scriptManager;
     public static ArrayList<Manager> managers;
     public static Player player;
-    private static boolean quit;
-    private static boolean init;
 
     public static void create(String title,
             UpdateManager updateManager,
@@ -36,6 +38,8 @@ public class Game {
             ScriptManager scriptManager) {
 
         Game.title = title;
+        Game.state = EngineInit.getInstance();
+
         Game.updateManager = updateManager;
         Game.graphicsManager = graphicsManager;
         Game.inputManager = inputManager;
@@ -44,40 +48,20 @@ public class Game {
         Game.scriptManager = scriptManager;
 
         managers = new ArrayList<Manager>();
-        setInitializing(true);
-
-        gameObjectManager.create();
-        updateManager.create();
-        graphicsManager.create();
-        inputManager.create();
-        resourceManager.create();
-        scriptManager.create();
-        resourceManager.start();
-        updateManager.start();
-        ScriptManager.getInstance().loadStartupScripts();
-
     }
 
     public static void run() {
-        
-        while(initializing()) {
-            resourceManager.processGraphics();
-            Thread.yield();
-        }
-        while (!quit) {
-            resourceManager.processGraphics();
-            graphicsManager.render();
-            if (graphicsManager.isCloseRequested()) {
-                quit();
-            }
 
+        state.init();
+        while (!(state instanceof state.Quit)) {
+            state.run();
         }
         Game.destroy();
     }
 
     public static void destroy() {
 
-        ArrayList<Manager> copy  = (ArrayList<Manager>) managers.clone();
+        ArrayList<Manager> copy = (ArrayList<Manager>) managers.clone();
         for (Manager m : copy) {
             m.destroy();
         }
@@ -88,11 +72,7 @@ public class Game {
     }
 
     public static void quit() {
-        quit = true;
-    }
-
-    public static boolean isRunning() {
-        return !quit;
+        changeState(Quit.getInstance());
     }
 
     public static void setPlayer(Player p) {
@@ -120,12 +100,62 @@ public class Game {
     public static Player getPlayer() {
         return player;
     }
-    
+
     public static boolean initializing() {
-        return init;
+        return state instanceof EngineInit;
     }
-    
-    public static void setInitializing(boolean init) {
-        Game.init = init;
+
+    public static boolean isRunning() {
+        return !(state instanceof state.Quit);
+    }
+
+    public static void changeState(GameState gstate) {
+        state.end();
+        state = gstate;
+        System.out.println("New State " + state);
+        state.init();
+    }
+
+    static class EngineInit extends GameState {
+
+        static EngineInit instance;
+
+        public static EngineInit getInstance() {
+            if (instance == null) {
+                instance = new EngineInit();
+            }
+            return instance;
+        }
+
+        @Override
+        public void run() {
+            if (game.Game.resourceManager.isLoading()) {
+                game.Game.resourceManager.processGraphics();
+                Thread.yield();
+            } else {
+                game.Game.changeState(GameLoading.getInstance());
+            }
+        }
+
+        @Override
+        public void init() {
+            gameObjectManager.create();
+
+            updateManager.create();
+            updateManager.start();
+
+            resourceManager.create();
+            resourceManager.start();
+
+            scriptManager.create();
+            graphicsManager.create();
+            inputManager.create();
+            
+            update.UpdateManager.getInstance().setPaused(false);
+        }
+
+        @Override
+        public void end() {
+        }
     }
 }

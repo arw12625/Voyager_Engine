@@ -23,7 +23,8 @@ public class CollisionMesh extends GameObject implements Boundable {
         planes = new Octree<Plane>(b);
         planes.create();
         bbg = new BoundingBoxGraphic(b);
-        //ThreeDGraphicsManager.getInstance().add(bbg);
+        bbg.create();
+        ThreeDGraphicsManager.getInstance().add(bbg);
         
     }
     
@@ -33,7 +34,7 @@ public class CollisionMesh extends GameObject implements Boundable {
     }
     
     public CollisionMesh(ArrayList<Mesh> collision) {
-        this(BoundingBox.boundsFromBounds(collision));
+        this(BoundingBox.boundsFromBounds(collision, null));
         for(Mesh m : collision) {
             addMesh(m);
         }
@@ -54,8 +55,9 @@ public class CollisionMesh extends GameObject implements Boundable {
             }
 
             Plane p = new Plane(verts, collision.getNormals().get(face.getNormalIndices()[0]));
+            //ThreeDGraphicsManager.getInstance().add(new BoundingBoxGraphic(p.getBounds()));
+            
             planes.insert(p);
-            //graphics.ThreeDGraphicsManager.getInstance().addGraphic3D(p, 10);
         }
     }
     
@@ -66,7 +68,7 @@ public class CollisionMesh extends GameObject implements Boundable {
     }
     
     public ArrayList<Plane> getPlanes(BoundingBox b) {
-        bbg.setBoundingBox(getBounds());
+        //bbg.setBoundingBox(getBounds());
         return planes.queryRange(b);
     }
     

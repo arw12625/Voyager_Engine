@@ -33,7 +33,7 @@ public class ViewPoint extends GameObject {
 
     public ViewPoint(Vector3f position, Quaternion orientation) {
 
-        this(position, orientation, 60, 4f / 3f, 0.1f, 500f);
+        this(position, orientation, 60, 4f / 3f, 0.1f, 1000f);
 
     }
 
@@ -84,11 +84,11 @@ public class ViewPoint extends GameObject {
     }
 
     public synchronized void rotate(Quaternion q) {
-        b.getBounds().setOrientation(Quaternion.mul(b.getBounds().getOrientation(), q, null));
+        b.getBounds().setOrientation(Utilities.transform(b.getBounds().getOrientation(), q));
     }
 
     public synchronized void adjustToView() {
-        float angle = (float) (Math.acos(b.getBounds().getOrientation().getW()) * 2 * 180 / Math.PI);
+        float angle = (float) Math.toDegrees(Utilities.angleFromQuat(b.getBounds().getOrientation()));
         glRotatef(angle, b.getBounds().getOrientation().getX(),
                 b.getBounds().getOrientation().getY(),
                 b.getBounds().getOrientation().getZ());

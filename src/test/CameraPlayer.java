@@ -50,16 +50,16 @@ public class CameraPlayer extends game.Player implements physics.Positionable {
         setOrientation(Quaternion.mul(Utilities.quatFromAxisAngle(new Vector3f(1, 0, 0), xAngle), Utilities.quatFromAxisAngle(new Vector3f(0, 1, 0), yAngle), null));
         
         Vector3f go = new Vector3f();
-        if (keyboard.get(Keyboard.KEY_UP).isDown() || keyboard.get(Keyboard.KEY_W).isDown()) {
+        if (keyboard.getKey(Keyboard.KEY_UP).isDown() || keyboard.getKey(Keyboard.KEY_W).isDown()) {
             go.translate(0, 0, -1);
         }
-        if (keyboard.get(Keyboard.KEY_DOWN).isDown() || keyboard.get(Keyboard.KEY_S).isDown()) {
+        if (keyboard.getKey(Keyboard.KEY_DOWN).isDown() || keyboard.getKey(Keyboard.KEY_S).isDown()) {
             go.translate(0, 0, 1);
         }
-        if (keyboard.get(Keyboard.KEY_LEFT).isDown() || keyboard.get(Keyboard.KEY_A).isDown()) {
+        if (keyboard.getKey(Keyboard.KEY_LEFT).isDown() || keyboard.getKey(Keyboard.KEY_A).isDown()) {
             go.translate(-1, 0, 0);
         }
-        if (keyboard.get(Keyboard.KEY_RIGHT).isDown() || keyboard.get(Keyboard.KEY_D).isDown()) {
+        if (keyboard.getKey(Keyboard.KEY_RIGHT).isDown() || keyboard.getKey(Keyboard.KEY_D).isDown()) {
             go.translate(1, 0, 0);
         }
         if (go.lengthSquared() != 0) {

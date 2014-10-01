@@ -73,6 +73,7 @@ public class WavefrontModel extends Resource implements physics.Boundable {
         materialList = new ArrayList<graphics.Material>();
         objects = new ArrayList<Mesh>();
         bounds = new ArrayList<BoundingBox>();
+        
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(
                     ResourceLoader.getResourceAsStream("res/" + this.fullName + ".obj")));
@@ -80,18 +81,26 @@ public class WavefrontModel extends Resource implements physics.Boundable {
             String line;
             graphics.Material currentMaterial = graphics.Material.defaultMaterial;
             Mesh currentMesh = new Mesh(this.fullName);
+            
+            //Read in objects
             while ((line = reader.readLine()) != null) {
+                //Ignnore lines with #
                 if (line.startsWith("#")) {
                     continue;
                 }
                 String[] spaceSplit = line.split(" ");
+                //Read material library
                 if (line.startsWith("mtllib ")) {
                     String materialFileName = spaceSplit[1];
                     materials.putAll(loadMaterialLibrary(this.pathPrefix, materialFileName));
-                } else if (line.startsWith("o ")) {
+                }
+                //A new object is read
+                else if (line.startsWith("o ")) {
                     currentMesh = new Mesh(spaceSplit[1]);
                     addMesh(currentMesh);
-                } else if (line.startsWith("usemtl ")) {
+                }
+                //Set material for mesh
+                else if (line.startsWith("usemtl ")) {
                     if (spaceSplit.length > 1) {
                         currentMaterial = materials.get(spaceSplit[1]);
                         if (currentMesh.getName().equals(this.fullName)) {
@@ -106,24 +115,32 @@ public class WavefrontModel extends Resource implements physics.Boundable {
                         }
                     }
                     currentMesh.setMaterial(currentMaterial);
-                } else if (line.startsWith("v ")) {
+                }
+                //Read in a vertex
+                else if (line.startsWith("v ")) {
                     String[] xyz = spaceSplit;
                     float x = Float.valueOf(xyz[1]);
                     float y = Float.valueOf(xyz[2]);
                     float z = Float.valueOf(xyz[3]);
                     vertices.add(new Vector3f(x, y, z));
-                } else if (line.startsWith("vn ")) {
+                }
+                //Read in a normal vector
+                else if (line.startsWith("vn ")) {
                     String[] xyz = spaceSplit;
                     float x = Float.valueOf(xyz[1]);
                     float y = Float.valueOf(xyz[2]);
                     float z = Float.valueOf(xyz[3]);
                     normals.add(new Vector3f(x, y, z));
-                } else if (line.startsWith("vt ")) {
+                }
+                //Read in a uv texture coordinate
+                else if (line.startsWith("vt ")) {
                     String[] xyz = spaceSplit;
                     float u = Float.valueOf(xyz[1]);
                     float v = Float.valueOf(xyz[2]);
                     texCoords.add(new Vector2f(u, 1 - v));
-                } else if (line.startsWith("f ")) {
+                }
+                //Read in a new Face
+                else if (line.startsWith("f ")) {
                     String[] faceIndices = spaceSplit;
                     int[] vertexIndicesArray = {Integer.parseInt(faceIndices[1].split("/")[0]) - 1,
                         Integer.parseInt(faceIndices[2].split("/")[0]) - 1, Integer.parseInt(faceIndices[3].split("/")[0]) - 1};
@@ -135,7 +152,9 @@ public class WavefrontModel extends Resource implements physics.Boundable {
                             Integer.parseInt(faceIndices[2].split("/")[1]) - 1, Integer.parseInt(faceIndices[3].split("/")[1]) - 1};
                     }
                     currentMesh.addFace(new graphics.Face(vertexIndicesArray, normalIndicesArray, texCoordIndicesArray));
-                } else if (line.startsWith("dim ")) {
+                }
+                //Read in the specified dimension
+                else if (line.startsWith("dim ")) {
                     float x, y, z;
                     x = Float.parseFloat(spaceSplit[1]);
                     y = Float.parseFloat(spaceSplit[2]);
@@ -145,15 +164,18 @@ public class WavefrontModel extends Resource implements physics.Boundable {
                     b.create();
                 }
             }
+            //Create BoundingBox if unspecified
             if (b.getDimension().lengthSquared() == 0) {
                 Vector3f[] yolo = new Vector3f[vertices.size()];
                 vertices.toArray(yolo);
-                BoundingBox fit = BoundingBox.boundsFromVerts(yolo);
+                BoundingBox fit = BoundingBox.boundsFromVerts(yolo, null);
                 b.setDimension(fit.getDimension());
                 b.setPosition(fit.getPosition());
                 b.create();
             }
             reader.close();
+            
+            //Process bounds objects for aggregate beings
             for (Mesh possible : objects) {
                 if (possible.getName().toLowerCase().contains("bound")) {
                     ArrayList<Vector3f> corners = new ArrayList<Vector3f>();
@@ -167,9 +189,11 @@ public class WavefrontModel extends Resource implements physics.Boundable {
                     }
                     Vector3f[] cornerArray = new Vector3f[corners.size()];
                     corners.toArray(cornerArray);
-                    bounds.add(BoundingBox.boundsFromRectangularPoints(cornerArray));
+                    bounds.add(BoundingBox.boundsFromRectangularPoints(cornerArray, null));
                 }
             }
+            
+            //Generate materialList
             materialList = new ArrayList<graphics.Material>(materials.values());
 
         } catch (IOException e) {
@@ -182,17 +206,18 @@ public class WavefrontModel extends Resource implements physics.Boundable {
     public static HashMap<String, graphics.Material> loadMaterialLibrary(String pathPrefix, String materialFilePath) {
         HashMap<String, graphics.Material> materials = new HashMap<String, graphics.Material>();
         try {
-            System.out.println("WHAT + " + materialFilePath);
             BufferedReader reader = new BufferedReader(new InputStreamReader(
                     ResourceLoader.getResourceAsStream("res/" + pathPrefix + materialFilePath)));
             String line;
             graphics.Material parseMaterial = null;
             String materialName = "";
             while ((line = reader.readLine()) != null) {
+                //ignore lines with #
                 if (line.startsWith("#")) {
                     continue;
                 }
                 String[] spaceSplit = line.split(" ");
+                //Load new Material
                 if (line.startsWith("newmtl ")) {
                     if (!materialName.equals("")) {
                         materials.put(materialName, parseMaterial);
@@ -203,17 +228,29 @@ public class WavefrontModel extends Resource implements physics.Boundable {
                         materialName = spaceSplit[1];
                     }
                     parseMaterial = new graphics.Material(materialName);
-                } else if (line.startsWith("Ns ")) {
+                } 
+                //Load Specular Coefficient
+                else if (line.startsWith("Ns ")) {
                     parseMaterial.setSpecularCoefficient(Float.valueOf(spaceSplit[1]));
-                } else if (line.startsWith("Ka ")) {
+                }
+                //Load Ambient Color
+                else if (line.startsWith("Ka ")) {
                     parseMaterial.setAmbientColor(new float[]{Float.valueOf(spaceSplit[1]), Float.valueOf(spaceSplit[2]), Float.valueOf(spaceSplit[3])});
-                } else if (line.startsWith("Ks ")) {
+                }
+                //Load Specular Color
+                else if (line.startsWith("Ks ")) {
                     parseMaterial.setSpecularColor(new float[]{Float.valueOf(spaceSplit[1]), Float.valueOf(spaceSplit[2]), Float.valueOf(spaceSplit[3])});
-                } else if (line.startsWith("Kd ")) {
+                }
+                //Load Diffuse Color
+                else if (line.startsWith("Kd ")) {
                     parseMaterial.setDiffuseColor(new float[]{Float.valueOf(spaceSplit[1]), Float.valueOf(spaceSplit[2]), Float.valueOf(spaceSplit[3])});
-                } else if (line.startsWith("map_Kd")) {
+                }
+                //Load Texture Map
+                else if (line.startsWith("map_Kd")) {
                     parseMaterial.setTexture(resource.TextureManager.getInstance().loadTextureResource(pathPrefix + spaceSplit[1]));
-                } else {
+                }
+                //Unknown line
+                else {
                     util.DebugMessages.getInstance().write("[MTL] Unknown Line: " + line);
                 }
             }

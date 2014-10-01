@@ -16,7 +16,7 @@ import util.Utilities;
  *
  * @author Andy
  */
-public class DynamicEntity extends StaticEntity  {
+public class DynamicEntity extends StaticEntity {
 
     private Vector3f velocity;
     private Vector3f angularVelocity;
@@ -26,25 +26,30 @@ public class DynamicEntity extends StaticEntity  {
     private Vector3f forceBuffer;
     private Vector3f torqueBuffer;
     private float linearDrag = 0.998f;
-    private float angularDrag = .996f;
+    private float angularDrag = .999f;
     private boolean awake;
     private float minSpeedSquared = 0.0015f;
     private float vAvg;
     private static final Vector3f zero = new Vector3f();
+    private VectorGraphic vg;
 
     public DynamicEntity(BoundingBox b) {
         this(b, defaultMass);
     }
-    
+
     public DynamicEntity(BoundingBox b, float mass) {
         this(b, mass, getRectangularPrismInertiaTensor(b, mass));
     }
-    
-    public DynamicEntity(final BoundingBox b, final float mass, final Matrix3f inertiaTensor) {
-        super(b, mass, inertiaTensor);
+
+    public DynamicEntity(BoundingBox b, float mass, Matrix3f inertiaTensor) {
+        this(b, mass, inertiaTensor, Utilities.zeroVec);
+    }
+
+    public DynamicEntity(final BoundingBox b, final float mass, final Matrix3f inertiaTensor, Vector3f centerOfMass) {
+        super(b, mass, inertiaTensor, centerOfMass);
         reset();
     }
-    
+
     public synchronized void reset() {
         velocity = new Vector3f();
         angularVelocity = new Vector3f();
@@ -61,13 +66,15 @@ public class DynamicEntity extends StaticEntity  {
         forceBuffer.set(zero);
         torqueBuffer.set(zero);
     }
-    
+
     public synchronized void integrate(float delta) {
+
         // Calculate linear acceleration from force inputs.
         acceleration = (Vector3f) new Vector3f(forceBuffer).scale(invMass);
         // Calculate angular acceleration from torque inputs.
-        angularAcceleration = new Vector3f(torqueBuffer);
-        angularAcceleration.scale(invMomentOfInertiaAround(torqueBuffer));
+        
+        angularAcceleration = (Vector3f) Matrix3f.transform(invInertiaTensorWorld(), torqueBuffer, null);
+        
         // Adjust velocities
         // Update linear velocity from both acceleration and impulse.
         velocity = Utilities.addScaledVector(velocity, acceleration, delta);
@@ -81,8 +88,7 @@ public class DynamicEntity extends StaticEntity  {
         setPosition(Utilities.addScaledVector(getPosition(), velocity, delta));
         // Update angular position.
 
-        setOrientation(Utilities.addScaledVector(getOrientation(), Utilities.inverseTransform(angularVelocity, getOrientation()), -delta).normalise(null));
-
+        setOrientation(Utilities.addScaledVector(getOrientation(), angularVelocity, delta).normalise(null));
         // Normalize the orientation, and update the matrices with the new
         // position and orientation.
 
@@ -107,21 +113,27 @@ public class DynamicEntity extends StaticEntity  {
         Vector3f.add(forceBuffer, force, forceBuffer);
     }
 
-    public synchronized void applyForceAtPoint(Vector3f force, Vector3f application) {
+    public synchronized void applyForceAtPointLocal(Vector3f force, Vector3f application) {
         Vector3f.add(forceBuffer, force, forceBuffer);
-        Vector3f.add(torqueBuffer, Vector3f.cross(Vector3f.sub(application, getPosition(), null), force, null), torqueBuffer);
+        Vector3f.add(torqueBuffer, Vector3f.cross(Vector3f.sub(application, getGlobalCenterOfMass(), null),
+                Utilities.inverseTransform(force, orientation), null), torqueBuffer);
     }
 
     public synchronized void applyTorque(Vector3f torque) {
         Vector3f.add(torqueBuffer, torque, torqueBuffer);
     }
 
-    public synchronized void applyImpulseAtPoint(Vector3f impulse, Vector3f application) {
+    public synchronized void applyImpulseAtPointLocal(Vector3f impulse, Vector3f application) {
         velocity = Utilities.addScaledVector(velocity, impulse, invMass);
-        Vector3f angularImpulse = Vector3f.cross(Vector3f.sub(application, getPosition(), null), impulse, null);
-        Vector3f deltaAngularVelocity = new Vector3f(angularImpulse);
-        deltaAngularVelocity.scale(invMomentOfInertiaAround(angularImpulse));
+        Vector3f angularImpulse = Vector3f.cross(Utilities.transform( Vector3f.sub(application
+                , getLocalCenterOfMass(), null), orientation), impulse, null);
+        //System.out.println(inertiaTensor);
+        Vector3f deltaAngularVelocity = Matrix3f.transform(invInertiaTensorWorld(), angularImpulse, null);
         Vector3f.add(angularVelocity, deltaAngularVelocity, angularVelocity);
+    }
+    
+    public synchronized void applyImpulseAtPointGlobal(Vector3f impulse, Vector3f application) {
+        applyImpulseAtPointLocal(impulse, localize(application));
     }
 
     public synchronized Vector3f getVelocity() {
@@ -182,14 +194,4 @@ public class DynamicEntity extends StaticEntity  {
     public synchronized boolean isAwake() {
         return awake;
     }
-
-    public synchronized float invMomentOfInertiaAround(Vector3f axis) {
-        if (axis.lengthSquared() == 0) {
-            return 0;
-        }
-        Vector3f s = new Vector3f(axis);
-        s.normalise();
-        return 1.0f / Vector3f.dot(s, Utilities.transform(Matrix3f.transform(inertiaTensor, Utilities.inverseTransform(s, getOrientation()), null), getOrientation()));
-    }
-
 }

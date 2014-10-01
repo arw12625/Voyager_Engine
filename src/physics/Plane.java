@@ -4,6 +4,8 @@
  */
 package physics;
 
+import graphics.BoundingBoxGraphic;
+import graphics.ThreeD;
 import org.lwjgl.util.vector.Vector3f;
 
 /**
@@ -18,7 +20,7 @@ public class Plane implements Boundable {
 
     public Plane(Vector3f[] v, Vector3f n) {
 
-        bounds = BoundingBox.boundsFromVerts(v);
+        bounds = BoundingBox.boundsFromVerts(v, null);
         this.normal = n;
         p = -Vector3f.dot(v[0], n);
 
@@ -49,5 +51,6 @@ public class Plane implements Boundable {
     public Vector3f getMiddle() {
         return bounds.getPosition();
     }
+
 
 }

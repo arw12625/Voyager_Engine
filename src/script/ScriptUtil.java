@@ -19,6 +19,12 @@ import update.Updateable;
  * @author Tanner <thobson125@gmail.com>
  */
 public class ScriptUtil {
+    
+    public static void makeManagerVar(String packageName, String managerName) {
+        ScriptManager.getInstance().evaluateText("var " + managerName + " = " + packageName + "." + managerName +
+                ".getInstance();", ScriptManager.getInstance().globalScope);
+    }
+    
     /*
      * @param prefix The prefix used when retrieving the model (e.g. "rocket/")
      * @param path The path used when retrieving the model, without the ".obj" (e.g. "rocket")

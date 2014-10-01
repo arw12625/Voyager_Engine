@@ -31,12 +31,7 @@ public class BoundingBox extends Transform implements Boundable {
     }
 
     public BoundingBox(Vector3f position, Vector3f dimension) {
-        this(position, dimension, false);
-    }
-
-    public BoundingBox(Vector3f position, Vector3f dimension, boolean aligned) {
         this(position, dimension, new Quaternion());
-        this.aligned = aligned;
     }
 
     public BoundingBox(Vector3f position, Vector3f dimension, Quaternion orientation) {
@@ -52,26 +47,20 @@ public class BoundingBox extends Transform implements Boundable {
     @Override
     public void create() {
         super.create();
-        half = new Vector3f(dimension);
-        half.scale(.5f);
-        localVerts = new Vector3f[]{
-            new Vector3f(-half.getX(), -half.getY(), -half.getZ()),
-            new Vector3f(-half.getX(), -half.getY(), half.getZ()),
-            new Vector3f(-half.getX(), half.getY(), half.getZ()),
-            new Vector3f(-half.getX(), half.getY(), -half.getZ()),
-            new Vector3f(half.getX(), -half.getY(), half.getZ()),
-            new Vector3f(half.getX(), -half.getY(), -half.getZ()),
-            new Vector3f(half.getX(), half.getY(), -half.getZ()),
-            half
-        };
-        globalVerts = new Vector3f[localVerts.length];
+        localVerts = new Vector3f[8];
         localAxes = new Vector3f[]{
             new Vector3f(1, 0, 0),
             new Vector3f(0, 1, 0),
             new Vector3f(0, 0, 1)
         };
+        globalVerts = new Vector3f[localVerts.length];
         globalAxes = new Vector3f[localAxes.length];
-        deriveGlobalData();
+        if (!aligned) {
+            alignedBounds = new BoundingBox(this);
+            alignedBounds.setAligned(true);
+            alignedBounds.create();
+        }
+        deriveLocalData();
     }
 
     public synchronized void translate(Vector3f t) {
@@ -94,6 +83,15 @@ public class BoundingBox extends Transform implements Boundable {
     public synchronized void setOrientation(Quaternion orientation) {
         this.orientation = orientation;
         deriveGlobalData();
+    }
+
+    public synchronized void setDimension(Vector3f dimension) {
+        this.dimension = dimension;
+        deriveLocalData();
+    }
+
+    private void setAligned(boolean aligned) {
+        this.aligned = aligned;
     }
 
     @Override
@@ -142,6 +140,27 @@ public class BoundingBox extends Transform implements Boundable {
         }
     }
 
+    private synchronized void deriveLocalData() {
+        half = new Vector3f(dimension);
+        half.scale(.5f);
+        if (localVerts != null) {
+            localVerts = new Vector3f[]{
+                new Vector3f(-half.getX(), -half.getY(), -half.getZ()),
+                new Vector3f(-half.getX(), -half.getY(), half.getZ()),
+                new Vector3f(-half.getX(), half.getY(), half.getZ()),
+                new Vector3f(-half.getX(), half.getY(), -half.getZ()),
+                new Vector3f(half.getX(), -half.getY(), half.getZ()),
+                new Vector3f(half.getX(), -half.getY(), -half.getZ()),
+                new Vector3f(half.getX(), half.getY(), -half.getZ()),
+                half
+            };
+            deriveGlobalData();
+            if (!aligned) {
+                BoundingBox.createAlignedBounds(globalVerts, alignedBounds);
+            }
+        }
+    }
+
     private synchronized void deriveGlobalData() {
         if (globalVerts != null) {
             for (int i = 0; i < globalVerts.length; i++) {
@@ -151,11 +170,6 @@ public class BoundingBox extends Transform implements Boundable {
             if (globalAxes != null) {
                 for (int i = 0; i < globalAxes.length; i++) {
                     globalAxes[i] = Utilities.transform(localAxes[i], orientation);
-                }
-                if (!aligned) {
-                    alignedBounds = BoundingBox.boundsFromVerts(true, globalVerts);
-                } else {
-                    alignedBounds = null;
                 }
             }
         }
@@ -195,7 +209,7 @@ public class BoundingBox extends Transform implements Boundable {
         return (value >= min) && (value <= max);
     }
 
-    public static BoundingBox boundsFromVerts(boolean aligned, Vector3f... verts) {
+    public static BoundingBox boundsFromVerts(Vector3f[] verts, BoundingBox b) {
         Vector3f min = new Vector3f(Float.MAX_VALUE, Float.MAX_VALUE, Float.MAX_VALUE);
         Vector3f max = new Vector3f(-Float.MAX_VALUE, -Float.MAX_VALUE, -Float.MAX_VALUE);
         for (Vector3f v : verts) {
@@ -218,41 +232,36 @@ public class BoundingBox extends Transform implements Boundable {
                 min.setZ(v.getZ());
             }
         }
-        return boundsFromMinMax(aligned, min, max);
+        return boundsFromMinMax(min, max, b);
     }
 
-    public static BoundingBox boundsFromVerts(Vector3f... verts) {
-        return boundsFromVerts(false, verts);
-    }
-
-    public static BoundingBox boundsFromMinMax(boolean aligned, Vector3f min, Vector3f max) {
+    public static BoundingBox boundsFromMinMax(Vector3f min, Vector3f max, BoundingBox b) {
         Vector3f dim = Vector3f.sub(max, min, null);
         Vector3f half = new Vector3f(dim);
         half.scale(0.5f);
         Vector3f pos = Vector3f.add(min, half, null);
-        BoundingBox b = new BoundingBox(pos, dim, aligned);
-        b.create();
+        if (b == null) {
+            b = new BoundingBox();
+            b.create();
+        }
+        //System.out.println(b.getDimension());
+        //System.out.println(b.getAlignedBounds().getDimension());
+        b.setPosition(pos);
+        b.setDimension(dim);
+        b.setOrientation(Utilities.zeroQuat);
         return b;
     }
 
-    public static BoundingBox boundsFromMinMax(Vector3f min, Vector3f max) {
-        return boundsFromMinMax(false, min, max);
-    }
-
-    public static BoundingBox boundsFromBounds(boolean aligned, ArrayList<? extends Boundable> bounds) {
+    public static BoundingBox boundsFromBounds(ArrayList<? extends Boundable> bounds, BoundingBox b) {
         Vector3f[] verts = new Vector3f[bounds.size() * 2];
         for (int i = 0; i < bounds.size(); i++) {
-            BoundingBox b = bounds.get(i).getBounds().getAlignedBounds();
-            Vector3f max = Vector3f.add(b.getPosition(), b.getHalf(), null);
-            Vector3f min = Vector3f.sub(b.getPosition(), b.getHalf(), null);
+            BoundingBox alignedBound = bounds.get(i).getBounds().getAlignedBounds();
+            Vector3f max = Vector3f.add(alignedBound.getPosition(), alignedBound.getHalf(), null);
+            Vector3f min = Vector3f.sub(alignedBound.getPosition(), alignedBound.getHalf(), null);
             verts[2 * i] = max;
             verts[2 * i + 1] = min;
         }
-        return boundsFromVerts(aligned, verts);
-    }
-
-    public static BoundingBox boundsFromBounds(ArrayList<? extends Boundable> bounds) {
-        return boundsFromBounds(false, bounds);
+        return boundsFromVerts(verts, b);
     }
 
     @Override
@@ -260,7 +269,7 @@ public class BoundingBox extends Transform implements Boundable {
         return this;
     }
 
-    public static BoundingBox boundsFromRectangularPoints(Vector3f[] points) {
+    public static BoundingBox boundsFromRectangularPoints(Vector3f[] points, BoundingBox b) {
         if (points.length != 8) {
             throw new RuntimeException("Not a rectangular prism. Not 8 vertices");
         }
@@ -306,24 +315,31 @@ public class BoundingBox extends Transform implements Boundable {
 
         Quaternion orientation = Utilities.quatFromBasis(axes[0], axes[1], axes[2]);
         //orientation.negate();
-        
+
         Vector3f pos = new Vector3f();
         for (Vector3f v : points) {
             Vector3f.add(pos, v, pos);
         }
         pos.scale(1f / 8f);
 
-        BoundingBox b = new BoundingBox(pos, dim, orientation);
-        b.create();
+        if (b == null) {
+            b = new BoundingBox(pos, dim, orientation);
+            b.create();
+        }
+        b.setPosition(pos);
+        b.setDimension(dim);
+        b.setOrientation(orientation);
+        b.deriveGlobalData();
+        return b;
+    }
+
+    private static BoundingBox createAlignedBounds(Vector3f[] verts, BoundingBox b) {
+        BoundingBox.boundsFromVerts(verts, b);
         return b;
     }
 
     public synchronized float getVolume() {
         return dimension.getX() * dimension.getY() * dimension.getZ();
-    }
-    
-    public synchronized void setDimension(Vector3f dimension) {
-        this.dimension = dimension;
     }
 
     @Override

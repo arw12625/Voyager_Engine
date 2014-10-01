@@ -26,7 +26,9 @@ public class KeyStatus {
     }
 
     public boolean isPressed() {
-        return this.pressed && !this.oldpressed;
+        boolean tmp = oldpressed;
+        oldpressed = pressed;
+        return !tmp && pressed;
     }
 
     public void update(boolean pressed) {

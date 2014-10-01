@@ -66,7 +66,7 @@ public class ResourceManager extends StandardManager implements Runnable {
     @Override
     public boolean add(GameObject obj) {
         if (obj instanceof Resource) {
-            System.out.println("ADDING To Resource Queue" + obj);
+            util.DebugMessages.getInstance().write("ADDING To Resource Queue" + obj);
             queuedResources.add((Resource) obj);
             return true;
         }

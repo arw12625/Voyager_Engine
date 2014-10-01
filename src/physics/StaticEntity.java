@@ -4,10 +4,13 @@
  */
 package physics;
 
+import graphics.ThreeDGraphicsManager;
+import graphics.VectorGraphic;
 import java.util.ArrayList;
 import java.util.Arrays;
 import org.lwjgl.util.vector.Matrix3f;
 import org.lwjgl.util.vector.Vector3f;
+import util.Utilities;
 
 /**
  *
@@ -20,6 +23,7 @@ public class StaticEntity extends BoundingBox {
     float invMass;
     Matrix3f invInertiaTensor;
     boolean collide;
+    Vector3f relativeCenterOfMass;
     static final float defaultMass = 1f;
 
     public StaticEntity(BoundingBox b) {
@@ -31,6 +35,10 @@ public class StaticEntity extends BoundingBox {
     }
 
     public StaticEntity(BoundingBox b, float mass, Matrix3f inertiaTensor) {
+        this(b, mass, inertiaTensor, Utilities.zeroVec);
+    }
+    
+    public StaticEntity(BoundingBox b, float mass, Matrix3f inertiaTensor, Vector3f relativeCenterOfMass) {
         super(b);
         this.mass = mass;
         this.inertiaTensor = inertiaTensor;
@@ -39,6 +47,7 @@ public class StaticEntity extends BoundingBox {
         invInertiaTensor.load(inertiaTensor);
         invInertiaTensor.invert();
         collide = true;
+        this.relativeCenterOfMass = relativeCenterOfMass;
     }
 
     public float getInvMass() {
@@ -49,8 +58,12 @@ public class StaticEntity extends BoundingBox {
         return mass;
     }
 
-    public Vector3f getCenterOfMass() {
-        return getCenter();
+    public Vector3f getLocalCenterOfMass() {
+        return relativeCenterOfMass;
+    }
+
+    public Vector3f getGlobalCenterOfMass() {
+        return Vector3f.add(getPosition(), Utilities.transform(getLocalCenterOfMass(), orientation), null);
     }
     
     public Matrix3f getInertiaTensor() {
@@ -61,9 +74,24 @@ public class StaticEntity extends BoundingBox {
         return invInertiaTensor;
     }
 
+    public Matrix3f invInertiaTensorWorld() {
+        Matrix3f mat = Utilities.matFromQuat(orientation);
+        Matrix3f inv = Utilities.matFromQuat(Utilities.inverse(orientation));
+        return Matrix3f.mul(mat, Matrix3f.mul(invInertiaTensor, inv, null), null);
+    }
+
+    public float invMomentAround(Vector3f axis) {
+        Vector3f norm = new Vector3f();
+        norm.normalise();
+        return Matrix3f.transform(invInertiaTensorWorld(), axis, null).length();
+    }
+    
     public void collide(StaticEntity s) {
     }
     public void collide(Plane collision, Vector3f contact) {
+        VectorGraphic test = new VectorGraphic(contact, new Vector3f(0,10,0));
+        test.create();
+        //ThreeDGraphicsManager.getInstance().add(test);
     }
 
     public boolean isCollidable() {

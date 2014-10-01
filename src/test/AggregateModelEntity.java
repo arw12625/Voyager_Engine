@@ -29,6 +29,8 @@ public class AggregateModelEntity extends AggregateEntity implements graphics.Th
     graphics.ThreeDModel m;
     ArrayList<BoundingBoxGraphic> bbg;
     BoundingBoxGraphic all;
+    VectorGraphic vg;
+    VectorGraphic vc;
 
     public AggregateModelEntity(graphics.ThreeDModel m, ArrayList<StaticEntity> bodies, BoundingBox b, float mass, Matrix3f inertia) {
         super(bodies, b, mass, inertia);
@@ -37,16 +39,23 @@ public class AggregateModelEntity extends AggregateEntity implements graphics.Th
         for(StaticEntity se : bodies) {
             BoundingBoxGraphic bggggg = new BoundingBoxGraphic(se);
             bggggg.create();
-            //bbg.add(bggggg);
+            bbg.add(bggggg);
         }
         
         all = new BoundingBoxGraphic(this);
         all.create();
         //ThreeDGraphicsManager.getInstance().add(all);
+        
+        vg = new VectorGraphic(getGlobalCenterOfMass(), new Vector3f(0, 6, 0));
+        vg.create();
+        //ThreeDGraphicsManager.getInstance().add(vg);
+        vc = new VectorGraphic(getPosition(), new Vector3f(0, 10, 0));
+        vc.create();
+        //ThreeDGraphicsManager.getInstance().add(vc);*/
     }
 
     public AggregateModelEntity(graphics.ThreeDModel m, AggregateEntity a) {
-        this(m, a.getPhysicalBodies(), a, a.getMass(), a.getInertiaTensor());
+        this(m, a.getLocalPhysicalBodies(), a, a.getMass(), a.getInertiaTensor());
     }
 
     public static AggregateModelEntity aggregateModelEntityFromPath(String prefix, String path) {
@@ -86,9 +95,9 @@ public class AggregateModelEntity extends AggregateEntity implements graphics.Th
         float angle = (float) (Math.acos(orientation.getW()) * 2 * 180 / Math.PI);
         glPushMatrix();
         glTranslatef(pos.getX(), pos.getY(), pos.getZ());
-        glRotatef(-angle, orientation.getX(), orientation.getY(), orientation.getZ());
+        glRotatef(angle, orientation.getX(), orientation.getY(), orientation.getZ());
         for(int i = 0; i < bbg.size(); i++) {
-            bbg.get(i).setBoundingBox(getPhysicalBodies().get(i));
+            bbg.get(i).setBoundingBox(getLocalPhysicalBodies().get(i));
             bbg.get(i).render();
         }
         m.render();
@@ -97,6 +106,8 @@ public class AggregateModelEntity extends AggregateEntity implements graphics.Th
 
     @Override
     public boolean update(int delta) {
+        vg.setPosition(getGlobalCenterOfMass());
+        vc.setPosition(getPosition());
         return false;
     }
 }

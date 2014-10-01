@@ -4,6 +4,8 @@
  */
 package test;
 
+import graphics.BoundingBoxGraphic;
+import graphics.VectorGraphic;
 import java.util.ArrayList;
 import org.lwjgl.input.Keyboard;
 import static org.lwjgl.opengl.GL11.*;
@@ -19,10 +21,16 @@ import util.Utilities;
 public class SimpleModelEntity extends physics.DynamicEntity implements graphics.ThreeD {
 
     graphics.ThreeDModel m;
+    VectorGraphic vg;
+    BoundingBoxGraphic all;
 
     public SimpleModelEntity(graphics.ThreeDModel m) {
         super(m.getBounds());
         this.m = m;
+        vg = new VectorGraphic(new Vector3f(0, 2, 0), new Vector3f(0, 4, 0));
+        vg.create();
+        all = new BoundingBoxGraphic(this);
+        all.create();
     }
 
     public static SimpleModelEntity simpleModelEntityFromPath(String prefix, String path) {
@@ -52,8 +60,11 @@ public class SimpleModelEntity extends physics.DynamicEntity implements graphics
         float angle = (float) (Math.acos(orientation.getW()) * 2 * 180 / Math.PI);
         glPushMatrix();
         glTranslatef(pos.getX(), pos.getY(), pos.getZ());
-        glRotatef(-angle, orientation.getX(), orientation.getY(), orientation.getZ());
+        glRotatef(angle, orientation.getX(), orientation.getY(), orientation.getZ());
         m.render();
+        vg.render();
         glPopMatrix();
+        all.setBoundingBox(this);
+        all.render();
     }
 }

@@ -5,10 +5,13 @@
 package script;
 
 import game.*;
+import input.InputManager;
+import input.KeyStatus;
 import java.util.ArrayList;
 import java.util.HashMap;
 import org.lwjgl.input.Keyboard;
 import javax.script.*;
+import org.mozilla.javascript.Scriptable;
 
 /**
  *
@@ -20,6 +23,7 @@ public class Console extends GameObject implements update.Updateable {
     ArrayList<String> inputs;
     ArrayList<String> lines;
     ScriptManager scriptManager;
+    Scriptable scope;
     HashMap<Integer, Character> keyNorm;
     HashMap<Integer, Character> keyShift;
     resource.FontResource consoleFont;
@@ -32,12 +36,15 @@ public class Console extends GameObject implements update.Updateable {
     private boolean showError;
     private boolean show;
     private boolean inputEnable;
+    private HashMap<Integer, Boolean> keyPressedStates;
     static final int returnKey = Keyboard.KEY_RETURN;
     static final int backKey = Keyboard.KEY_BACK;
     static final int lshiftKey = Keyboard.KEY_LSHIFT;
     static final int rshiftKey = Keyboard.KEY_RSHIFT;
     static final int upKey = Keyboard.KEY_UP;
     static final int downKey = Keyboard.KEY_DOWN;
+    static final int leftKey = Keyboard.KEY_LEFT;
+    static final int rightKey = Keyboard.KEY_RIGHT;
     static Console instance;
 
     @Override
@@ -60,14 +67,16 @@ public class Console extends GameObject implements update.Updateable {
         lines = new ArrayList<String>();
 
         resource.FontManager fm = resource.FontManager.getInstance();
-        consoleFont = fm.createFont("console", new org.newdawn.slick.Color(102, 135, 172));
-        lineGraphic = new graphics.HudGraphic("Console", resource.TextureManager.getInstance().loadTextureResource("terminal.png"), "", consoleFont, 10, 8);
+        consoleFont = fm.createFont("console/console", new org.newdawn.slick.Color(102, 135, 172));
+        lineGraphic = new graphics.HudGraphic("Console", resource.TextureManager.getInstance().loadTextureResource("console/terminal.png"), "", consoleFont, 10, 8);
+        
         lineGraphic.create();
         terminal = new graphics.Menu(0, 0, false, lineGraphic, true, null, null);
         terminal.create();
         graphics.ThreeDGraphicsManager.getInstance().add(terminal);
-        
+
         scriptManager = ScriptManager.getInstance();
+        scope = scriptManager.getChildScope(scriptManager.globalScope);
         loadConsoleScripts();
 
         setEnabled(false);
@@ -79,7 +88,7 @@ public class Console extends GameObject implements update.Updateable {
     }
 
     public static Console getInstance() {
-        if(instance == null) {
+        if (instance == null) {
             instance = new Console();
         }
         return instance;
@@ -96,28 +105,28 @@ public class Console extends GameObject implements update.Updateable {
     @Override
     public boolean update(int delta) {
         if (inputEnable) {
+            //for this iteration, update the pressed keys 
+            updateKeys();
+
             String oldLine = line.toString();
             input.InputManager keyboard = input.InputManager.getInstance();
-            boolean shift = keyboard.get(lshiftKey).isDown() || keyboard.get(rshiftKey).isDown();
-            for (Integer i : keyNorm.keySet()) {
-                input.KeyStatus k = keyboard.get(i);
-                if (k.isPressed()) {
-                    Character c = shift ? keyShift.get(i) : keyNorm.get(i);
-                    line.append(c);
-                }
-            }
-            if (keyboard.get(returnKey).isPressed() && shift) {
-                //line.append('\n');
-            }
-            if (keyboard.get(backKey).isPressed() && line.length() > 0) {
-                line.delete(line.length() - 1, line.length());
-            }
+            boolean shift = keyboard.getKey(lshiftKey).isDown() || keyboard.getKey(rshiftKey).isDown();
+            for (Integer i : keyPressedStates.keySet()) {
+                if (keyPressedStates.get(i)) {
 
-            if (keyboard.get(upKey).isPressed()) {
-                upCounter++;
-            }
-            if (keyboard.get(downKey).isPressed()) {
-                upCounter--;
+                    if (i == returnKey && shift) {
+                        //line.append('\n');
+                    } else if (i == backKey && line.length() > 0) {
+                        line.delete(line.length() - 1, line.length());
+                    } else if (i == upKey) {
+                        upCounter++;
+                    } else if (i == downKey) {
+                        upCounter--;
+                    } else {
+                        Character c = shift ? keyShift.get(i) : keyNorm.get(i);
+                        line.append(c);
+                    }
+                }
             }
             if (upCounter < 0) {
                 upCounter = 0;
@@ -125,7 +134,7 @@ public class Console extends GameObject implements update.Updateable {
             if (upCounter > inputs.size()) {
                 upCounter = inputs.size();
             }
-            if (keyboard.get(upKey).isPressed() || keyboard.get(downKey).isPressed() && inputs.size() > 0) {
+            if (keyPressedStates.get(upKey) || keyPressedStates.get(downKey) && inputs.size() > 0) {
                 if (upCounter == 0) {
                     line = new StringBuilder();
                 } else {
@@ -141,7 +150,7 @@ public class Console extends GameObject implements update.Updateable {
 
             updateMessage();
 
-            if (keyboard.get(returnKey).isPressed() && !shift) {
+            if (keyPressedStates.get(returnKey) && !shift) {
                 String str = line.toString();
                 if (!str.equals("")) {
                     inputs.add(str);
@@ -155,7 +164,7 @@ public class Console extends GameObject implements update.Updateable {
                 line.delete(0, str.length());
             }
         }
-        
+
         return false;
     }
 
@@ -200,7 +209,7 @@ public class Console extends GameObject implements update.Updateable {
     private String formatString(String input) {
         String prefix = getPrefix();
         StringBuilder wordWrap = new StringBuilder(input);
-        wordWrap.insert(0, getPrefix());
+        wordWrap.insert(0, prefix);
         int width = (int) ((graphics.ThreeDGraphicsManager.getInstance().getWidth()) / consoleFont.getWidth());
         for (int i = 1; i < wordWrap.length() / width + 1; i++) {
             wordWrap.insert(i * width, "\n");
@@ -213,11 +222,14 @@ public class Console extends GameObject implements update.Updateable {
     }
 
     private void execute(String command) {
-            scriptManager.eval(command);
+        try {
+            scriptManager.evaluateText(command, scope);
+        } catch (Exception se) {
             write("Not a valid command!");
             if (showError) {
-                //write(se.getMessage());
+                write(se.getMessage());
             }
+        }
     }
 
     public void setShowError(boolean show) {
@@ -239,7 +251,7 @@ public class Console extends GameObject implements update.Updateable {
     }
 
     public void loadConsoleScripts() {
-        scriptManager.loadAndExecute("Console.js");
+        scriptManager.loadAndExecute("engine_scripts/Console.js");
     }
 
     public void clearScreen() {
@@ -284,5 +296,25 @@ public class Console extends GameObject implements update.Updateable {
         keyShift.put(Keyboard.KEY_SLASH, '?');
         keyNorm.put(Keyboard.KEY_COLON, ';');
         keyShift.put(Keyboard.KEY_COLON, ':');
+
+        keyPressedStates = new HashMap<Integer, Boolean>();
+        //Add keys that are pressed to a map for "debouncing purposes"
+        //The buckets are initialized to false and is iterated over through the keys
+        for (int key : keyNorm.keySet()) {
+            keyPressedStates.put(key, false);
+        }
+        //A list of non character keys that are pressed rather than held
+        int[] specialKeys = {upKey, downKey, leftKey, rightKey, returnKey, backKey};
+        for (int key : specialKeys) {
+            keyPressedStates.put(key, false);
+        }
+    }
+
+    private void updateKeys() {
+        InputManager im = InputManager.getInstance();
+        //Iterate through the keys of the pressed states keys
+        for (int key : keyPressedStates.keySet()) {
+            keyPressedStates.put(key, im.getKey(key).isPressed());
+        }
     }
 }

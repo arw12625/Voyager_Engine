@@ -70,7 +70,9 @@ public class FocusPlayer extends game.Player {
 
         orientation = (Quaternion) Quaternion.mul(Utilities.quatFromAxisAngle(new Vector3f(1, 0, 0), xAngle),
                 Utilities.quatFromAxisAngle(new Vector3f(0, 1, 0), yAngle), null).normalise();
-        Vector3f.add(p.getPosition(), Utilities.transform(new Vector3f(0, 0, radius), orientation), position);
+        Quaternion test = new Quaternion(orientation);
+        test.negate();
+        Vector3f.add(p.getPosition(), Utilities.transform(new Vector3f(0, 0, radius), test), position);
 
         vp.setOrientation(orientation);
         vp.setPosition(position);

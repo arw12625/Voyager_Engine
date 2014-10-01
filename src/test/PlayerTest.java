@@ -45,7 +45,7 @@ public class PlayerTest {
         SoundManager.getInstance().create();
         ThreeDPhysicsManager.getInstance().create();
         DebugMessages.getInstance().create();
-        GameStateManager.getInstance().create();
+        //GameStateManager.getInstance().create();
 
         PhysicalPlayer player = new PhysicalPlayer();
         player.create();

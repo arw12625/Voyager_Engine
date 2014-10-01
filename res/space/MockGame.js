@@ -6,7 +6,7 @@
 var grav = new Gravity();
 
 var ter = new WavefrontModel("water_map");
-var tercol = new WavefrontModel("water_map_col");
+var tercol = new WavefrontModel("water_map");
 ter.create();
 tercol.create();
 
@@ -20,7 +20,7 @@ var cm = new CollisionMesh(tercol.getObjects());
 cm.create();
 ThreeDPhysicsManager.getInstance().setCollisionMesh(cm);
 
-var agg = AggregateModelEntity.aggregateModelEntityFromPath("landing_module_fix");
+var agg = AggregateModelEntity.aggregateModelEntityFromPath("agg8");
 var gs = ScriptManager.getInstance().loadScript("rocket.js");
 agg.addScript(gs);
 ThreeDGraphicsManager.getInstance().add(agg);
@@ -36,5 +36,5 @@ ThreeDGraphicsManager.getInstance().setViewPoint(player.getViewPoint());
     
 var s = new SkySphere(SkySphere.SkyType.PLAIN_NIGHT);
 s.create();
-ThreeDGraphicsManager.getInstance().addGraphic3D(s, -100);
+ThreeDGraphicsManager.getInstance().addGraphic3D(s, -1);
     
